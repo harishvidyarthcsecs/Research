@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Humanizer — Research Agent</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-card: #161b22;
+            --bg-card-hover: #1c2333;
+            --bg-input: #0d1117;
+            --accent-blue: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-red: #f78166;
+            --accent-orange: #e3b341;
+            --accent-purple: #bc8cff;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #656d76;
+            --border-color: #30363d;
+            --border-muted: #21262d;
+            --sidebar-width: 240px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Sidebar ── */
+        #sidebar {
+            position: fixed;
+            top: 0; left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-brand { padding: 20px 16px 16px; border-bottom: 1px solid var(--border-muted); }
+        .sidebar-brand h6 { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+        .sidebar-brand p { font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 0; }
+        .sidebar-logo { width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; margin-bottom: 10px; }
+
+        .sidebar-nav { flex: 1; padding: 12px 8px; overflow-y: auto; }
+        .nav-section-label { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); padding: 8px 8px 4px; }
+
+        .nav-link-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; color: var(--text-secondary); text-decoration: none; font-size: 13.5px; font-weight: 500; transition: all 0.15s ease; margin-bottom: 2px; }
+        .nav-link-item:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+        .nav-link-item.active { background: rgba(188,140,255,0.12); color: var(--accent-purple); }
+        .nav-link-item .nav-icon { width: 18px; text-align: center; font-size: 13px; }
+
+        .sidebar-footer { padding: 12px 8px; border-top: 1px solid var(--border-muted); }
+
+        /* ── Main ── */
+        #main-content { margin-left: var(--sidebar-width); min-height: 100vh; display: flex; flex-direction: column; }
+
+        .hero-header { padding: 40px 40px 24px; position: relative; overflow: hidden; }
+        .hero-header::before { content: ''; position: absolute; top: -60px; left: -60px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(188,140,255,0.12) 0%, transparent 70%); pointer-events: none; }
+        .hero-title { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #e6edf3 0%, #bc8cff 60%, #58a6ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.2; margin-bottom: 8px; }
+        .hero-subtitle { font-size: 14px; color: var(--text-secondary); max-width: 520px; }
+
+        .content-area { flex: 1; padding: 0 40px 40px; }
+
+        .glass-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; }
+        .card-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
+
+        /* ── Mode toggle ── */
+        .mode-toggle { display: flex; gap: 0; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; width: fit-content; margin-bottom: 20px; }
+        .mode-btn { background: none; border: none; color: var(--text-muted); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 9px 18px; cursor: pointer; transition: all 0.15s ease; display: flex; align-items: center; gap: 7px; }
+        .mode-btn.active { background: rgba(188,140,255,0.15); color: var(--accent-purple); }
+        .mode-btn:hover:not(.active) { background: var(--bg-card-hover); color: var(--text-primary); }
+
+        /* ── Drop zone ── */
+        .drop-zone { border: 2px dashed var(--border-color); border-radius: 10px; padding: 40px 24px; text-align: center; cursor: pointer; transition: all 0.2s ease; background: var(--bg-input); }
+        .drop-zone.drag-over { border-color: var(--accent-purple); background: rgba(188,140,255,0.06); }
+        .drop-zone-icon { font-size: 32px; color: var(--text-muted); margin-bottom: 12px; }
+        .drop-zone-text { font-size: 14px; color: var(--text-secondary); margin-bottom: 6px; }
+        .drop-zone-hint { font-size: 12px; color: var(--text-muted); }
+        .drop-zone input[type="file"] { display: none; }
+
+        /* ── Textarea ── */
+        .text-input { width: 100%; background: var(--bg-input); border: 1.5px solid var(--border-color); border-radius: 10px; color: var(--text-primary); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; padding: 14px 16px; resize: vertical; min-height: 200px; outline: none; transition: border-color 0.2s ease; }
+        .text-input:focus { border-color: var(--accent-purple); box-shadow: 0 0 0 3px rgba(188,140,255,0.1); }
+        .text-input::placeholder { color: var(--text-muted); }
+
+        /* ── Buttons ── */
+        .btn-humanize { background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue)); color: #fff; border: none; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600; padding: 11px 24px; cursor: pointer; transition: opacity 0.15s ease, transform 0.15s ease; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-humanize:hover { opacity: 0.88; transform: translateY(-1px); }
+        .btn-humanize:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .btn-copy { background: none; border: 1px solid var(--border-color); border-radius: 7px; color: var(--text-muted); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; padding: 5px 12px; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 5px; }
+        .btn-copy:hover { border-color: var(--accent-purple); color: var(--accent-purple); }
+
+        .btn-diff { background: none; border: 1px solid var(--border-color); border-radius: 7px; color: var(--text-muted); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; padding: 5px 12px; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 5px; }
+        .btn-diff.active { border-color: var(--accent-orange); color: var(--accent-orange); background: rgba(227,179,65,0.08); }
+        .btn-diff:hover:not(.active) { border-color: var(--accent-orange); color: var(--accent-orange); }
+
+        /* ── Loading ── */
+        .loading-overlay { display: none; align-items: center; gap: 12px; padding: 16px; background: rgba(188,140,255,0.06); border: 1px solid rgba(188,140,255,0.2); border-radius: 10px; margin-top: 16px; }
+        .loading-overlay.active { display: flex; }
+        .spinner-ring { width: 20px; height: 20px; border: 2px solid var(--border-color); border-top-color: var(--accent-purple); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Result sections ── */
+        .result-section { margin-top: 24px; }
+        .result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .result-label { font-size: 12px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; }
+        .result-label.draft { color: var(--accent-blue); }
+        .result-label.audit { color: var(--accent-orange); }
+        .result-label.final { color: var(--accent-green); }
+
+        .result-box { background: var(--bg-input); border: 1px solid var(--border-muted); border-radius: 10px; padding: 16px; font-size: 14px; line-height: 1.7; color: var(--text-secondary); white-space: pre-wrap; min-height: 80px; }
+        .result-box.audit-box { font-size: 13px; }
+        .result-box.final-box { border-color: rgba(63,185,80,0.3); color: var(--text-primary); }
+
+        /* ── Diff highlight ── */
+        ins { background: rgba(63,185,80,0.18); color: var(--accent-green); text-decoration: none; border-radius: 3px; padding: 0 2px; }
+        del { background: rgba(247,129,102,0.18); color: var(--accent-red); text-decoration: line-through; border-radius: 3px; padding: 0 2px; }
+
+        /* ── File chosen indicator ── */
+        .file-chosen { margin-top: 10px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--accent-purple); }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            #sidebar { transform: translateX(-100%); }
+            #sidebar.open { transform: translateX(0); }
+            #main-content { margin-left: 0; }
+            .hero-header, .content-area { padding-left: 20px; padding-right: 20px; }
+        }
+
+        .hamburger { display: none; position: fixed; top: 14px; left: 14px; z-index: 1100; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; width: 36px; height: 36px; align-items: center; justify-content: center; cursor: pointer; color: var(--text-secondary); }
+        @media (max-width: 768px) { .hamburger { display: flex; } }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; }
+        .sidebar-overlay.active { display: block; }
+    </style>
+</head>
+<body>
+
+<button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<aside id="sidebar">
+    <div class="sidebar-brand">
+        <div class="sidebar-logo"><i class="fas fa-atom"></i></div>
+        <h6>Research Agent</h6>
+        <p>AI-Powered Research</p>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section-label">Tools</div>
+        <a href="/" class="nav-link-item"><span class="nav-icon"><i class="fas fa-search"></i></span>Research</a>
+        <a href="/literature" class="nav-link-item"><span class="nav-icon"><i class="fas fa-book-open"></i></span>Literature Builder</a>
+        <a href="/validator" class="nav-link-item"><span class="nav-icon"><i class="fas fa-check-double"></i></span>Reference Validator</a>
+        <a href="/citations" class="nav-link-item"><span class="nav-icon"><i class="fas fa-quote-right"></i></span>Enhanced Citations</a>
+        <div class="nav-section-label" style="margin-top:12px;">Writing</div>
+        <a href="/humanizer" class="nav-link-item active"><span class="nav-icon"><i class="fas fa-feather-alt"></i></span>Humanizer</a>
+        <a href="/latex-reorder" class="nav-link-item"><span class="nav-icon"><i class="fas fa-sort-numeric-down"></i></span>LaTeX Reorder</a>
+    </nav>
+    <div class="sidebar-footer">
+        <a href="/test" class="nav-link-item" style="font-size:12px;"><span class="nav-icon"><i class="fas fa-heartbeat"></i></span>System Status</a>
+    </div>
+</aside>
+
+<div id="main-content">
+    <div class="hero-header">
+        <p class="hero-title">AI Writing Humanizer</p>
+        <p class="hero-subtitle">Remove AI writing patterns and produce natural, direct prose. Upload a PDF or paste text directly.</p>
+    </div>
+
+    <div class="content-area">
+        <div class="glass-card mb-4">
+            <div class="card-label">Input Mode</div>
+
+            <!-- Mode toggle -->
+            <div class="mode-toggle">
+                <button class="mode-btn active" id="modeTextBtn" onclick="setMode('text')">
+                    <i class="fas fa-align-left"></i> Paste Text
+                </button>
+                <button class="mode-btn" id="modePdfBtn" onclick="setMode('pdf')">
+                    <i class="fas fa-file-pdf"></i> Upload PDF
+                </button>
+            </div>
+
+            <!-- Text paste panel -->
+            <div id="textPanel">
+                <textarea class="text-input" id="textInput" placeholder="Paste your AI-generated text here. The humanizer will remove AI writing patterns, replace vague claims with specific sentences, and produce natural prose..."></textarea>
+            </div>
+
+            <!-- PDF upload panel -->
+            <div id="pdfPanel" style="display:none;">
+                <div class="drop-zone" id="dropZone" onclick="document.getElementById('pdfFileInput').click()">
+                    <div class="drop-zone-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                    <div class="drop-zone-text">Drop your PDF here or click to browse</div>
+                    <div class="drop-zone-hint">Supports PDF files up to 50 MB</div>
+                    <input type="file" id="pdfFileInput" accept=".pdf">
+                </div>
+                <div class="file-chosen" id="fileChosen" style="display:none;">
+                    <i class="fas fa-file-pdf"></i>
+                    <span id="fileChosenName"></span>
+                    <button onclick="clearFile()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:12px;margin-left:4px;"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-3 mt-3">
+                <button class="btn-humanize" id="humanizeBtn" onclick="runHumanize()">
+                    <i class="fas fa-magic"></i> Humanize
+                </button>
+                <div class="loading-overlay" id="loadingIndicator">
+                    <div class="spinner-ring"></div>
+                    <span style="font-size:13px;color:var(--accent-purple);">Humanizing — this may take 30–60 seconds...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div id="resultsArea" style="display:none;">
+
+            <!-- Draft Rewrite -->
+            <div class="glass-card result-section">
+                <div class="result-header">
+                    <div class="result-label draft"><i class="fas fa-pen-nib" style="margin-right:5px;"></i>Draft Rewrite</div>
+                    <div class="d-flex gap-2">
+                        <button class="btn-diff" id="diffToggle" onclick="toggleDiff()">
+                            <i class="fas fa-exchange-alt"></i> Show Diff
+                        </button>
+                        <button class="btn-copy" onclick="copySection('draftBox')">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                </div>
+                <div class="result-box" id="draftBox"></div>
+            </div>
+
+            <!-- AI Pattern Audit -->
+            <div class="glass-card result-section">
+                <div class="result-header">
+                    <div class="result-label audit"><i class="fas fa-search-plus" style="margin-right:5px;"></i>AI Pattern Audit</div>
+                    <button class="btn-copy" onclick="copySection('auditBox')">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+                <div class="result-box audit-box" id="auditBox"></div>
+            </div>
+
+            <!-- Final Version -->
+            <div class="glass-card result-section">
+                <div class="result-header">
+                    <div class="result-label final"><i class="fas fa-check-circle" style="margin-right:5px;"></i>Final Version</div>
+                    <button class="btn-copy" onclick="copySection('finalBox')">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+                <div class="result-box final-box" id="finalBox"></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let currentMode = 'text';
+    let humanizeResult = null;
+    let showingDiff = false;
+
+    // Sidebar
+    document.getElementById('hamburgerBtn').addEventListener('click', () => {
+        document.getElementById('sidebar').classList.toggle('open');
+        document.getElementById('sidebarOverlay').classList.toggle('active');
+    });
+    document.getElementById('sidebarOverlay').addEventListener('click', () => {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('active');
+    });
+
+    // Mode toggle
+    function setMode(mode) {
+        currentMode = mode;
+        document.getElementById('modeTextBtn').classList.toggle('active', mode === 'text');
+        document.getElementById('modePdfBtn').classList.toggle('active', mode === 'pdf');
+        document.getElementById('textPanel').style.display = mode === 'text' ? 'block' : 'none';
+        document.getElementById('pdfPanel').style.display = mode === 'pdf' ? 'block' : 'none';
+    }
+
+    // PDF drop zone
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('pdfFileInput');
+
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type === 'application/pdf') setFile(file);
+    });
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files[0]) setFile(fileInput.files[0]);
+    });
+
+    function setFile(file) {
+        fileInput._selectedFile = file;
+        document.getElementById('fileChosen').style.display = 'flex';
+        document.getElementById('fileChosenName').textContent = file.name;
+        dropZone.style.borderColor = 'var(--accent-purple)';
+    }
+
+    function clearFile() {
+        fileInput.value = '';
+        fileInput._selectedFile = null;
+        document.getElementById('fileChosen').style.display = 'none';
+        dropZone.style.borderColor = '';
+    }
+
+    // Run humanize
+    async function runHumanize() {
+        const btn = document.getElementById('humanizeBtn');
+        const loading = document.getElementById('loadingIndicator');
+
+        let body, headers;
+
+        if (currentMode === 'text') {
+            const text = document.getElementById('textInput').value.trim();
+            if (!text) { alert('Please paste some text to humanize.'); return; }
+            body = JSON.stringify({ text });
+            headers = { 'Content-Type': 'application/json' };
+        } else {
+            const file = fileInput._selectedFile || fileInput.files[0];
+            if (!file) { alert('Please select a PDF file.'); return; }
+            const fd = new FormData();
+            fd.append('file', file);
+            body = fd;
+            headers = {};
+        }
+
+        btn.disabled = true;
+        loading.classList.add('active');
+        document.getElementById('resultsArea').style.display = 'none';
+
+        try {
+            const response = await fetch('/humanize', { method: 'POST', headers, body });
+            const data = await response.json();
+
+            if (!response.ok) {
+                alert('Error: ' + (data.error || 'Humanization failed'));
+                return;
+            }
+
+            humanizeResult = data;
+            showingDiff = false;
+            document.getElementById('diffToggle').classList.remove('active');
+            document.getElementById('diffToggle').innerHTML = '<i class="fas fa-exchange-alt"></i> Show Diff';
+
+            document.getElementById('draftBox').textContent = data.draft || '';
+            document.getElementById('auditBox').textContent = data.audit_notes || '';
+            document.getElementById('finalBox').textContent = data.final || '';
+            document.getElementById('resultsArea').style.display = 'block';
+            document.getElementById('resultsArea').scrollIntoView({ behavior: 'smooth' });
+
+        } catch (err) {
+            alert('Error: ' + err.message);
+        } finally {
+            btn.disabled = false;
+            loading.classList.remove('active');
+        }
+    }
+
+    // Diff toggle
+    function toggleDiff() {
+        if (!humanizeResult) return;
+        showingDiff = !showingDiff;
+        const btn = document.getElementById('diffToggle');
+        const box = document.getElementById('draftBox');
+
+        if (showingDiff) {
+            btn.classList.add('active');
+            btn.innerHTML = '<i class="fas fa-exchange-alt"></i> Hide Diff';
+            box.innerHTML = computeDiff(humanizeResult.original || '', humanizeResult.draft || '');
+        } else {
+            btn.classList.remove('active');
+            btn.innerHTML = '<i class="fas fa-exchange-alt"></i> Show Diff';
+            box.textContent = humanizeResult.draft || '';
+        }
+    }
+
+    // Simple word-level diff
+    function computeDiff(original, revised) {
+        const origWords = original.split(/(\s+)/);
+        const revWords = revised.split(/(\s+)/);
+
+        // LCS-based diff (simple greedy approximation)
+        const result = [];
+        let oi = 0, ri = 0;
+
+        while (oi < origWords.length || ri < revWords.length) {
+            if (oi < origWords.length && ri < revWords.length && origWords[oi] === revWords[ri]) {
+                result.push(escHtml(origWords[oi]));
+                oi++; ri++;
+            } else if (ri < revWords.length && (oi >= origWords.length || revWords[ri] !== origWords[oi])) {
+                if (revWords[ri].trim()) result.push(`<ins>${escHtml(revWords[ri])}</ins>`);
+                else result.push(escHtml(revWords[ri]));
+                ri++;
+            } else {
+                if (origWords[oi].trim()) result.push(`<del>${escHtml(origWords[oi])}</del>`);
+                else result.push(escHtml(origWords[oi]));
+                oi++;
+            }
+        }
+
+        return result.join('');
+    }
+
+    function copySection(id) {
+        const el = document.getElementById(id);
+        const text = el.textContent || el.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            // brief flash
+            const orig = el.style.borderColor;
+            el.style.borderColor = 'var(--accent-purple)';
+            setTimeout(() => { el.style.borderColor = orig; }, 700);
+        });
+    }
+
+    function escHtml(str) {
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+</script>
+</body>
+</html>

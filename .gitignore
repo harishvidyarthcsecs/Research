@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+venv/
+env/
+.env
+.venv
+
+# Logs and debug artifacts
+*.log
+research_system.log
+debug_form.html
+debug_response.html
+debug_response.json
+
+# Output data (runtime-generated)
+output/
+data/memory/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+secrets.json
+
+# Pickle files (use JSON instead)
+*.pkl

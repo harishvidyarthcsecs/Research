@@ -2,6 +2,10 @@
 
 A multi-agent research system that autonomously performs academic and technical research end-to-end with minimal user intervention, producing structured, verifiable, and reference-backed outputs.
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![CI](https://github.com/mohamedaaris/Research/actions/workflows/ci.yml/badge.svg)](https://github.com/mohamedaaris/Research/actions)
+
 ## System Architecture
 
 The system consists of 8 specialized agents working in a coordinated pipeline:
@@ -18,13 +22,15 @@ The system consists of 8 specialized agents working in a coordinated pipeline:
 ## Features
 
 - **Autonomous Research Pipeline**: Complete end-to-end research with minimal user input
-- **Multi-Source Paper Discovery**: Searches ArXiv and simulated academic databases
-- **Structured Claim Extraction**: Uses pattern matching to extract quantitative and qualitative claims
+- **Multi-Source Paper Discovery**: Searches ArXiv, Semantic Scholar, CrossRef, and PubMed
+- **Structured Claim Extraction**: Uses LLM-based extraction for quantitative and qualitative claims
+- **AI Writing Humanizer**: Upload a PDF to detect and remove AI writing patterns, producing natural prose
+- **LaTeX Citation Reordering**: Upload a `.tex` file to automatically renumber bibliography entries sequentially ([1], [2], [3], ...)
 - **Claim Normalization**: Standardizes metrics, conditions, and terminology
 - **Contradiction Detection**: Identifies conflicting claims across papers
 - **Research Gap Analysis**: Detects underexplored topics, missing methodologies, and evaluation gaps
 - **Multi-Format Citations**: Generates BibTeX, APA, IEEE, and MLA citations
-- **Persistent Memory**: Stores research results in a knowledge graph
+- **Persistent Memory**: Stores research results in a JSON-backed knowledge graph (no fragile pickle files)
 - **Comprehensive Logging**: Detailed operation tracking for transparency
 
 ## Installation
@@ -240,7 +246,7 @@ The system maintains persistent memory:
 
 ## License
 
-[Add your license here]
+[MIT](LICENSE)
 
 ## Citation
 
@@ -249,8 +255,8 @@ If you use this system in your research, please cite:
 ```bibtex
 @software{autonomous_research_system,
   title={Autonomous Research Agent System},
-  author={[Your Name]},
+  author={Aaris, Mohamed},
   year={2026},
-  url={[Repository URL]}
+  url={https://github.com/mohamedaaris/Research}
 }
 ```
