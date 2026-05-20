@@ -16,7 +16,7 @@ from .base_agent import BaseAgent
 class EnhancedPaperDiscoveryAgent(BaseAgent):
     """Enhanced agent that searches multiple academic databases."""
     
-    def __init__(self, memory_store=None, max_papers_per_source: int = 50):
+    def __init__(self, memory_store=None, max_papers_per_source: int = 10):
         super().__init__("EnhancedPaperDiscoveryAgent", memory_store)
         self.max_papers_per_source = max_papers_per_source
         self.session = None

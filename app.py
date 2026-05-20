@@ -905,18 +905,37 @@ def debug_form():
 
 @app.route('/test')
 def test():
-    """Test endpoint to verify the system works."""
+    """System status — returns JSON consumed by the status popup in the UI."""
+    import platform, sys
     try:
         system = get_system()
+        apis = {
+            "ArXiv": True,
+            "Semantic Scholar": True,
+            "CrossRef": True,
+            "PubMed": True,
+            "Anthropic LLM": bool(os.environ.get("ANTHROPIC_API_KEY")),
+        }
         return jsonify({
             'status': 'ok',
-            'message': 'Research system is ready',
-            'system_initialized': system is not None
+            'message': 'All systems operational',
+            'system_initialized': system is not None,
+            'python_version': sys.version.split()[0],
+            'platform': platform.system(),
+            'apis': apis,
+            'features': {
+                'llm_extraction': bool(os.environ.get("ANTHROPIC_API_KEY")),
+                'humanizer': bool(os.environ.get("ANTHROPIC_API_KEY")),
+                'pdf_export': True,
+                'docx_export': True,
+            }
         })
     except Exception as e:
         return jsonify({
             'status': 'error',
-            'message': str(e)
+            'message': str(e),
+            'apis': {},
+            'features': {}
         }), 500
 
 

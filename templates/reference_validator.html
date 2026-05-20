@@ -3,930 +3,1285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reference Validator - Research System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>Reference Validator - Research Agent</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #2563eb;
-            --secondary-color: #64748b;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --light-bg: #f8fafc;
-            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --bg-primary: #0d1117;
+            --bg-card: #161b22;
+            --bg-card-hover: #1c2333;
+            --bg-input: #0d1117;
+            --accent-blue: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-red: #f78166;
+            --accent-orange: #e3b341;
+            --accent-purple: #bc8cff;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #656d76;
+            --border-color: #30363d;
+            --border-muted: #21262d;
+            --sidebar-width: 240px;
         }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow-x: hidden;
         }
 
-        .main-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            margin: 2rem auto;
-            max-width: 1200px;
+        /* ── Sidebar ── */
+        #sidebar {
+            position: fixed;
+            top: 0; left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-brand {
+            padding: 20px 16px 16px;
+            border-bottom: 1px solid var(--border-muted);
+        }
+
+        .sidebar-brand h6 {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .sidebar-brand p {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .sidebar-logo {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 12px 8px;
+            overflow-y: auto;
+        }
+
+        .nav-section-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 8px 8px 4px;
+        }
+
+        .nav-link-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 500;
+            transition: all 0.15s ease;
+            margin-bottom: 2px;
+        }
+
+        .nav-link-item:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+
+        .nav-link-item.active {
+            background: rgba(88, 166, 255, 0.12);
+            color: var(--accent-blue);
+        }
+
+        .nav-link-item .nav-icon {
+            width: 18px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .sidebar-footer {
+            padding: 12px 8px;
+            border-top: 1px solid var(--border-muted);
+        }
+
+        /* ── Main content ── */
+        #main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Hero Header ── */
+        .hero-header {
+            padding: 40px 40px 32px;
+            position: relative;
             overflow: hidden;
         }
 
-        .header-section {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #1e40af 100%);
-            color: white;
-            padding: 2rem;
-            text-align: center;
+        .hero-header::before {
+            content: '';
+            position: absolute;
+            top: -60px; left: -60px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(247,129,102,0.1) 0%, transparent 70%);
+            pointer-events: none;
         }
 
-        .header-section h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+        .hero-title {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #e6edf3 0%, #f78166 50%, #e3b341 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+            margin-bottom: 8px;
         }
 
-        .header-section p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-bottom: 0;
+        .hero-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            max-width: 520px;
         }
 
-        .nav-pills {
-            background: var(--light-bg);
-            padding: 1rem;
-            border-bottom: 1px solid #e2e8f0;
+        /* ── Content area ── */
+        .content-area {
+            flex: 1;
+            padding: 0 40px 40px;
         }
 
-        .nav-pills .nav-link {
+        /* ── Cards ── */
+        .glass-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
-            font-weight: 500;
-            margin: 0 0.25rem;
-            transition: all 0.3s ease;
+            padding: 24px;
+            transition: border-color 0.2s ease;
+            margin-bottom: 20px;
         }
 
-        .nav-pills .nav-link:hover {
-            background: var(--primary-color);
-            color: white;
+        .card-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 16px;
         }
 
-        .content-section {
-            padding: 2rem;
-        }
-
+        /* ── Upload area ── */
         .upload-card {
-            background: var(--light-bg);
-            border: 2px dashed #cbd5e1;
-            border-radius: 16px;
-            padding: 3rem;
+            background: var(--bg-input);
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 40px;
             text-align: center;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             cursor: pointer;
-            margin-bottom: 2rem;
+            margin-bottom: 20px;
         }
 
         .upload-card:hover {
-            border-color: var(--primary-color);
-            background: #eff6ff;
+            border-color: var(--accent-blue);
+            background: rgba(88,166,255,0.04);
         }
 
         .upload-card.dragover {
-            border-color: var(--primary-color);
-            background: #dbeafe;
-            transform: scale(1.02);
+            border-color: var(--accent-blue);
+            background: rgba(88,166,255,0.08);
+            transform: scale(1.01);
         }
 
         .upload-icon {
-            font-size: 3rem;
-            color: var(--secondary-color);
-            margin-bottom: 1rem;
+            font-size: 2.5rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
         }
 
+        .upload-card h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .upload-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        /* ── Inputs ── */
+        .form-control-dark {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 13.5px;
+            padding: 10px 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            width: 100%;
+        }
+
+        .form-control-dark:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(88,166,255,0.1);
+        }
+
+        .form-control-dark::placeholder { color: var(--text-muted); }
+
+        textarea.form-control-dark {
+            resize: vertical;
+            min-height: 130px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 12.5px;
+            line-height: 1.6;
+        }
+
+        .form-label-dark {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        /* ── Format selector ── */
         .format-selector {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 2rem;
+            margin-bottom: 20px;
         }
 
         .format-option {
-            background: var(--light-bg);
-            border: 2px solid transparent;
-            border-radius: 12px;
-            padding: 1rem;
+            background: var(--bg-input);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             text-align: center;
         }
 
         .format-option:hover {
-            border-color: var(--primary-color);
-            background: #eff6ff;
+            border-color: var(--accent-blue);
+            background: rgba(88,166,255,0.05);
         }
 
         .format-option.active {
-            border-color: var(--primary-color);
-            background: #dbeafe;
+            border-color: var(--accent-blue);
+            background: rgba(88,166,255,0.1);
         }
 
-        .options-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 2rem;
+        .format-option h6 {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
         }
 
-        .custom-switch {
+        .format-option small {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* ── Toggle switches ── */
+        .options-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #f1f5f9;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border-muted);
         }
 
-        .custom-switch:last-child {
-            border-bottom: none;
+        .options-row:last-child { border-bottom: none; }
+
+        .options-row-label strong {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .options-row-label small {
+            font-size: 12px;
+            color: var(--text-muted);
         }
 
         .switch {
             position: relative;
             display: inline-block;
-            width: 50px;
-            height: 24px;
+            width: 44px;
+            height: 22px;
+            flex-shrink: 0;
         }
 
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
+        .switch input { opacity: 0; width: 0; height: 0; }
 
         .slider {
             position: absolute;
             cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #cbd5e1;
-            transition: .4s;
-            border-radius: 24px;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border-color);
+            transition: .3s;
+            border-radius: 22px;
         }
 
         .slider:before {
             position: absolute;
             content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
+            height: 16px; width: 16px;
+            left: 3px; bottom: 3px;
+            background-color: var(--text-muted);
+            transition: .3s;
             border-radius: 50%;
         }
 
-        input:checked + .slider {
-            background-color: var(--primary-color);
-        }
-
+        input:checked + .slider { background-color: var(--accent-blue); }
         input:checked + .slider:before {
-            transform: translateX(26px);
+            transform: translateX(22px);
+            background-color: #0d1117;
         }
 
+        /* ── Validate button ── */
         .validate-btn {
-            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+            background: linear-gradient(135deg, var(--accent-green), #2ea043);
             border: none;
-            border-radius: 12px;
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 600;
-            padding: 1rem 2rem;
-            transition: all 0.3s ease;
+            border-radius: 10px;
+            color: #0d1117;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 14px 24px;
+            transition: all 0.2s ease;
             width: 100%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .validate-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(63,185,80,0.25);
         }
 
         .validate-btn:disabled {
-            background: #9ca3af;
+            background: var(--border-color);
+            color: var(--text-muted);
             cursor: not-allowed;
         }
 
+        /* ── Loading ── */
         .loading-spinner {
             display: none;
             text-align: center;
-            padding: 2rem;
+            padding: 24px;
+            background: rgba(88,166,255,0.06);
+            border: 1px solid rgba(88,166,255,0.2);
+            border-radius: 10px;
+            margin-top: 16px;
         }
 
-        .spinner-border {
-            width: 3rem;
-            height: 3rem;
-            border-width: 0.3em;
+        .spinner-ring {
+            width: 32px; height: 32px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
         }
 
-        .results-section {
-            display: none;
-            margin-top: 2rem;
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* ── Results section ── */
+        .results-section { display: none; margin-top: 24px; }
+
+        /* ── Stat cards ── */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
         }
 
         .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 18px;
             text-align: center;
-            box-shadow: var(--card-shadow);
-            transition: transform 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-4px);
         }
 
         .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+            font-size: 28px;
+            font-weight: 800;
+            line-height: 1;
         }
 
         .stat-label {
-            color: var(--secondary-color);
-            font-size: 0.9rem;
-            font-weight: 500;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
         }
 
+        /* ── Result cards ── */
         .result-card {
-            background: white;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 1.5rem;
+            padding: 20px;
+            margin-bottom: 16px;
         }
 
         .result-header {
             display: flex;
             align-items: center;
-            margin-bottom: 1rem;
+            gap: 10px;
+            margin-bottom: 14px;
         }
 
-        .result-icon {
-            font-size: 1.5rem;
-            margin-right: 0.75rem;
+        .result-header h5 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
         }
 
-        .correction-item {
-            background: #fef3c7;
-            border: 1px solid #f59e0b;
-            border-radius: 8px;
-            padding: 0.75rem;
-            margin: 0.5rem 0;
-            font-size: 0.9rem;
-        }
+        .result-icon { font-size: 1.2rem; }
 
+        /* ── Correction items ── */
         .correction-summary {
-            background: #fff7ed;
-            border: 1px solid #fb923c;
+            background: rgba(227,179,65,0.08);
+            border: 1px solid rgba(227,179,65,0.2);
             border-radius: 8px;
-            padding: 1rem;
-            margin: 0.5rem 0;
+            padding: 12px 14px;
+            margin-bottom: 10px;
         }
 
         .correction-toggle {
-            background: #f97316;
-            border: none;
+            background: rgba(227,179,65,0.15);
+            border: 1px solid rgba(227,179,65,0.3);
             border-radius: 6px;
-            color: white;
-            font-size: 0.85rem;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            transition: all 0.3s ease;
+            color: var(--accent-orange);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 5px 12px;
             cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        .correction-toggle:hover {
-            background: #ea580c;
-            transform: translateY(-1px);
-        }
+        .correction-toggle:hover { background: rgba(227,179,65,0.25); }
 
         .correction-details {
             display: none;
-            margin-top: 0.75rem;
-            padding-top: 0.75rem;
-            border-top: 1px solid #fed7aa;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(227,179,65,0.2);
         }
 
-        .correction-details.show {
-            display: block;
-        }
+        .correction-details.show { display: block; }
 
         .correction-detail-item {
-            background: #fef3c7;
-            border-left: 3px solid #f59e0b;
-            padding: 0.5rem 0.75rem;
-            margin: 0.25rem 0;
-            font-size: 0.85rem;
-            border-radius: 4px;
+            background: rgba(227,179,65,0.06);
+            border-left: 2px solid var(--accent-orange);
+            padding: 6px 10px;
+            margin-bottom: 6px;
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            border-radius: 0 6px 6px 0;
         }
 
-        .issue-item {
-            background: #fee2e2;
-            border: 1px solid #ef4444;
+        /* ── Issue items ── */
+        .issue-summary {
+            background: rgba(247,129,102,0.08);
+            border: 1px solid rgba(247,129,102,0.2);
             border-radius: 8px;
-            padding: 0.75rem;
-            margin: 0.5rem 0;
-            font-size: 0.9rem;
+            padding: 12px 14px;
+            margin-bottom: 10px;
         }
 
+        .issue-detail-item {
+            background: rgba(247,129,102,0.06);
+            border-left: 2px solid var(--accent-red);
+            padding: 6px 10px;
+            margin-bottom: 6px;
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            border-radius: 0 6px 6px 0;
+        }
+
+        .issue-toggle {
+            background: rgba(247,129,102,0.15);
+            border: 1px solid rgba(247,129,102,0.3);
+            border-radius: 6px;
+            color: var(--accent-red);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 5px 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .issue-toggle:hover { background: rgba(247,129,102,0.25); }
+
+        /* ── Processing log ── */
+        .log-entry {
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            padding: 4px 0;
+            border-bottom: 1px solid var(--border-muted);
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .log-entry:last-child { border-bottom: none; }
+
+        .log-entry::before {
+            content: '•';
+            color: var(--accent-blue);
+            flex-shrink: 0;
+        }
+
+        /* ── Output section ── */
         .output-section {
-            background: #1f2937;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 1.5rem;
-            margin-top: 2rem;
+            padding: 20px;
+            margin-top: 20px;
         }
 
         .output-textarea {
-            background: #111827;
-            border: 1px solid #374151;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
-            color: #f9fafb;
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            padding: 1rem;
+            color: var(--text-primary);
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 12.5px;
+            line-height: 1.6;
+            padding: 14px;
             resize: vertical;
             width: 100%;
+            outline: none;
         }
 
-        .download-section {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
+        .output-textarea:focus { border-color: var(--accent-blue); }
+
+        .form-select-dark {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 7px;
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 13px;
+            padding: 7px 28px 7px 10px;
+            outline: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b949e' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            transition: border-color 0.2s;
         }
 
-        .download-btn {
-            background: var(--primary-color);
-            border: none;
+        .form-select-dark:focus { border-color: var(--accent-blue); }
+
+        /* ── Download buttons ── */
+        .btn-export {
+            background: rgba(63,185,80,0.12);
+            color: var(--accent-green);
+            border: 1px solid rgba(63,185,80,0.25);
             border-radius: 8px;
-            color: white;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 14px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-export:hover { background: rgba(63,185,80,0.2); }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 13px;
             font-weight: 500;
-            padding: 0.75rem 1.5rem;
-            transition: all 0.3s ease;
+            padding: 8px 14px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .download-btn:hover {
-            background: #1d4ed8;
-            transform: translateY(-1px);
+        .btn-ghost:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+            border-color: var(--accent-blue);
         }
 
+        /* ── Responsive ── */
         @media (max-width: 768px) {
-            .main-container {
-                margin: 1rem;
-                border-radius: 16px;
-            }
-            
-            .content-section {
-                padding: 1rem;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .download-section {
-                flex-direction: column;
-            }
+            #sidebar { transform: translateX(-100%); }
+            #sidebar.open { transform: translateX(0); }
+            #main-content { margin-left: 0; }
+            .hero-header, .content-area { padding-left: 20px; padding-right: 20px; }
+            .hero-title { font-size: 22px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
         }
+
+        /* Mobile hamburger */
+        .hamburger {
+            display: none;
+            position: fixed;
+            top: 14px; left: 14px;
+            z-index: 1100;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 36px; height: 36px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) { .hamburger { display: flex; } }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .sidebar-overlay.active { display: block; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-in { animation: slideIn 0.35s ease forwards; }
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <!-- Header -->
-        <div class="header-section">
-            <h1><i class="fas fa-check-double"></i> Reference Validator</h1>
-            <p>Validate, correct, and enhance your academic references with AI-powered verification</p>
-        </div>
 
-        <!-- Navigation -->
-        <div class="nav-pills">
-            <ul class="nav nav-pills justify-content-center">
-                <li class="nav-item">
-                    <a class="nav-link" href="/"><i class="fas fa-home"></i> Research System</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/literature"><i class="fas fa-book"></i> Literature Builder</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="/validator"><i class="fas fa-check-double"></i> Reference Validator</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/citations"><i class="fas fa-quote-right"></i> Citations</a>
-                </li>
-            </ul>
-        </div>
+<!-- Mobile hamburger -->
+<button class="hamburger" id="hamburgerBtn" aria-label="Toggle sidebar">
+    <i class="fas fa-bars"></i>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-        <!-- Content -->
-        <div class="content-section">
-            <!-- Upload Section -->
-            <div class="upload-card" id="uploadArea">
-                <div class="upload-icon">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                </div>
-                <h4>Drop your reference file here</h4>
-                <p class="text-muted">or click to browse files</p>
-                <input type="file" id="fileInput" class="d-none" accept=".txt,.bib,.tex">
-                <button type="button" class="btn btn-outline-primary mt-2" onclick="document.getElementById('fileInput').click()">
-                    <i class="fas fa-folder-open"></i> Browse Files
-                </button>
-            </div>
-
-            <!-- Manual Input -->
-            <div class="mb-4">
-                <label for="manualInput" class="form-label fw-bold">Or paste your references directly:</label>
-                <textarea class="form-control" id="manualInput" rows="6" 
-                          placeholder="Paste your references here..."></textarea>
-            </div>
-
-            <!-- Format Selection -->
-            <div class="format-selector">
-                <h5 class="mb-3"><i class="fas fa-cog"></i> Reference Format</h5>
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="format-option active" data-format="bibitem">
-                            <h6><strong>Bibitem</strong></h6>
-                            <small class="text-muted">\\bibitem{key} format</small>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="format-option" data-format="bibtex">
-                            <h6><strong>BibTeX</strong></h6>
-                            <small class="text-muted">@article{key, ...}</small>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="format-option" data-format="plain">
-                            <h6><strong>Plain Text</strong></h6>
-                            <small class="text-muted">One reference per line</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Validation Options -->
-            <div class="options-card">
-                <h5 class="mb-3"><i class="fas fa-tools"></i> Validation Options</h5>
-                
-                <div class="custom-switch">
-                    <div>
-                        <strong>Fix Format Issues</strong>
-                        <br><small class="text-muted">Correct author names, title capitalization, journal formatting</small>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="checkFormat" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-
-                <div class="custom-switch">
-                    <div>
-                        <strong>Correct Spelling</strong>
-                        <br><small class="text-muted">Fix common spelling mistakes in academic terms</small>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="checkSpelling" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-
-                <div class="custom-switch">
-                    <div>
-                        <strong>Remove Duplicates</strong>
-                        <br><small class="text-muted">Detect and remove duplicate references intelligently</small>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="checkDuplicates" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-
-                <div class="custom-switch">
-                    <div>
-                        <strong>Verify Papers</strong>
-                        <br><small class="text-muted">Validate papers using CrossRef API and correct bibliographic data</small>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="verifyPapers" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Validate Button -->
-            <button type="button" class="validate-btn" id="validateBtn" disabled>
-                <i class="fas fa-check-double"></i> Validate References
-            </button>
-
-            <!-- Loading Spinner -->
-            <div class="loading-spinner" id="loadingSpinner">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Validating references...</span>
-                </div>
-                <p class="mt-3">Processing references, please wait...</p>
-            </div>
-
-            <!-- Results Section -->
-            <div class="results-section" id="resultsSection">
-                <!-- Statistics -->
-                <div class="stats-grid" id="statsGrid">
-                    <!-- Stats will be populated here -->
-                </div>
-
-                <!-- Processing Log -->
-                <div class="result-card">
-                    <div class="result-header">
-                        <i class="fas fa-list result-icon text-info"></i>
-                        <h5>Processing Log</h5>
-                    </div>
-                    <div id="processingLog">
-                        <!-- Log will be populated here -->
-                    </div>
-                </div>
-
-                <!-- Corrections and Issues -->
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="result-card">
-                            <div class="result-header">
-                                <i class="fas fa-edit result-icon text-warning"></i>
-                                <h5>Corrections Made</h5>
-                            </div>
-                            <div id="correctionsSection">
-                                <!-- Corrections will be populated here -->
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="result-card">
-                            <div class="result-header">
-                                <i class="fas fa-exclamation-triangle result-icon text-danger"></i>
-                                <h5>Issues Found</h5>
-                            </div>
-                            <div id="issuesSection">
-                                <!-- Issues will be populated here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Output Section -->
-                <div class="output-section">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="text-white mb-0"><i class="fas fa-file-alt"></i> Corrected References</h5>
-                        <select class="form-select" id="outputFormat" style="width: auto;">
-                            <option value="bibitem">Bibitem Format</option>
-                            <option value="bibtex">BibTeX Format</option>
-                            <option value="plain">Plain Text Format</option>
-                        </select>
-                    </div>
-                    <textarea class="output-textarea" id="correctedReferences" rows="15" readonly></textarea>
-                    
-                    <div class="download-section">
-                        <button class="download-btn" onclick="downloadCorrectedReferences()">
-                            <i class="fas fa-download"></i> Download References
-                        </button>
-                        <button class="download-btn" onclick="downloadValidationReport()">
-                            <i class="fas fa-file-text"></i> Download Report
-                        </button>
-                        <button class="download-btn" onclick="copyToClipboard()">
-                            <i class="fas fa-copy"></i> Copy to Clipboard
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- Sidebar -->
+<aside id="sidebar">
+    <div class="sidebar-brand">
+        <div class="sidebar-logo"><i class="fas fa-atom"></i></div>
+        <h6>Research Agent</h6>
+        <p>AI-Powered Research</p>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        let validationResult = null;
-        let fileContent = '';
-        let selectedFormat = 'bibitem';
+    <nav class="sidebar-nav">
+        <div class="nav-section-label">Tools</div>
 
-        // DOM elements
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('fileInput');
-        const manualInput = document.getElementById('manualInput');
-        const validateBtn = document.getElementById('validateBtn');
-        const loadingSpinner = document.getElementById('loadingSpinner');
-        const resultsSection = document.getElementById('resultsSection');
+        <a href="/" class="nav-link-item">
+            <span class="nav-icon"><i class="fas fa-search"></i></span>
+            Research
+        </a>
+        <a href="/literature" class="nav-link-item">
+            <span class="nav-icon"><i class="fas fa-book-open"></i></span>
+            Literature Builder
+        </a>
+        <a href="/validator" class="nav-link-item active">
+            <span class="nav-icon"><i class="fas fa-check-double"></i></span>
+            Reference Validator
+        </a>
+        <a href="/citations" class="nav-link-item">
+            <span class="nav-icon"><i class="fas fa-quote-right"></i></span>
+            Enhanced Citations
+        </a>
 
-        // File upload handling
-        uploadArea.addEventListener('click', () => fileInput.click());
-        uploadArea.addEventListener('dragover', handleDragOver);
-        uploadArea.addEventListener('drop', handleDrop);
-        uploadArea.addEventListener('dragleave', handleDragLeave);
+        <div class="nav-section-label" style="margin-top:12px;">Writing</div>
 
-        fileInput.addEventListener('change', handleFileSelect);
-        manualInput.addEventListener('input', handleManualInput);
+        <a href="/humanizer" class="nav-link-item">
+            <span class="nav-icon"><i class="fas fa-feather-alt"></i></span>
+            Humanizer
+        </a>
+        <a href="/latex-reorder" class="nav-link-item">
+            <span class="nav-icon"><i class="fas fa-sort-numeric-down"></i></span>
+            LaTeX Reorder
+        </a>
+    </nav>
 
-        // Format selection
-        document.querySelectorAll('.format-option').forEach(option => {
-            option.addEventListener('click', function() {
-                document.querySelectorAll('.format-option').forEach(opt => opt.classList.remove('active'));
-                this.classList.add('active');
-                selectedFormat = this.dataset.format;
-            });
-        });
+    <div class="sidebar-footer">
+        <a href="/test" class="nav-link-item" style="font-size:12px;">
+            <span class="nav-icon"><i class="fas fa-heartbeat"></i></span>
+            System Status
+        </a>
+    </div>
+</aside>
 
-        function handleDragOver(e) {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
-        }
+<!-- Main content -->
+<div id="main-content">
 
-        function handleDragLeave(e) {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-        }
+    <!-- Hero header -->
+    <div class="hero-header">
+        <p class="hero-title">Reference Validator</p>
+        <p class="hero-subtitle">Validate, correct, and enhance your academic references with AI-powered verification and CrossRef lookup.</p>
+    </div>
 
-        function handleDrop(e) {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                processFile(files[0]);
-            }
-        }
+    <div class="content-area">
 
-        function handleFileSelect(e) {
-            const file = e.target.files[0];
-            if (file) {
-                processFile(file);
-            }
-        }
+        <!-- Upload Section -->
+        <div class="upload-card" id="uploadArea">
+            <div class="upload-icon">
+                <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <h4>Drop your reference file here</h4>
+            <p>or click to browse files — .txt, .bib, .tex</p>
+            <input type="file" id="fileInput" class="d-none" accept=".txt,.bib,.tex">
+            <button type="button" class="btn-ghost" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-folder-open"></i> Browse Files
+            </button>
+        </div>
 
-        function handleManualInput(e) {
-            fileContent = e.target.value;
-            validateBtn.disabled = !fileContent.trim();
-        }
+        <!-- Manual Input -->
+        <div class="glass-card">
+            <div class="card-label">Or paste references directly</div>
+            <textarea class="form-control-dark" id="manualInput" rows="6"
+                      placeholder="Paste your references here..."></textarea>
+        </div>
 
-        function processFile(file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                fileContent = e.target.result;
-                manualInput.value = fileContent;
-                validateBtn.disabled = false;
-                
-                // Update upload area
-                uploadArea.innerHTML = `
-                    <div class="upload-icon text-success">
-                        <i class="fas fa-file-alt"></i>
+        <!-- Format Selection -->
+        <div class="glass-card format-selector">
+            <div class="card-label"><i class="fas fa-cog" style="margin-right:6px;"></i>Reference Format</div>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="format-option active" data-format="bibitem">
+                        <h6>Bibitem</h6>
+                        <small>\bibitem{"{"}key{"}"} format</small>
                     </div>
-                    <h5>${file.name}</h5>
-                    <p class="text-success">File loaded successfully</p>
-                `;
-            };
-            reader.readAsText(file);
-        }
-
-        // Validation process
-        validateBtn.addEventListener('click', async function() {
-            if (!fileContent.trim()) {
-                alert('Please upload a file or paste references manually.');
-                return;
-            }
-
-            const options = {
-                checkFormat: document.getElementById('checkFormat').checked,
-                checkSpelling: document.getElementById('checkSpelling').checked,
-                checkDuplicates: document.getElementById('checkDuplicates').checked,
-                verifyPapers: document.getElementById('verifyPapers').checked
-            };
-
-            // Show loading
-            loadingSpinner.style.display = 'block';
-            resultsSection.style.display = 'none';
-            validateBtn.disabled = true;
-
-            try {
-                const response = await fetch('/validate-references', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        content: fileContent,
-                        format: selectedFormat,
-                        options: options
-                    })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    validationResult = data;
-                    displayResults(data);
-                } else {
-                    alert('Error: ' + data.error);
-                }
-            } catch (error) {
-                alert('Error: ' + error.message);
-            } finally {
-                loadingSpinner.style.display = 'none';
-                validateBtn.disabled = false;
-            }
-        });
-
-        function displayResults(data) {
-            resultsSection.style.display = 'block';
-            
-            displayStatistics(data.stats);
-            displayProcessingLog(data.processing_log);
-            displayCorrections(data.corrections);
-            displayIssues(data.issues);
-            displayCorrectedReferences(data.corrected_references);
-            
-            resultsSection.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function displayStatistics(stats) {
-            const statsHtml = `
-                <div class="stat-card">
-                    <div class="stat-number text-primary">${stats.original_count}</div>
-                    <div class="stat-label">Original</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number text-warning">${stats.duplicates_removed}</div>
-                    <div class="stat-label">Duplicates</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number text-info">${stats.format_corrections}</div>
-                    <div class="stat-label">Format Fixes</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number text-success">${stats.spelling_corrections}</div>
-                    <div class="stat-label">Spelling Fixes</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number text-danger">${stats.invalid_papers}</div>
-                    <div class="stat-label">Invalid</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number text-success">${stats.final_count}</div>
-                    <div class="stat-label">Final Valid</div>
-                </div>
-            `;
-            document.getElementById('statsGrid').innerHTML = statsHtml;
-        }
-
-        function displayProcessingLog(log) {
-            const logHtml = log.map(entry => `<div class="mb-1">• ${entry}</div>`).join('');
-            document.getElementById('processingLog').innerHTML = logHtml;
-        }
-
-        function displayCorrections(corrections) {
-            if (corrections.length === 0) {
-                document.getElementById('correctionsSection').innerHTML = '<p class="text-muted">No corrections needed.</p>';
-                return;
-            }
-
-            const totalCorrections = corrections.reduce((sum, corr) => sum + (corr.corrections_count || 0), 0);
-            
-            const correctionsHtml = `
-                <div class="text-center">
-                    <div class="mb-3">
-                        <h4 class="text-warning">${totalCorrections}</h4>
-                        <p class="text-muted">Total corrections made across ${corrections.length} references</p>
+                <div class="col-md-4">
+                    <div class="format-option" data-format="bibtex">
+                        <h6>BibTeX</h6>
+                        <small>@article{"{"}key, ...{"}"}</small>
                     </div>
-                    <button class="btn btn-warning btn-lg" onclick="viewCorrectionsDetails()">
-                        <i class="fas fa-eye"></i> View All Corrections
+                </div>
+                <div class="col-md-4">
+                    <div class="format-option" data-format="plain">
+                        <h6>Plain Text</h6>
+                        <small>One reference per line</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Validation Options -->
+        <div class="glass-card">
+            <div class="card-label"><i class="fas fa-tools" style="margin-right:6px;"></i>Validation Options</div>
+
+            <div class="options-row">
+                <div class="options-row-label">
+                    <strong>Fix Format Issues</strong>
+                    <small>Correct author names, title capitalization, journal formatting</small>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="checkFormat" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="options-row">
+                <div class="options-row-label">
+                    <strong>Correct Spelling</strong>
+                    <small>Fix common spelling mistakes in academic terms</small>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="checkSpelling" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="options-row">
+                <div class="options-row-label">
+                    <strong>Remove Duplicates</strong>
+                    <small>Detect and remove duplicate references intelligently</small>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="checkDuplicates" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="options-row">
+                <div class="options-row-label">
+                    <strong>Verify Papers</strong>
+                    <small>Validate papers using CrossRef API and correct bibliographic data</small>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="verifyPapers" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Validate Button -->
+        <button type="button" class="validate-btn" id="validateBtn" disabled>
+            <i class="fas fa-check-double"></i> Validate References
+        </button>
+
+        <!-- Loading Spinner -->
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner-ring"></div>
+            <div style="font-size:13.5px; font-weight:600; color:var(--accent-blue);">Validating References...</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">Processing references, please wait</div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section slide-in" id="resultsSection">
+
+            <!-- Statistics -->
+            <div class="stats-grid" id="statsGrid"></div>
+
+            <!-- Processing Log -->
+            <div class="result-card">
+                <div class="result-header">
+                    <i class="fas fa-list result-icon" style="color:var(--accent-blue);"></i>
+                    <h5>Processing Log</h5>
+                </div>
+                <div id="processingLog"></div>
+            </div>
+
+            <!-- Corrections and Issues -->
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="result-card" style="height:100%;">
+                        <div class="result-header">
+                            <i class="fas fa-edit result-icon" style="color:var(--accent-orange);"></i>
+                            <h5>Corrections Made</h5>
+                        </div>
+                        <div id="correctionsSection"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="result-card" style="height:100%;">
+                        <div class="result-header">
+                            <i class="fas fa-exclamation-triangle result-icon" style="color:var(--accent-red);"></i>
+                            <h5>Issues Found</h5>
+                        </div>
+                        <div id="issuesSection"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Output Section -->
+            <div class="output-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div style="font-size:13px; font-weight:700; color:var(--text-primary);">
+                        <i class="fas fa-file-alt" style="color:var(--accent-blue); margin-right:8px;"></i>Corrected References
+                    </div>
+                    <select class="form-select-dark" id="outputFormat" style="width:auto;">
+                        <option value="bibitem">Bibitem Format</option>
+                        <option value="bibtex">BibTeX Format</option>
+                        <option value="plain">Plain Text Format</option>
+                    </select>
+                </div>
+                <textarea class="output-textarea" id="correctedReferences" rows="15" readonly></textarea>
+
+                <div class="d-flex gap-2 flex-wrap mt-3">
+                    <button class="btn-export" onclick="downloadCorrectedReferences()">
+                        <i class="fas fa-download"></i> Download References
+                    </button>
+                    <button class="btn-export" style="background:rgba(88,166,255,0.1);color:var(--accent-blue);border-color:rgba(88,166,255,0.25);" onclick="downloadValidationReport()">
+                        <i class="fas fa-file-alt"></i> Download Report
+                    </button>
+                    <button class="btn-ghost" onclick="copyToClipboard()">
+                        <i class="fas fa-copy"></i> Copy to Clipboard
                     </button>
                 </div>
-            `;
-            
-            document.getElementById('correctionsSection').innerHTML = correctionsHtml;
-            
-            // Store corrections data for the details page
-            window.correctionsData = corrections;
-        }
+            </div>
+        </div>
 
-        function viewCorrectionsDetails() {
-            if (window.correctionsData) {
-                const dataParam = encodeURIComponent(JSON.stringify(window.correctionsData));
-                window.open(`/corrections-details?data=${dataParam}`, '_blank');
-            }
-        }
+    </div>
+</div>
 
-        function displayIssues(issues) {
-            if (issues.length === 0) {
-                document.getElementById('issuesSection').innerHTML = '<p class="text-muted">No issues found.</p>';
-                return;
-            }
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let validationResult = null;
+    let fileContent = '';
+    let selectedFormat = 'bibitem';
 
-            const issuesHtml = issues.map((issue, index) => {
-                const issueId = `issue-${index}`;
-                return `
-                    <div class="correction-summary" style="background: #fef2f2; border-color: #fca5a5;">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>${issue.type}:</strong> ${issue.reference_key}
-                                <br><small class="text-muted">${issue.description.split(';').length} issues found</small>
-                            </div>
-                            <button class="correction-toggle" style="background: #ef4444;" onclick="toggleCorrections('${issueId}')">
-                                <i class="fas fa-eye"></i> View Details
-                            </button>
-                        </div>
-                        <div class="correction-details" id="${issueId}">
-                            ${issue.description.split(';').map(desc => `
-                                <div class="correction-detail-item" style="background: #fee2e2; border-color: #fca5a5;">
-                                    ${desc.trim()}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            document.getElementById('issuesSection').innerHTML = issuesHtml;
-        }
+    // DOM elements
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const manualInput = document.getElementById('manualInput');
+    const validateBtn = document.getElementById('validateBtn');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const resultsSection = document.getElementById('resultsSection');
 
-        function displayCorrectedReferences(references) {
-            document.getElementById('correctedReferences').value = references;
-        }
+    // ── Sidebar toggle ──
+    document.getElementById('hamburgerBtn').addEventListener('click', () => {
+        document.getElementById('sidebar').classList.toggle('open');
+        document.getElementById('sidebarOverlay').classList.toggle('active');
+    });
+    document.getElementById('sidebarOverlay').addEventListener('click', () => {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('active');
+    });
 
-        // Output format change
-        document.getElementById('outputFormat').addEventListener('change', function() {
-            if (validationResult) {
-                const format = this.value;
-                fetch('/reformat-references', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        references: validationResult.corrected_references_data,
-                        format: format
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('correctedReferences').value = data.formatted_references;
-                })
-                .catch(error => console.error('Error reformatting:', error));
-            }
+    // File upload handling
+    uploadArea.addEventListener('click', () => fileInput.click());
+    uploadArea.addEventListener('dragover', handleDragOver);
+    uploadArea.addEventListener('drop', handleDrop);
+    uploadArea.addEventListener('dragleave', handleDragLeave);
+
+    fileInput.addEventListener('change', handleFileSelect);
+    manualInput.addEventListener('input', handleManualInput);
+
+    // Format selection
+    document.querySelectorAll('.format-option').forEach(option => {
+        option.addEventListener('click', function() {
+            document.querySelectorAll('.format-option').forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            selectedFormat = this.dataset.format;
         });
+    });
 
-        // Download functions
-        function downloadCorrectedReferences() {
-            if (!validationResult) return;
-            
-            const format = document.getElementById('outputFormat').value;
-            const content = document.getElementById('correctedReferences').value;
-            const filename = `corrected_references.${format === 'bibtex' ? 'bib' : 'txt'}`;
-            
-            downloadFile(content, filename, 'text/plain');
+    function handleDragOver(e) {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    }
+
+    function handleDragLeave(e) {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            processFile(files[0]);
+        }
+    }
+
+    function handleFileSelect(e) {
+        const file = e.target.files[0];
+        if (file) {
+            processFile(file);
+        }
+    }
+
+    function handleManualInput(e) {
+        fileContent = e.target.value;
+        validateBtn.disabled = !fileContent.trim();
+    }
+
+    function processFile(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            fileContent = e.target.result;
+            manualInput.value = fileContent;
+            validateBtn.disabled = false;
+
+            // Update upload area
+            uploadArea.innerHTML = `
+                <div class="upload-icon" style="color:var(--accent-green);">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h4>${file.name}</h4>
+                <p style="color:var(--accent-green);">File loaded successfully</p>
+            `;
+        };
+        reader.readAsText(file);
+    }
+
+    // Validation process
+    validateBtn.addEventListener('click', async function() {
+        if (!fileContent.trim()) {
+            alert('Please upload a file or paste references manually.');
+            return;
         }
 
-        function downloadValidationReport() {
-            if (!validationResult) return;
-            
-            downloadFile(validationResult.validation_report, 'validation_report.md', 'text/markdown');
+        const options = {
+            checkFormat: document.getElementById('checkFormat').checked,
+            checkSpelling: document.getElementById('checkSpelling').checked,
+            checkDuplicates: document.getElementById('checkDuplicates').checked,
+            verifyPapers: document.getElementById('verifyPapers').checked
+        };
+
+        // Show loading
+        loadingSpinner.style.display = 'block';
+        resultsSection.style.display = 'none';
+        validateBtn.disabled = true;
+
+        try {
+            const response = await fetch('/validate-references', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    content: fileContent,
+                    format: selectedFormat,
+                    options: options
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                validationResult = data;
+                displayResults(data);
+            } else {
+                alert('Error: ' + data.error);
+            }
+        } catch (error) {
+            alert('Error: ' + error.message);
+        } finally {
+            loadingSpinner.style.display = 'none';
+            validateBtn.disabled = false;
+        }
+    });
+
+    function displayResults(data) {
+        resultsSection.style.display = 'block';
+
+        displayStatistics(data.stats);
+        displayProcessingLog(data.processing_log);
+        displayCorrections(data.corrections);
+        displayIssues(data.issues);
+        displayCorrectedReferences(data.corrected_references);
+
+        resultsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function displayStatistics(stats) {
+        const statsHtml = `
+            <div class="stat-card">
+                <div class="stat-number" style="color:var(--accent-blue);">${stats.original_count}</div>
+                <div class="stat-label">Original</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color:var(--accent-orange);">${stats.duplicates_removed}</div>
+                <div class="stat-label">Duplicates</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color:var(--accent-purple);">${stats.format_corrections}</div>
+                <div class="stat-label">Format Fixes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color:var(--accent-green);">${stats.spelling_corrections}</div>
+                <div class="stat-label">Spelling Fixes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color:var(--accent-red);">${stats.invalid_papers}</div>
+                <div class="stat-label">Invalid</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" style="color:var(--accent-green);">${stats.final_count}</div>
+                <div class="stat-label">Final Valid</div>
+            </div>
+        `;
+        document.getElementById('statsGrid').innerHTML = statsHtml;
+    }
+
+    function displayProcessingLog(log) {
+        const logHtml = log.map(entry => `<div class="log-entry">${entry}</div>`).join('');
+        document.getElementById('processingLog').innerHTML = logHtml;
+    }
+
+    function displayCorrections(corrections) {
+        if (corrections.length === 0) {
+            document.getElementById('correctionsSection').innerHTML = '<p style="color:var(--text-muted);font-size:13px;">No corrections needed.</p>';
+            return;
         }
 
-        function copyToClipboard() {
-            const textarea = document.getElementById('correctedReferences');
-            textarea.select();
-            document.execCommand('copy');
-            
-            // Show feedback
-            const btn = event.target;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-            }, 2000);
+        const totalCorrections = corrections.reduce((sum, corr) => sum + (corr.corrections_count || 0), 0);
+
+        const correctionsHtml = `
+            <div class="text-center">
+                <div class="mb-3">
+                    <div style="font-size:32px; font-weight:800; color:var(--accent-orange);">${totalCorrections}</div>
+                    <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">Total corrections across ${corrections.length} references</p>
+                </div>
+                <button class="correction-toggle" onclick="viewCorrectionsDetails()">
+                    <i class="fas fa-eye"></i> View All Corrections
+                </button>
+            </div>
+        `;
+
+        document.getElementById('correctionsSection').innerHTML = correctionsHtml;
+
+        // Store corrections data for the details page
+        window.correctionsData = corrections;
+    }
+
+    function viewCorrectionsDetails() {
+        if (window.correctionsData) {
+            const dataParam = encodeURIComponent(JSON.stringify(window.correctionsData));
+            window.open(`/corrections-details?data=${dataParam}`, '_blank');
+        }
+    }
+
+    function displayIssues(issues) {
+        if (issues.length === 0) {
+            document.getElementById('issuesSection').innerHTML = '<p style="color:var(--text-muted);font-size:13px;">No issues found.</p>';
+            return;
         }
 
-        function downloadFile(content, filename, mimeType) {
-            const blob = new Blob([content], { type: mimeType });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
+        const issuesHtml = issues.map((issue, index) => {
+            const issueId = `issue-${index}`;
+            return `
+                <div class="issue-summary">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong style="font-size:13px; color:var(--text-primary);">${issue.type}:</strong>
+                            <span style="font-size:13px; color:var(--text-secondary);"> ${issue.reference_key}</span>
+                            <br><small style="font-size:12px; color:var(--text-muted);">${issue.description.split(';').length} issues found</small>
+                        </div>
+                        <button class="issue-toggle" onclick="toggleCorrections('${issueId}')">
+                            <i class="fas fa-eye"></i> Details
+                        </button>
+                    </div>
+                    <div class="correction-details" id="${issueId}">
+                        ${issue.description.split(';').map(desc => `
+                            <div class="issue-detail-item">${desc.trim()}</div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        document.getElementById('issuesSection').innerHTML = issuesHtml;
+    }
+
+    function toggleCorrections(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('show');
+    }
+
+    function displayCorrectedReferences(references) {
+        document.getElementById('correctedReferences').value = references;
+    }
+
+    // Output format change
+    document.getElementById('outputFormat').addEventListener('change', function() {
+        if (validationResult) {
+            const format = this.value;
+            fetch('/reformat-references', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    references: validationResult.corrected_references_data,
+                    format: format
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('correctedReferences').value = data.formatted_references;
+            })
+            .catch(error => console.error('Error reformatting:', error));
         }
-    </script>
+    });
+
+    // Download functions
+    function downloadCorrectedReferences() {
+        if (!validationResult) return;
+
+        const format = document.getElementById('outputFormat').value;
+        const content = document.getElementById('correctedReferences').value;
+        const filename = `corrected_references.${format === 'bibtex' ? 'bib' : 'txt'}`;
+
+        downloadFile(content, filename, 'text/plain');
+    }
+
+    function downloadValidationReport() {
+        if (!validationResult) return;
+
+        downloadFile(validationResult.validation_report, 'validation_report.md', 'text/markdown');
+    }
+
+    function copyToClipboard() {
+        const textarea = document.getElementById('correctedReferences');
+        textarea.select();
+        document.execCommand('copy');
+
+        // Show feedback
+        const btn = event.target.closest('button');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        btn.style.color = 'var(--accent-green)';
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.style.color = '';
+        }, 2000);
+    }
+
+    function downloadFile(content, filename, mimeType) {
+        const blob = new Blob([content], { type: mimeType });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }
+</script>
 </body>
 </html>

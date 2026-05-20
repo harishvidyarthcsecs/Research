@@ -715,12 +715,125 @@
     </nav>
 
     <div class="sidebar-footer">
-        <a href="/test" class="nav-link-item" style="font-size:12px;">
-            <span class="nav-icon"><i class="fas fa-heartbeat"></i></span>
+        <a href="#" class="nav-link-item" style="font-size:12px;" onclick="openStatusModal(); return false;">
+            <span class="nav-icon"><i class="fas fa-heartbeat" id="statusPulse"></i></span>
             System Status
         </a>
     </div>
 </aside>
+
+<!-- ── System Status Modal ── -->
+<div id="statusModal" style="display:none; position:fixed; inset:0; z-index:9999; align-items:center; justify-content:center;">
+    <div style="position:absolute; inset:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px);" onclick="closeStatusModal()"></div>
+    <div style="position:relative; background:#161b22; border:1px solid #30363d; border-radius:16px; padding:32px; width:480px; max-width:90vw; box-shadow:0 24px 60px rgba(0,0,0,0.5);">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:36px;height:36px;background:linear-gradient(135deg,#58a6ff,#3fb950);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+                    <i class="fas fa-heartbeat" style="color:#fff;font-size:16px;"></i>
+                </div>
+                <div>
+                    <div style="font-size:16px;font-weight:700;color:#e6edf3;">System Status</div>
+                    <div style="font-size:12px;color:#8b949e;" id="statusLastChecked">Checking...</div>
+                </div>
+            </div>
+            <button onclick="closeStatusModal()" style="background:none;border:none;color:#8b949e;font-size:20px;cursor:pointer;padding:4px 8px;border-radius:6px;" onmouseover="this.style.background='#21262d'" onmouseout="this.style.background='none'">×</button>
+        </div>
+
+        <!-- Overall status banner -->
+        <div id="statusBanner" style="padding:12px 16px;border-radius:10px;margin-bottom:20px;font-size:13px;font-weight:600;">
+            Checking system health...
+        </div>
+
+        <!-- API status grid -->
+        <div style="margin-bottom:20px;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#656d76;margin-bottom:12px;">API Connections</div>
+            <div id="apisGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+        </div>
+
+        <!-- Features status -->
+        <div style="margin-bottom:24px;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#656d76;margin-bottom:12px;">Features</div>
+            <div id="featuresGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+        </div>
+
+        <!-- System info -->
+        <div id="sysInfo" style="background:#0d1117;border:1px solid #21262d;border-radius:8px;padding:12px;font-size:12px;color:#8b949e;display:none;">
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;margin-top:20px;gap:10px;">
+            <button onclick="openStatusModal()" style="background:#21262d;border:1px solid #30363d;color:#e6edf3;padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+            <button onclick="closeStatusModal()" style="background:#58a6ff;border:none;color:#fff;padding:8px 20px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;font-weight:600;">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function openStatusModal() {
+    const modal = document.getElementById('statusModal');
+    modal.style.display = 'flex';
+    document.getElementById('statusLastChecked').textContent = 'Checking...';
+    document.getElementById('statusBanner').style.background = '#21262d';
+    document.getElementById('statusBanner').style.color = '#8b949e';
+    document.getElementById('statusBanner').textContent = 'Checking system health...';
+    document.getElementById('apisGrid').innerHTML = '<div style="color:#8b949e;font-size:13px;grid-column:1/-1;">Loading...</div>';
+    document.getElementById('featuresGrid').innerHTML = '';
+
+    fetch('/test')
+        .then(r => r.json())
+        .then(data => {
+            const ok = data.status === 'ok';
+            const banner = document.getElementById('statusBanner');
+            banner.style.background = ok ? 'rgba(63,185,80,0.12)' : 'rgba(247,129,102,0.12)';
+            banner.style.color = ok ? '#3fb950' : '#f78166';
+            banner.style.border = `1px solid ${ok ? 'rgba(63,185,80,0.3)' : 'rgba(247,129,102,0.3)'}`;
+            banner.innerHTML = `<i class="fas fa-${ok ? 'check-circle' : 'exclamation-circle'}"></i> ${data.message || (ok ? 'All systems operational' : 'System error')}`;
+
+            // APIs
+            const apis = data.apis || {};
+            document.getElementById('apisGrid').innerHTML = Object.entries(apis).map(([name, up]) => `
+                <div style="background:#0d1117;border:1px solid #21262d;border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:8px;">
+                    <span style="width:8px;height:8px;border-radius:50%;background:${up ? '#3fb950' : '#f78166'};flex-shrink:0;${up ? 'box-shadow:0 0 6px #3fb950' : ''}"></span>
+                    <span style="font-size:12px;color:${up ? '#e6edf3' : '#8b949e'};">${name}</span>
+                </div>
+            `).join('');
+
+            // Features
+            const features = data.features || {};
+            const featureNames = { llm_extraction: 'LLM Extraction', humanizer: 'AI Humanizer', pdf_export: 'PDF Export', docx_export: 'Word Export' };
+            document.getElementById('featuresGrid').innerHTML = Object.entries(features).map(([key, on]) => `
+                <div style="background:#0d1117;border:1px solid #21262d;border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:8px;">
+                    <span style="width:8px;height:8px;border-radius:50%;background:${on ? '#3fb950' : '#e3b341'};flex-shrink:0;"></span>
+                    <span style="font-size:12px;color:${on ? '#e6edf3' : '#8b949e'};">${featureNames[key] || key}</span>
+                </div>
+            `).join('');
+
+            // Sys info
+            if (data.python_version) {
+                const si = document.getElementById('sysInfo');
+                si.style.display = 'block';
+                si.innerHTML = `<span style="color:#656d76;">Python</span> <span style="color:#e6edf3;">${data.python_version}</span> &nbsp;·&nbsp; <span style="color:#656d76;">Platform</span> <span style="color:#e6edf3;">${data.platform}</span>`;
+            }
+
+            document.getElementById('statusLastChecked').textContent = 'Last checked: just now';
+            document.getElementById('statusPulse').style.color = ok ? '#3fb950' : '#f78166';
+        })
+        .catch(() => {
+            document.getElementById('statusBanner').style.background = 'rgba(247,129,102,0.12)';
+            document.getElementById('statusBanner').style.color = '#f78166';
+            document.getElementById('statusBanner').textContent = '⚠ Could not reach server';
+        });
+}
+
+function closeStatusModal() {
+    document.getElementById('statusModal').style.display = 'none';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeStatusModal(); });
+</script>
 
 <!-- Main content -->
 <div id="main-content">
