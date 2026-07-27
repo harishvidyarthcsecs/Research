@@ -1,18 +1,37 @@
 """
 Topic Expansion Agent - Decomposes research topics into subtopics and research directions.
+
+Primary mode ("llm"): asks the shared LLM client to decompose the topic into
+subtopics, methods, datasets, related areas and search keywords, so expansion
+generalizes beyond a fixed set of domains.
+
+Fallback mode ("rules"): the original hardcoded 5-domain keyword dictionary,
+kept as the no-API-key fallback and rule-based ablation baseline
+(set TOPIC_MODE=rules), mirroring CONTRADICTION_MODE / GAP_MODE.
 """
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
+import json
+import os
 import re
 from ..models.data_models import TopicMap
 from .base_agent import BaseAgent
+from . import llm_client
 
 
 class TopicExpansionAgent(BaseAgent):
     """Agent responsible for expanding research topics into structured maps."""
-    
-    def __init__(self, memory_store=None):
+
+    def __init__(self, memory_store=None, mode: Optional[str] = None):
         super().__init__("TopicExpansionAgent", memory_store)
+        self.mode = mode  # None = auto: "llm" if a provider is available
+        self.tracker: Optional[llm_client.UsageTracker] = None
         self.domain_keywords = self._load_domain_keywords()
+
+    def _resolve_mode(self) -> str:
+        mode = self.mode or os.getenv("TOPIC_MODE")
+        if mode in ("llm", "rules"):
+            return mode
+        return "llm" if llm_client.get_provider() is not None else "rules"
     
     def _load_domain_keywords(self) -> Dict[str, List[str]]:
         """Load domain-specific keywords for topic expansion."""
@@ -49,35 +68,83 @@ class TopicExpansionAgent(BaseAgent):
         Returns:
             TopicMap: Structured representation of the topic
         """
-        self.log_operation("topic_expansion_start", {"topic": topic})
-        
-        # Extract main components
+        mode = self._resolve_mode()
+        self.log_operation("topic_expansion_start", {"topic": topic, "mode": mode})
+
         main_topic = topic.strip()
-        subtopics = self._extract_subtopics(topic)
-        methods = self._extract_methods(topic)
-        datasets = self._extract_datasets(topic)
-        related_areas = self._extract_related_areas(topic)
-        keywords = self._extract_keywords(topic)
-        
-        topic_map = TopicMap(
-            main_topic=main_topic,
-            subtopics=subtopics,
-            methods=methods,
-            datasets=datasets,
-            related_areas=related_areas,
-            keywords=keywords
-        )
-        
+        topic_map = None
+
+        if mode == "llm":
+            topic_map = self._llm_expand(main_topic)
+            if topic_map is None:
+                mode = "rules"
+
+        if topic_map is None:
+            topic_map = TopicMap(
+                main_topic=main_topic,
+                subtopics=self._extract_subtopics(topic),
+                methods=self._extract_methods(topic),
+                datasets=self._extract_datasets(topic),
+                related_areas=self._extract_related_areas(topic),
+                keywords=self._extract_keywords(topic),
+            )
+
         # Store in memory for other agents
         await self.store_result("topic_map", topic_map)
-        
+
         self.log_operation("topic_expansion_complete", {
-            "subtopics_count": len(subtopics),
-            "methods_count": len(methods),
-            "keywords_count": len(keywords)
+            "mode": mode,
+            "subtopics_count": len(topic_map.subtopics),
+            "methods_count": len(topic_map.methods),
+            "keywords_count": len(topic_map.keywords),
         })
-        
+
         return topic_map
+
+    # ------------------------------------------------------------------ #
+    # LLM-based expansion (primary)                                      #
+    # ------------------------------------------------------------------ #
+
+    def _llm_expand(self, main_topic: str) -> Optional[TopicMap]:
+        prompt = (
+            "Decompose the following research topic into a structured map for "
+            "literature search. Return ONLY a JSON object with keys:\n"
+            "  subtopics (list of 3-6 specific subtopics or research directions), "
+            "methods (list of 2-6 relevant methods/techniques), "
+            "datasets (list of 0-6 commonly used benchmark datasets, empty if "
+            "none are standard for this topic), "
+            "related_areas (list of 2-5 related research areas), "
+            "keywords (list of 6-12 search keywords/phrases for finding papers).\n"
+            "Do not invent dataset names if you are not confident they exist.\n\n"
+            f"Topic: {main_topic}"
+        )
+        try:
+            raw = llm_client.chat(
+                prompt,
+                max_tokens=1024,
+                temperature=0.0,
+                tracker=self.tracker,
+                purpose="topic_expansion",
+            ).strip()
+            raw = re.sub(r"^```(?:json)?\s*", "", raw)
+            raw = re.sub(r"\s*```$", "", raw)
+            data = json.loads(raw)
+            return TopicMap(
+                main_topic=main_topic,
+                subtopics=[str(s) for s in data.get("subtopics", [])][:6],
+                methods=[str(s) for s in data.get("methods", [])][:6],
+                datasets=[str(s) for s in data.get("datasets", [])][:6],
+                related_areas=[str(s) for s in data.get("related_areas", [])][:5],
+                keywords=[str(s) for s in data.get("keywords", [])][:12],
+            )
+        except json.JSONDecodeError as e:
+            if self.tracker is not None:
+                self.tracker.record_parse_failure("topic_expansion")
+            self.logger.warning(f"LLM topic expansion failed: {e}; falling back to rules")
+            return None
+        except Exception as e:
+            self.logger.warning(f"LLM topic expansion failed: {e}; falling back to rules")
+            return None
     
     def _extract_subtopics(self, topic: str) -> List[str]:
         """Extract potential subtopics from the main topic."""

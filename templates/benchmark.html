@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block title %}Benchmark{% endblock %}
+{% block nav_benchmark %}active{% endblock %}
+
+{% block hero_gradient %}linear-gradient(135deg, #e6edf3 0%, #bc8cff 50%, #58a6ff 100%){% endblock %}
+{% block hero_orb1_color %}rgba(188,140,255,0.14){% endblock %}
+{% block hero_orb2_color %}rgba(88,166,255,0.1){% endblock %}
+
+{% block hero_title %}Benchmark: Dedicated Agents vs. Naive Baseline{% endblock %}
+{% block hero_subtitle %}This system's core claim: separately-measured, dedicated contradiction and research-gap detection agents surface more than a single naive LLM pass over the same papers. Pick a frozen worked-example topic and run both side by side.{% endblock %}
+
+{% block extra_css %}
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 900px) { .compare-grid { grid-template-columns: 1fr; } }
+
+.compare-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 22px; }
+.compare-card.dedicated { border-color: rgba(88,166,255,0.35); background: rgba(88,166,255,0.03); }
+.compare-card.baseline { border-color: rgba(227,179,65,0.35); background: rgba(227,179,65,0.03); }
+
+.compare-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+.compare-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; }
+
+.metric-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+.metric-box { background: var(--bg-input); border: 1px solid var(--border-muted); border-radius: 8px; padding: 12px; text-align: center; }
+.metric-num { font-size: 24px; font-weight: 800; color: var(--text-primary); }
+.metric-label { font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+.gap-list { font-size: 12.5px; color: var(--text-secondary); }
+.gap-list li { margin-bottom: 6px; }
+
+.mode-note { font-size: 11.5px; color: var(--text-muted); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-muted); }
+
+.empty-state { text-align: center; padding: 50px 20px; color: var(--text-muted); }
+.empty-state i { font-size: 2.5rem; margin-bottom: 14px; display: block; }
+.empty-state code { background: var(--bg-input); padding: 2px 6px; border-radius: 4px; color: var(--accent-blue); }
+{% endblock %}
+
+{% block content %}
+{% if topics %}
+<div class="glass-card">
+    <div class="card-label">Worked-Example Topic</div>
+    <select class="form-select-dark" id="topicSelect">
+        {% for t in topics %}
+        <option value="{{ t.slug }}">{{ t.topic }}</option>
+        {% endfor %}
+    </select>
+    <div class="mt-3">
+        <button class="btn-primary-dark" id="runBtn" onclick="runBenchmark()">
+            <i class="fas fa-play"></i> Run Comparison
+        </button>
+    </div>
+    <div class="loading-bar" id="loadingBar" style="margin-top:12px;">
+        <div class="spinner-ring"></div>
+        <div>
+            <div style="font-weight:600;">Running dedicated pipeline and naive baseline...</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Uses the frozen paper corpus — no external discovery calls, but LLM calls if a provider is configured. Can take up to a minute.</div>
+        </div>
+    </div>
+    <div id="errorBox" style="display:none;margin-top:12px;padding:12px 16px;background:rgba(247,129,102,0.1);border:1px solid rgba(247,129,102,0.3);border-radius:8px;font-size:13px;color:var(--accent-red);"></div>
+</div>
+
+<div id="resultsArea" style="display:none;">
+    <div class="compare-grid">
+        <div class="compare-card dedicated">
+            <div class="compare-title"><i class="fas fa-sitemap" style="color:var(--accent-blue);"></i> Dedicated Multi-Agent Pipeline</div>
+            <div class="compare-desc">Separate contradiction-detection and gap-detection agents, each specialized and independently measured.</div>
+            <div class="metric-row" id="pipelineMetrics"></div>
+            <div class="section-title" style="font-size:11px;">Sample Detected Gaps</div>
+            <ul class="gap-list" id="pipelineGaps"></ul>
+            <div class="mode-note" id="pipelineMeta"></div>
+        </div>
+        <div class="compare-card baseline">
+            <div class="compare-title"><i class="fas fa-bolt" style="color:var(--accent-orange);"></i> Naive Single-LLM Baseline</div>
+            <div class="compare-desc">One prompt, one pass: "summarize abstracts and note contradictions/gaps" — the approach most competing systems bury inside a single writing agent.</div>
+            <div class="metric-row" id="baselineMetrics"></div>
+            <div class="section-title" style="font-size:11px;">Sample Reported Gaps</div>
+            <ul class="gap-list" id="baselineGaps"></ul>
+            <div class="mode-note" id="baselineMeta"></div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="glass-card">
+    <div class="empty-state">
+        <i class="fas fa-flask"></i>
+        <div style="font-size:15px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;">No worked-example topics yet</div>
+        <div style="font-size:13px;max-width:480px;margin:0 auto;">
+            Snapshot a topic first: <code>python -m eval.snapshot_topic "your topic" --slug your-slug</code><br>
+            then reload this page. See <code>eval/README.md</code> for the full workflow.
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function runBenchmark() {
+    const slug = document.getElementById('topicSelect').value;
+    const btn = document.getElementById('runBtn');
+    const loading = document.getElementById('loadingBar');
+    hideError();
+    btn.disabled = true;
+    loading.classList.add('active');
+    document.getElementById('resultsArea').style.display = 'none';
+
+    try {
+        const resp = await fetch('/run-benchmark', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ slug }),
+        });
+        const data = await resp.json();
+        if (!resp.ok) { showError('Error: ' + (data.error || 'Benchmark run failed')); return; }
+        displayResults(data);
+    } catch (err) {
+        showError('Network error: ' + err.message);
+    } finally {
+        btn.disabled = false;
+        loading.classList.remove('active');
+    }
+}
+
+function showError(msg) {
+    const box = document.getElementById('errorBox');
+    box.textContent = msg;
+    box.style.display = 'block';
+}
+function hideError() { document.getElementById('errorBox').style.display = 'none'; }
+
+function metricBoxes(m) {
+    return `
+        <div class="metric-box"><div class="metric-num">${m.claims}</div><div class="metric-label">Claims</div></div>
+        <div class="metric-box"><div class="metric-num">${m.contradictions}</div><div class="metric-label">Contradictions</div></div>
+        <div class="metric-box"><div class="metric-num">${m.gaps}</div><div class="metric-label">Gaps</div></div>
+    `;
+}
+
+function gapItems(gaps) {
+    if (!gaps || !gaps.length) return '<li style="color:var(--text-muted);">None reported</li>';
+    return gaps.map(g => `<li>${escHtml(g)}</li>`).join('');
+}
+
+function displayResults(data) {
+    const p = data.dedicated_pipeline, b = data.naive_baseline;
+
+    document.getElementById('pipelineMetrics').innerHTML = metricBoxes(p);
+    document.getElementById('pipelineGaps').innerHTML = gapItems(p.sample_gaps);
+    const pMeta = p.run_metadata || {};
+    document.getElementById('pipelineMeta').textContent =
+        `Provider: ${pMeta.provider || 'none (rules fallback)'} · Cost: $${(p.usage && p.usage.estimated_cost_usd || 0).toFixed(4)} · ${data.papers_analyzed} papers analyzed`;
+
+    document.getElementById('baselineMetrics').innerHTML = metricBoxes(b);
+    document.getElementById('baselineGaps').innerHTML = gapItems(b.sample_gaps);
+    document.getElementById('baselineMeta').textContent =
+        `Cost: $${(b.usage && b.usage.estimated_cost_usd || 0).toFixed(4)} · single prompt, single pass`;
+
+    document.getElementById('resultsArea').style.display = 'block';
+    document.getElementById('resultsArea').scrollIntoView({ behavior: 'smooth' });
+}
+
+function escHtml(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+</script>
+{% endblock %}

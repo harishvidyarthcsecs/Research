@@ -1,12 +1,12 @@
 """
 Main Autonomous Research Agent System orchestrator.
 """
-import asyncio
 import logging
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from datetime import datetime
 
 from .models.data_models import ResearchResults, TopicMap, PaperMetadata, Claim
+from .agents import llm_client
 from .agents.topic_expansion_agent import TopicExpansionAgent
 from .agents.enhanced_paper_discovery_agent import EnhancedPaperDiscoveryAgent as PaperDiscoveryAgent
 from .agents.claim_extraction_agent import ClaimExtractionAgent
@@ -50,29 +50,45 @@ class AutonomousResearchSystem:
         )
         return logging.getLogger("AutonomousResearchSystem")
     
-    async def research(self, topic: str) -> ResearchResults:
+    async def research(self, topic: str,
+                       papers: Optional[List[PaperMetadata]] = None) -> ResearchResults:
         """
         Perform autonomous research on a given topic.
-        
+
         Args:
             topic: Research topic or question
-            
+            papers: Optional frozen paper corpus. When given, Stage 2 discovery
+                is skipped — used by the evaluation harness so runs are
+                reproducible against a fixed set of papers.
+
         Returns:
             ResearchResults: Comprehensive research findings
         """
         self.logger.info(f"Starting autonomous research on topic: {topic}")
         start_time = datetime.now()
-        
+        frozen_corpus = papers is not None
+
+        # Per-run LLM usage/cost tracking, shared by all agents
+        tracker = llm_client.UsageTracker()
+        for agent in (self.topic_expansion_agent,
+                      self.claim_extraction_agent,
+                      self.contradiction_detection_agent,
+                      self.research_gap_detection_agent):
+            agent.tracker = tracker
+
         try:
             # Stage 1: Topic Expansion
             self.logger.info("Stage 1: Topic Expansion")
             topic_map = await self.topic_expansion_agent.process(topic)
-            
-            # Stage 2: Paper Discovery
-            self.logger.info("Stage 2: Paper Discovery")
-            async with self.paper_discovery_agent:
-                papers = await self.paper_discovery_agent.process(topic_map)
-            
+
+            # Stage 2: Paper Discovery (skipped when a frozen corpus is supplied)
+            if papers is None:
+                self.logger.info("Stage 2: Paper Discovery")
+                async with self.paper_discovery_agent:
+                    papers = await self.paper_discovery_agent.process(topic_map)
+            else:
+                self.logger.info(f"Stage 2: Using frozen corpus of {len(papers)} papers")
+
             # Stage 3: Claim Extraction
             self.logger.info("Stage 3: Claim Extraction")
             claims = await self.claim_extraction_agent.process(papers)
@@ -83,11 +99,14 @@ class AutonomousResearchSystem:
             
             # Stage 5: Contradiction Detection
             self.logger.info("Stage 5: Contradiction Detection")
-            contradictions = await self.contradiction_detection_agent.process(normalized_claims)
+            contradictions = await self.contradiction_detection_agent.process(
+                normalized_claims, papers=papers)
             
             # Stage 6: Research Gap Detection
             self.logger.info("Stage 6: Research Gap Detection")
-            research_gaps = await self.research_gap_detection_agent.process(topic_map, normalized_claims)
+            research_gaps = await self.research_gap_detection_agent.process(
+                topic_map, normalized_claims,
+                contradictions=contradictions, papers=papers)
             
             # Stage 7: Citation Building
             self.logger.info("Stage 7: Citation Building")
@@ -97,7 +116,10 @@ class AutonomousResearchSystem:
             self.logger.info("Stage 8: Storing in Long-term Memory")
             await self._store_in_memory(topic_map, papers, normalized_claims, contradictions, research_gaps)
             
+            duration = datetime.now() - start_time
+
             # Compile results
+            info = llm_client.provider_info()
             results = ResearchResults(
                 topic_map=topic_map,
                 papers=papers,
@@ -106,12 +128,19 @@ class AutonomousResearchSystem:
                 research_gaps=research_gaps,
                 citations=citations,
                 total_papers_analyzed=len(papers),
-                total_claims_extracted=len(normalized_claims)
+                total_claims_extracted=len(normalized_claims),
+                usage=tracker.summary(),
+                run_metadata={
+                    "provider": info.get("provider"),
+                    "model": info.get("model"),
+                    "temperature": 0.0,
+                    "duration_s": round(duration.total_seconds(), 2),
+                    "frozen_corpus": frozen_corpus,
+                },
             )
-            
-            duration = datetime.now() - start_time
+
             self.logger.info(f"Research completed in {duration.total_seconds():.2f} seconds")
-            
+
             return results
             
         except Exception as e:

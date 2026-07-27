@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+
+{% block title %}Journal Fit Recommender{% endblock %}
+{% block nav_journal %}active{% endblock %}
+
+{% block hero_gradient %}linear-gradient(135deg, #e6edf3 0%, #58a6ff 50%, #3fb950 100%){% endblock %}
+{% block hero_orb1_color %}rgba(88,166,255,0.14){% endblock %}
+{% block hero_orb2_color %}rgba(63,185,80,0.1){% endblock %}
+
+{% block hero_title %}Journal Fit Recommender{% endblock %}
+{% block hero_subtitle %}Find the best journals for your manuscript — with SJR quartile (Q1–Q4), Scimago links, and AI-powered fit scoring.{% endblock %}
+
+{% block extra_css %}
+.text-input-big {
+    width: 100%; background: var(--bg-input);
+    border: 1.5px solid var(--border-color); border-radius: 10px;
+    color: var(--text-primary); font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px; padding: 14px 16px; resize: vertical; min-height: 160px;
+    outline: none; transition: border-color 0.2s;
+}
+.text-input-big:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(88,166,255,0.1); }
+.text-input-big::placeholder { color: var(--text-muted); }
+
+.btn-recommend {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
+    color: #fff; border: none; border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600;
+    padding: 11px 24px; cursor: pointer; transition: opacity 0.15s, transform 0.15s;
+    display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-recommend:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-recommend:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.journal-card {
+    background: var(--bg-card); border: 1px solid var(--border-color);
+    border-radius: 10px; padding: 18px 20px; margin-bottom: 12px;
+    transition: all 0.2s;
+}
+.journal-card:hover { border-color: var(--accent-blue); transform: translateY(-1px); }
+.journal-card.top-pick { border-color: rgba(88,166,255,0.5); background: rgba(88,166,255,0.04); }
+
+.fit-bar-wrap { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+.fit-bar-bg { flex: 1; height: 6px; background: var(--border-muted); border-radius: 3px; overflow: hidden; }
+.fit-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--accent-blue), var(--accent-green)); transition: width 0.8s ease; }
+
+.journal-name { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+.journal-publisher { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.journal-tip { font-size: 13px; color: var(--text-secondary); background: rgba(88,166,255,0.06); border-left: 3px solid var(--accent-blue); border-radius: 0 6px 6px 0; padding: 8px 12px; margin-top: 10px; }
+
+.meta-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+.meta-chip { font-size: 11px; padding: 2px 9px; border-radius: 12px; font-weight: 600; }
+
+.q-badge {
+    font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 4px;
+    letter-spacing: 0.5px;
+}
+.q1 { background: rgba(63,185,80,0.15); color: var(--accent-green); border: 1px solid rgba(63,185,80,0.3); }
+.q2 { background: rgba(88,166,255,0.15); color: var(--accent-blue); border: 1px solid rgba(88,166,255,0.3); }
+.q3 { background: rgba(227,179,65,0.15); color: var(--accent-orange); border: 1px solid rgba(227,179,65,0.3); }
+.q4 { background: rgba(139,148,158,0.1); color: var(--text-muted); border: 1px solid rgba(139,148,158,0.3); }
+
+.oa-badge { font-size: 10px; padding: 2px 7px; border-radius: 3px; background: rgba(63,185,80,0.12); color: var(--accent-green); border: 1px solid rgba(63,185,80,0.25); font-weight: 700; }
+
+.form-control-dark {
+    width: 100%; background: var(--bg-input);
+    border: 1.5px solid var(--border-color); border-radius: 8px;
+    color: var(--text-primary); font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px; padding: 10px 14px; outline: none; transition: border-color 0.2s;
+}
+.form-control-dark:focus { border-color: var(--accent-blue); }
+.form-control-dark::placeholder { color: var(--text-muted); }
+
+.quartile-legend {
+    display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+    font-size: 11px; color: var(--text-muted);
+}
+{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <div class="card-label">Your Research Abstract</div>
+    <textarea class="text-input-big" id="abstractInput"
+        placeholder="Paste your research abstract here. The more detail you provide, the better the recommendations..."></textarea>
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <label style="font-size:12px;color:var(--text-muted);font-weight:600;display:block;margin-bottom:6px;">Research Field (optional but improves results)</label>
+            <input type="text" class="form-control-dark" id="fieldInput" placeholder="e.g. Graph Theory, Machine Learning, Cardiology">
+        </div>
+    </div>
+    <div class="mt-3">
+        <button class="btn-recommend" id="recommendBtn" onclick="runRecommend()">
+            <i class="fas fa-compass"></i> Find Best Journals
+        </button>
+    </div>
+    <div class="loading-bar" id="loadingBar" style="margin-top:12px;border-color:rgba(88,166,255,0.2);">
+        <div class="spinner-ring"></div>
+        <div>
+            <div style="font-weight:600;" id="loadingMsg">Searching journal database...</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Querying OpenAlex across multiple fields — takes 15–30 seconds</div>
+        </div>
+    </div>
+    <div id="errorBox" style="display:none;margin-top:12px;padding:12px 16px;background:rgba(247,129,102,0.1);border:1px solid rgba(247,129,102,0.3);border-radius:8px;font-size:13px;color:var(--accent-red);"></div>
+</div>
+
+<div id="resultsArea" style="display:none;">
+    <div class="glass-card">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+            <div style="flex:1;">
+                <div class="card-label mb-2">Extracted Concepts</div>
+                <div id="conceptsRow" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;"></div>
+                <div id="broadFieldsRow"></div>
+            </div>
+            <div style="text-align:right;">
+                <div id="foundCount" style="font-size:22px;font-weight:800;color:var(--text-primary);"></div>
+                <div style="font-size:12px;color:var(--text-muted);">Journals Searched</div>
+            </div>
+        </div>
+        <div class="quartile-legend mt-3">
+            <span style="font-weight:700;color:var(--text-secondary);">Quartile Guide:</span>
+            <span class="q-badge q1">Q1</span><span>Top 25% by SJR impact</span>
+            <span class="q-badge q2">Q2</span><span>26–50%</span>
+            <span class="q-badge q3">Q3</span><span>51–75%</span>
+            <span class="q-badge q4">Q4</span><span>Bottom 25%</span>
+        </div>
+    </div>
+
+    <div id="topPickCard" style="display:none;" class="glass-card" style="border-color:rgba(88,166,255,0.4);">
+        <div class="card-label" style="color:var(--accent-blue);margin-bottom:12px;">⭐ Top Recommendation</div>
+        <div id="topPickContent"></div>
+    </div>
+
+    <div class="glass-card">
+        <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+            <div class="card-label mb-0">All Recommendations</div>
+            <div style="display:flex;gap:6px;" id="quartileFilter">
+                <button class="filter-chip active" data-q="all" onclick="filterQ('all',this)" style="font-size:11px;padding:3px 10px;border-radius:12px;border:1px solid var(--border-color);background:var(--bg-card-hover);color:var(--text-secondary);cursor:pointer;font-family:inherit;">All</button>
+                <button class="filter-chip" data-q="Q1" onclick="filterQ('Q1',this)" style="font-size:11px;padding:3px 10px;border-radius:12px;border:1px solid rgba(63,185,80,0.3);background:rgba(63,185,80,0.08);color:var(--accent-green);cursor:pointer;font-family:inherit;">Q1</button>
+                <button class="filter-chip" data-q="Q2" onclick="filterQ('Q2',this)" style="font-size:11px;padding:3px 10px;border-radius:12px;border:1px solid rgba(88,166,255,0.3);background:rgba(88,166,255,0.08);color:var(--accent-blue);cursor:pointer;font-family:inherit;">Q2</button>
+                <button class="filter-chip" data-q="Q3" onclick="filterQ('Q3',this)" style="font-size:11px;padding:3px 10px;border-radius:12px;border:1px solid rgba(227,179,65,0.3);background:rgba(227,179,65,0.08);color:var(--accent-orange);cursor:pointer;font-family:inherit;">Q3</button>
+                <button class="filter-chip" data-q="Q4" onclick="filterQ('Q4',this)" style="font-size:11px;padding:3px 10px;border-radius:12px;border:1px solid rgba(139,148,158,0.3);background:rgba(139,148,158,0.08);color:var(--text-muted);cursor:pointer;font-family:inherit;">Q4</button>
+                <button class="filter-chip" data-q="OA" onclick="filterQ('OA',this)" style="font-size:11px;padding:3px 10px;border-radius:12px;border:1px solid rgba(63,185,80,0.3);background:rgba(63,185,80,0.08);color:var(--accent-green);cursor:pointer;font-family:inherit;">Open Access</button>
+            </div>
+        </div>
+        <div id="journalsContainer"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let _allRecs = [];
+
+async function runRecommend() {
+    const abstract = document.getElementById('abstractInput').value.trim();
+    if (!abstract) { showError('Please paste your abstract.'); return; }
+    const field = document.getElementById('fieldInput').value.trim();
+    const btn = document.getElementById('recommendBtn');
+    const loading = document.getElementById('loadingBar');
+    hideError();
+    btn.disabled = true;
+    loading.classList.add('active');
+    document.getElementById('resultsArea').style.display = 'none';
+
+    try {
+        const resp = await fetch('/recommend-journals', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ abstract, field }),
+        });
+        const data = await resp.json();
+        if (!resp.ok) { showError('Error: ' + (data.error || 'Recommendation failed')); return; }
+        displayResults(data);
+    } catch (err) {
+        showError('Network error: ' + err.message);
+    } finally {
+        btn.disabled = false;
+        loading.classList.remove('active');
+    }
+}
+
+function showError(msg) {
+    const box = document.getElementById('errorBox');
+    box.textContent = msg;
+    box.style.display = 'block';
+}
+function hideError() { document.getElementById('errorBox').style.display = 'none'; }
+
+function displayResults(data) {
+    const concepts = data.concepts_extracted || [];
+    document.getElementById('conceptsRow').innerHTML = concepts
+        .map(c => `<span class="tag tag-blue">${escHtml(c)}</span>`).join('');
+
+    const broad = data.broad_fields_detected || [];
+    document.getElementById('broadFieldsRow').innerHTML = broad.length
+        ? `<div style="font-size:12px;color:var(--text-muted);">Auto-detected fields: ${broad.map(f => `<span class="tag tag-purple" style="font-size:10px;">${escHtml(f)}</span>`).join(' ')}</div>`
+        : '';
+
+    document.getElementById('foundCount').textContent = data.journals_found || 0;
+
+    _allRecs = data.recommendations || [];
+
+    if (data.top_pick) {
+        document.getElementById('topPickContent').innerHTML = renderJournalCard(data.top_pick, true);
+        document.getElementById('topPickCard').style.display = 'block';
+    }
+
+    renderJournals(_allRecs);
+    document.getElementById('resultsArea').style.display = 'block';
+    document.getElementById('resultsArea').scrollIntoView({ behavior: 'smooth' });
+}
+
+function renderJournals(recs) {
+    if (!recs.length) {
+        document.getElementById('journalsContainer').innerHTML =
+            '<div style="color:var(--text-muted);text-align:center;padding:32px;font-size:13px;"><i class="fas fa-search" style="font-size:2rem;display:block;margin-bottom:10px;"></i>No recommendations found for this filter.</div>';
+        return;
+    }
+    document.getElementById('journalsContainer').innerHTML = recs.map(j => renderJournalCard(j, false)).join('');
+}
+
+function filterQ(q, btn) {
+    document.querySelectorAll('#quartileFilter .filter-chip').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    let filtered = _allRecs;
+    if (q === 'OA') filtered = _allRecs.filter(j => j.is_oa);
+    else if (q !== 'all') filtered = _allRecs.filter(j => j.quartile === q);
+    renderJournals(filtered);
+}
+
+function renderJournalCard(j, isTop) {
+    const score = j.fit_score || 0;
+    const scoreColor = score >= 70 ? 'var(--accent-green)' : score >= 40 ? 'var(--accent-blue)' : 'var(--accent-orange)';
+    const qClass = { Q1: 'q1', Q2: 'q2', Q3: 'q3', Q4: 'q4' }[j.quartile] || 'q4';
+    const homepageSafe = safeUrl(j.homepage);
+    const homepage = homepageSafe
+        ? `<a href="${escHtml(homepageSafe)}" target="_blank" rel="noopener noreferrer" style="color:var(--accent-blue);font-size:11px;margin-left:8px;">Website <i class="fas fa-external-link-alt"></i></a>` : '';
+    const scimagoSafe = safeUrl(j.scimago_url);
+    const scimagoLink = scimagoSafe
+        ? `<a href="${escHtml(scimagoSafe)}" target="_blank" rel="noopener noreferrer" style="color:var(--accent-purple);font-size:11px;margin-left:8px;">Scimago <i class="fas fa-external-link-alt"></i></a>` : '';
+    const oaBadge = j.is_oa ? `<span class="oa-badge">Open Access</span>` : '';
+    return `<div class="journal-card${isTop ? ' top-pick' : ''}">
+        <div class="d-flex justify-content-between align-items-start">
+            <div style="flex:1;">
+                <div class="journal-name">${escHtml(j.name || 'Unknown')} ${homepage} ${scimagoLink}</div>
+                <div class="journal-publisher">${escHtml(j.publisher || '')}${j.issn ? ' · ISSN: ' + escHtml(j.issn) : ''}</div>
+            </div>
+            <div style="text-align:right;flex-shrink:0;margin-left:12px;">
+                <div style="font-size:22px;font-weight:800;color:${scoreColor};">${score}%</div>
+                <div style="font-size:11px;color:var(--text-muted);">fit score</div>
+            </div>
+        </div>
+        <div class="fit-bar-wrap">
+            <div class="fit-bar-bg"><div class="fit-bar-fill" style="width:${score}%"></div></div>
+        </div>
+        <div class="meta-chips">
+            <span class="q-badge ${qClass}" title="${escHtml(j.quartile_source||'')}">${j.quartile || '?'}</span>
+            ${j.quartile_source === 'Verified (Scimago)'
+                ? '<span style="font-size:10px;padding:2px 7px;border-radius:3px;background:rgba(63,185,80,0.1);color:var(--accent-green);border:1px solid rgba(63,185,80,0.25);font-weight:600;" title="Curated from Scimago SJR data">✓ Scimago DB</span>'
+                : j.quartile_source && j.quartile_source.startsWith('AI')
+                  ? `<span style="font-size:10px;padding:2px 7px;border-radius:3px;background:rgba(188,140,255,0.1);color:var(--accent-purple);border:1px solid rgba(188,140,255,0.25);font-weight:600;" title="${escHtml(j.quartile_source)}">🤖 AI lookup</span>`
+                  : '<span style="font-size:10px;padding:2px 7px;border-radius:3px;background:rgba(139,148,158,0.1);color:var(--text-muted);border:1px solid rgba(139,148,158,0.25);" title="Relative ranking within search results">Est.</span>'
+            }
+            ${oaBadge}
+            ${j.h_index ? `<span class="meta-chip" style="background:rgba(88,166,255,0.1);color:var(--accent-blue);">H-index: ${j.h_index}</span>` : ''}
+            ${j.impact_factor ? `<span class="meta-chip" style="background:rgba(188,140,255,0.1);color:var(--accent-purple);">IF: ${j.impact_factor}</span>` : ''}
+            ${j.works_count ? `<span class="meta-chip" style="background:rgba(227,179,65,0.1);color:var(--accent-orange);">${j.works_count.toLocaleString()} papers</span>` : ''}
+        </div>
+        ${j.fit_reason ? `<div style="font-size:13px;color:var(--text-secondary);margin-top:4px;">${escHtml(j.fit_reason)}</div>` : ''}
+        ${j.submission_tips ? `<div class="journal-tip"><i class="fas fa-lightbulb" style="color:var(--accent-blue);margin-right:6px;"></i>${escHtml(j.submission_tips)}</div>` : ''}
+    </div>`;
+}
+
+function escHtml(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function safeUrl(url) {
+    if (!url) return '';
+    // Only allow plain http/https web URLs — block file downloads and other protocols
+    if (!/^https?:\/\/.{4}/i.test(url)) return '';
+    if (/\.(pdf|xls|xlsx|doc|docx|zip|rar|gz|exe|dmg)(\?.*)?$/i.test(url)) return '';
+    return url;
+}
+</script>
+{% endblock %}

@@ -1,1476 +1,637 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autonomous Research Agent System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-primary: #0d1117;
-            --bg-card: #161b22;
-            --bg-card-hover: #1c2333;
-            --bg-input: #0d1117;
-            --accent-blue: #58a6ff;
-            --accent-green: #3fb950;
-            --accent-red: #f78166;
-            --accent-orange: #e3b341;
-            --accent-purple: #bc8cff;
-            --text-primary: #e6edf3;
-            --text-secondary: #8b949e;
-            --text-muted: #656d76;
-            --border-color: #30363d;
-            --border-muted: #21262d;
-            --sidebar-width: 240px;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* ── Sidebar ── */
-        #sidebar {
-            position: fixed;
-            top: 0; left: 0;
-            width: var(--sidebar-width);
-            height: 100vh;
-            background: var(--bg-card);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            z-index: 1000;
-            transition: transform 0.3s ease;
-        }
-
-        .sidebar-brand {
-            padding: 20px 16px 16px;
-            border-bottom: 1px solid var(--border-muted);
-        }
-
-        .sidebar-brand h6 {
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        .sidebar-brand p {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin: 0;
-        }
-
-        .sidebar-logo {
-            width: 32px; height: 32px;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-            border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-
-        .sidebar-nav {
-            flex: 1;
-            padding: 12px 8px;
-            overflow-y: auto;
-        }
-
-        .nav-section-label {
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            padding: 8px 8px 4px;
-        }
-
-        .nav-link-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 10px;
-            border-radius: 6px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 13.5px;
-            font-weight: 500;
-            transition: all 0.15s ease;
-            margin-bottom: 2px;
-        }
-
-        .nav-link-item:hover {
-            background: var(--bg-card-hover);
-            color: var(--text-primary);
-        }
-
-        .nav-link-item.active {
-            background: rgba(88, 166, 255, 0.12);
-            color: var(--accent-blue);
-        }
-
-        .nav-link-item .nav-icon {
-            width: 18px;
-            text-align: center;
-            font-size: 13px;
-        }
-
-        .sidebar-footer {
-            padding: 12px 8px;
-            border-top: 1px solid var(--border-muted);
-        }
-
-        /* ── Main content ── */
-        #main-content {
-            margin-left: var(--sidebar-width);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* ── Hero Header ── */
-        .hero-header {
-            padding: 40px 40px 32px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-header::before {
-            content: '';
-            position: absolute;
-            top: -60px; left: -60px;
-            width: 300px; height: 300px;
-            background: radial-gradient(circle, rgba(88,166,255,0.15) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        .hero-header::after {
-            content: '';
-            position: absolute;
-            bottom: -80px; right: 80px;
-            width: 250px; height: 250px;
-            background: radial-gradient(circle, rgba(63,185,80,0.1) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        .hero-title {
-            font-size: 28px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #e6edf3 0%, #58a6ff 50%, #bc8cff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1.2;
-            margin-bottom: 8px;
-        }
-
-        .hero-subtitle {
-            font-size: 14px;
-            color: var(--text-secondary);
-            max-width: 520px;
-        }
-
-        /* ── Content area ── */
-        .content-area {
-            flex: 1;
-            padding: 0 40px 40px;
-        }
-
-        /* ── Cards ── */
-        .glass-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 24px;
-            transition: border-color 0.2s ease;
-        }
-
-        .glass-card:hover {
-            border-color: var(--border-color);
-        }
-
-        .card-label {
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-        }
-
-        /* ── Search / Input ── */
-        .research-input {
-            width: 100%;
-            background: var(--bg-input);
-            border: 1.5px solid var(--border-color);
-            border-radius: 10px;
-            color: var(--text-primary);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 15px;
-            padding: 14px 16px;
-            resize: vertical;
-            min-height: 80px;
-            outline: none;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .research-input:focus {
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 0 3px rgba(88,166,255,0.12);
-        }
-
-        .research-input::placeholder { color: var(--text-muted); }
-
-        /* ── Buttons ── */
-        .btn-primary-dark {
-            background: var(--accent-blue);
-            color: #0d1117;
-            border: none;
-            border-radius: 8px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            padding: 10px 20px;
-            cursor: pointer;
-            transition: opacity 0.15s ease, transform 0.15s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-        }
-
-        .btn-primary-dark:hover { opacity: 0.88; transform: translateY(-1px); }
-
-        .btn-ghost {
-            background: transparent;
-            color: var(--text-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 13px;
-            font-weight: 500;
-            padding: 8px 16px;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-ghost:hover {
-            background: var(--bg-card-hover);
-            color: var(--text-primary);
-            border-color: var(--accent-blue);
-        }
-
-        .btn-export {
-            background: rgba(63,185,80,0.12);
-            color: var(--accent-green);
-            border: 1px solid rgba(63,185,80,0.25);
-            border-radius: 8px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 13px;
-            font-weight: 600;
-            padding: 8px 14px;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-export:hover {
-            background: rgba(63,185,80,0.2);
-        }
-
-        /* ── Filter controls ── */
-        .filter-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: flex-end;
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .filter-group label {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.7px;
-        }
-
-        .form-select-dark, .form-control-dark {
-            background: var(--bg-input);
-            border: 1px solid var(--border-color);
-            border-radius: 7px;
-            color: var(--text-primary);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 13px;
-            padding: 7px 10px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .form-select-dark {
-            padding-right: 28px;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b949e' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 8px center;
-        }
-
-        .form-select-dark:focus, .form-control-dark:focus {
-            border-color: var(--accent-blue);
-        }
-
-        .form-control-dark::placeholder { color: var(--text-muted); }
-
-        /* ── Tabs ── */
-        .results-tabs {
-            display: flex;
-            gap: 2px;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 20px;
-        }
-
-        .tab-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 13.5px;
-            font-weight: 500;
-            padding: 10px 16px;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            margin-bottom: -1px;
-            transition: all 0.15s ease;
-            display: flex;
-            align-items: center;
-            gap: 7px;
-        }
-
-        .tab-btn:hover { color: var(--text-primary); }
-
-        .tab-btn.active {
-            color: var(--accent-blue);
-            border-bottom-color: var(--accent-blue);
-        }
-
-        .tab-badge {
-            background: var(--border-color);
-            color: var(--text-muted);
-            font-size: 11px;
-            font-weight: 600;
-            padding: 1px 6px;
-            border-radius: 10px;
-        }
-
-        .tab-btn.active .tab-badge {
-            background: rgba(88,166,255,0.2);
-            color: var(--accent-blue);
-        }
-
-        .tab-panel { display: none; }
-        .tab-panel.active { display: block; }
-
-        /* ── Stat cards ── */
-        .stat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 16px 20px;
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 32px;
-            font-weight: 800;
-            line-height: 1;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        /* ── Paper card ── */
-        .paper-item {
-            background: var(--bg-input);
-            border: 1px solid var(--border-muted);
-            border-radius: 10px;
-            padding: 16px;
-            margin-bottom: 10px;
-            transition: border-color 0.15s ease;
-        }
-
-        .paper-item:hover { border-color: var(--border-color); }
-
-        .paper-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 6px;
-            line-height: 1.4;
-        }
-
-        .paper-meta {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        .paper-abstract {
-            font-size: 12.5px;
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-
-        .relevance-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            background: rgba(63,185,80,0.12);
-            color: var(--accent-green);
-            font-size: 11px;
-            font-weight: 600;
-            padding: 3px 8px;
-            border-radius: 20px;
-            border: 1px solid rgba(63,185,80,0.25);
-        }
-
-        /* ── Citation box ── */
-        .citation-item {
-            background: var(--bg-input);
-            border: 1px solid var(--border-muted);
-            border-radius: 10px;
-            padding: 16px;
-            margin-bottom: 12px;
-        }
-
-        .citation-code {
-            font-family: 'Fira Code', 'Consolas', monospace;
-            font-size: 12.5px;
-            color: var(--text-secondary);
-            background: #0d1117;
-            border: 1px solid var(--border-muted);
-            border-radius: 7px;
-            padding: 12px 14px;
-            margin-top: 10px;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-
-        /* ── Gap item ── */
-        .gap-item {
-            background: var(--bg-input);
-            border: 1px solid var(--border-muted);
-            border-left: 3px solid var(--accent-orange);
-            border-radius: 0 10px 10px 0;
-            padding: 14px 16px;
-            margin-bottom: 10px;
-        }
-
-        /* ── Tags / badges ── */
-        .tag {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .tag-blue { background: rgba(88,166,255,0.15); color: var(--accent-blue); }
-        .tag-green { background: rgba(63,185,80,0.15); color: var(--accent-green); }
-        .tag-red { background: rgba(247,129,102,0.15); color: var(--accent-red); }
-        .tag-orange { background: rgba(227,179,65,0.15); color: var(--accent-orange); }
-        .tag-purple { background: rgba(188,140,255,0.15); color: var(--accent-purple); }
-
-        /* ── Loading ── */
-        .loading-overlay {
-            display: none;
-            align-items: center;
-            gap: 12px;
-            padding: 16px;
-            background: rgba(88,166,255,0.06);
-            border: 1px solid rgba(88,166,255,0.2);
-            border-radius: 10px;
-            margin-top: 16px;
-        }
-
-        .loading-overlay.active { display: flex; }
-
-        .spinner-ring {
-            width: 20px; height: 20px;
-            border: 2px solid var(--border-color);
-            border-top-color: var(--accent-blue);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            flex-shrink: 0;
-        }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* ── Slide-in animation ── */
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .slide-in { animation: slideIn 0.35s ease forwards; }
-
-        /* ── Feature cards ── */
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 14px;
-        }
-
-        .feature-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 18px 16px;
-            text-decoration: none;
-            color: inherit;
-            transition: all 0.18s ease;
-            display: block;
-        }
-
-        .feature-card:hover {
-            border-color: var(--accent-blue);
-            background: var(--bg-card-hover);
-            transform: translateY(-2px);
-            color: inherit;
-        }
-
-        .feature-icon {
-            width: 36px; height: 36px;
-            border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-
-        .feature-title {
-            font-size: 13.5px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .feature-desc {
-            font-size: 12px;
-            color: var(--text-muted);
-            line-height: 1.4;
-        }
-
-        /* ── History ── */
-        .history-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 16px;
-            background: var(--bg-input);
-            border: 1px solid var(--border-muted);
-            border-radius: 8px;
-            margin-bottom: 8px;
-        }
-
-        /* ── Export bar ── */
-        .export-bar {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 12px;
-        }
-
-        /* ── Search input in filters ── */
-        .search-input-wrap {
-            position: relative;
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .search-input-wrap .fa-search {
-            position: absolute;
-            left: 11px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 12px;
-        }
-
-        .search-input-wrap input {
-            padding-left: 32px;
-            width: 100%;
-        }
-
-        /* ── Responsive ── */
-        @media (max-width: 768px) {
-            #sidebar { transform: translateX(-100%); }
-            #sidebar.open { transform: translateX(0); }
-            #main-content { margin-left: 0; }
-            .hero-header, .content-area { padding-left: 20px; padding-right: 20px; }
-            .hero-title { font-size: 22px; }
-        }
-
-        /* Override Bootstrap colors */
-        .btn-primary { background: var(--accent-blue); border-color: var(--accent-blue); color: #0d1117; }
-        .btn-primary:hover { background: #79bbff; border-color: #79bbff; color: #0d1117; }
-        .badge.bg-primary { background: rgba(88,166,255,0.2) !important; color: var(--accent-blue); border: 1px solid rgba(88,166,255,0.3); }
-        .badge.bg-success { background: rgba(63,185,80,0.2) !important; color: var(--accent-green); border: 1px solid rgba(63,185,80,0.3); }
-        .badge.bg-secondary { background: var(--border-color) !important; color: var(--text-muted); }
-
-        /* Mobile hamburger */
-        .hamburger {
-            display: none;
-            position: fixed;
-            top: 14px; left: 14px;
-            z-index: 1100;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            width: 36px; height: 36px;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--text-secondary);
-        }
-
-        @media (max-width: 768px) { .hamburger { display: flex; } }
-
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
-        }
-
-        .sidebar-overlay.active { display: block; }
-    </style>
-</head>
-<body>
-
-<!-- Mobile hamburger -->
-<button class="hamburger" id="hamburgerBtn" aria-label="Toggle sidebar">
-    <i class="fas fa-bars"></i>
-</button>
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-<!-- Sidebar -->
-<aside id="sidebar">
-    <div class="sidebar-brand">
-        <div class="sidebar-logo"><i class="fas fa-atom"></i></div>
-        <h6>Research Agent</h6>
-        <p>AI-Powered Research</p>
-    </div>
-
-    <nav class="sidebar-nav">
-        <div class="nav-section-label">Tools</div>
-
-        <a href="/" class="nav-link-item active">
-            <span class="nav-icon"><i class="fas fa-search"></i></span>
-            Research
-        </a>
-        <a href="/literature" class="nav-link-item">
-            <span class="nav-icon"><i class="fas fa-book-open"></i></span>
-            Literature Builder
-        </a>
-        <a href="/validator" class="nav-link-item">
-            <span class="nav-icon"><i class="fas fa-check-double"></i></span>
-            Reference Validator
-        </a>
-        <a href="/citations" class="nav-link-item">
-            <span class="nav-icon"><i class="fas fa-quote-right"></i></span>
-            Enhanced Citations
-        </a>
-
-        <div class="nav-section-label" style="margin-top:12px;">Writing</div>
-
-        <a href="/humanizer" class="nav-link-item">
-            <span class="nav-icon"><i class="fas fa-feather-alt"></i></span>
-            Humanizer
-        </a>
-        <a href="/latex-reorder" class="nav-link-item">
-            <span class="nav-icon"><i class="fas fa-sort-numeric-down"></i></span>
-            LaTeX Reorder
-        </a>
-    </nav>
-
-    <div class="sidebar-footer">
-        <a href="#" class="nav-link-item" style="font-size:12px;" onclick="openStatusModal(); return false;">
-            <span class="nav-icon"><i class="fas fa-heartbeat" id="statusPulse"></i></span>
-            System Status
-        </a>
-    </div>
-</aside>
-
-<!-- ── System Status Modal ── -->
-<div id="statusModal" style="display:none; position:fixed; inset:0; z-index:9999; align-items:center; justify-content:center;">
-    <div style="position:absolute; inset:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px);" onclick="closeStatusModal()"></div>
-    <div style="position:relative; background:#161b22; border:1px solid #30363d; border-radius:16px; padding:32px; width:480px; max-width:90vw; box-shadow:0 24px 60px rgba(0,0,0,0.5);">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
-            <div style="display:flex; align-items:center; gap:12px;">
-                <div style="width:36px;height:36px;background:linear-gradient(135deg,#58a6ff,#3fb950);border-radius:8px;display:flex;align-items:center;justify-content:center;">
-                    <i class="fas fa-heartbeat" style="color:#fff;font-size:16px;"></i>
-                </div>
-                <div>
-                    <div style="font-size:16px;font-weight:700;color:#e6edf3;">System Status</div>
-                    <div style="font-size:12px;color:#8b949e;" id="statusLastChecked">Checking...</div>
-                </div>
+{% extends 'base.html' %}
+
+{% block title %}Autonomous Research Agent{% endblock %}
+{% block nav_research %}active{% endblock %}
+
+{% block hero_gradient %}linear-gradient(135deg, #e6edf3 0%, #58a6ff 50%, #bc8cff 100%){% endblock %}
+{% block hero_orb1_color %}rgba(88,166,255,0.15){% endblock %}
+{% block hero_orb2_color %}rgba(63,185,80,0.1){% endblock %}
+
+{% block hero_title %}Autonomous Research Agent{% endblock %}
+{% block hero_subtitle %}Discover papers, extract claims, map contradictions, and generate citations — powered by AI.{% endblock %}
+
+{% block extra_css %}
+.filter-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+.filter-group { display: flex; flex-direction: column; gap: 4px; }
+.filter-group label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.7px; }
+
+.results-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border-color); margin-bottom: 20px; }
+.tab-badge {
+    background: var(--border-color); color: var(--text-muted);
+    font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 10px;
+}
+.tab-btn.active .tab-badge { background: rgba(88,166,255,0.2); color: var(--accent-blue); }
+
+.paper-item {
+    background: var(--bg-input); border: 1px solid var(--border-muted);
+    border-radius: 10px; padding: 16px; margin-bottom: 10px; transition: border-color 0.15s;
+}
+.paper-item:hover { border-color: var(--border-color); }
+.paper-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; line-height: 1.4; }
+.paper-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+.paper-abstract { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; }
+.relevance-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(63,185,80,0.12); color: var(--accent-green);
+    font-size: 11px; font-weight: 600; padding: 3px 8px;
+    border-radius: 20px; border: 1px solid rgba(63,185,80,0.25);
+}
+
+.citation-item {
+    background: var(--bg-input); border: 1px solid var(--border-muted);
+    border-radius: 10px; padding: 16px; margin-bottom: 12px;
+}
+.citation-code {
+    font-family: 'Fira Code', 'Consolas', monospace; font-size: 12.5px;
+    color: var(--text-secondary); background: #0d1117;
+    border: 1px solid var(--border-muted); border-radius: 7px;
+    padding: 12px 14px; margin-top: 10px; white-space: pre-wrap; word-break: break-all;
+}
+
+.gap-item {
+    background: var(--bg-input); border: 1px solid var(--border-muted);
+    border-left: 3px solid var(--accent-orange);
+    border-radius: 0 10px 10px 0; padding: 14px 16px; margin-bottom: 10px;
+}
+
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+.feature-card {
+    background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px;
+    padding: 18px 16px; text-decoration: none; color: inherit;
+    transition: all 0.18s; display: block;
+}
+.feature-card:hover { border-color: var(--accent-blue); background: var(--bg-card-hover); transform: translateY(-2px); color: inherit; }
+.feature-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; margin-bottom: 10px; }
+.feature-title { font-size: 13.5px; font-weight: 600; margin-bottom: 4px; }
+.feature-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+
+.history-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; background: var(--bg-input);
+    border: 1px solid var(--border-muted); border-radius: 8px; margin-bottom: 8px;
+}
+
+.export-bar { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.loading-research {
+    display: none; align-items: center; gap: 12px; padding: 16px;
+    background: rgba(88,166,255,0.06); border: 1px solid rgba(88,166,255,0.2);
+    border-radius: 10px; margin-top: 16px;
+}
+.loading-research.active { display: flex; }
+
+.search-input-wrap { position: relative; flex: 1; min-width: 200px; }
+.search-input-wrap .fa-search { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 12px; }
+.search-input-wrap input { padding-left: 32px; width: 100%; }
+
+@keyframes slideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.slide-in { animation: slideIn 0.35s ease forwards; }
+{% endblock %}
+
+{% block content %}
+<!-- Research form -->
+<div class="glass-card">
+    <div class="card-label">New Research Query</div>
+    <form id="researchForm">
+        <textarea class="research-input mb-3" id="topic"
+            placeholder="e.g., Transformer-based models for climate forecasting — enter any research topic..."
+            rows="3" required></textarea>
+
+        <div class="filter-row mb-3">
+            <div class="filter-group">
+                <label>Year From</label>
+                <input type="number" class="form-control-dark" id="yearFrom" placeholder="2015" style="width:90px;">
             </div>
-            <button onclick="closeStatusModal()" style="background:none;border:none;color:#8b949e;font-size:20px;cursor:pointer;padding:4px 8px;border-radius:6px;" onmouseover="this.style.background='#21262d'" onmouseout="this.style.background='none'">×</button>
+            <div class="filter-group">
+                <label>Year To</label>
+                <input type="number" class="form-control-dark" id="yearTo" placeholder="2024" style="width:90px;">
+            </div>
+            <div class="filter-group">
+                <label>Citation Format</label>
+                <select class="form-select-dark" id="formatFilter" style="width:140px;">
+                    <option value="custom">Custom (LaTeX)</option>
+                    <option value="bibtex">BibTeX</option>
+                    <option value="apa">APA</option>
+                    <option value="ieee">IEEE</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Venue Filter</label>
+                <select class="form-select-dark" id="journalFilter" style="width:160px;">
+                    <option value="">All Venues</option>
+                </select>
+            </div>
+            <div class="filter-group" style="justify-content:flex-end;flex:1;align-items:flex-end;">
+                <button type="submit" class="btn-primary-dark">
+                    <i class="fas fa-rocket"></i> Start Research
+                </button>
+            </div>
         </div>
+    </form>
 
-        <!-- Overall status banner -->
-        <div id="statusBanner" style="padding:12px 16px;border-radius:10px;margin-bottom:20px;font-size:13px;font-weight:600;">
-            Checking system health...
-        </div>
-
-        <!-- API status grid -->
-        <div style="margin-bottom:20px;">
-            <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#656d76;margin-bottom:12px;">API Connections</div>
-            <div id="apisGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
-        </div>
-
-        <!-- Features status -->
-        <div style="margin-bottom:24px;">
-            <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#656d76;margin-bottom:12px;">Features</div>
-            <div id="featuresGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
-        </div>
-
-        <!-- System info -->
-        <div id="sysInfo" style="background:#0d1117;border:1px solid #21262d;border-radius:8px;padding:12px;font-size:12px;color:#8b949e;display:none;">
-        </div>
-
-        <div style="display:flex;justify-content:flex-end;margin-top:20px;gap:10px;">
-            <button onclick="openStatusModal()" style="background:#21262d;border:1px solid #30363d;color:#e6edf3;padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;">
-                <i class="fas fa-sync-alt"></i> Refresh
-            </button>
-            <button onclick="closeStatusModal()" style="background:#58a6ff;border:none;color:#fff;padding:8px 20px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;font-weight:600;">
-                Close
-            </button>
+    <div class="loading-research" id="loadingIndicator">
+        <div class="spinner-ring"></div>
+        <div>
+            <div style="font-size:13.5px;font-weight:600;color:var(--accent-blue);">Researching...</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Analyzing topic, discovering papers, extracting claims</div>
         </div>
     </div>
 </div>
 
-<script>
-function openStatusModal() {
-    const modal = document.getElementById('statusModal');
-    modal.style.display = 'flex';
-    document.getElementById('statusLastChecked').textContent = 'Checking...';
-    document.getElementById('statusBanner').style.background = '#21262d';
-    document.getElementById('statusBanner').style.color = '#8b949e';
-    document.getElementById('statusBanner').textContent = 'Checking system health...';
-    document.getElementById('apisGrid').innerHTML = '<div style="color:#8b949e;font-size:13px;grid-column:1/-1;">Loading...</div>';
-    document.getElementById('featuresGrid').innerHTML = '';
-
-    fetch('/test')
-        .then(r => r.json())
-        .then(data => {
-            const ok = data.status === 'ok';
-            const banner = document.getElementById('statusBanner');
-            banner.style.background = ok ? 'rgba(63,185,80,0.12)' : 'rgba(247,129,102,0.12)';
-            banner.style.color = ok ? '#3fb950' : '#f78166';
-            banner.style.border = `1px solid ${ok ? 'rgba(63,185,80,0.3)' : 'rgba(247,129,102,0.3)'}`;
-            banner.innerHTML = `<i class="fas fa-${ok ? 'check-circle' : 'exclamation-circle'}"></i> ${data.message || (ok ? 'All systems operational' : 'System error')}`;
-
-            // APIs
-            const apis = data.apis || {};
-            document.getElementById('apisGrid').innerHTML = Object.entries(apis).map(([name, up]) => `
-                <div style="background:#0d1117;border:1px solid #21262d;border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:8px;">
-                    <span style="width:8px;height:8px;border-radius:50%;background:${up ? '#3fb950' : '#f78166'};flex-shrink:0;${up ? 'box-shadow:0 0 6px #3fb950' : ''}"></span>
-                    <span style="font-size:12px;color:${up ? '#e6edf3' : '#8b949e'};">${name}</span>
-                </div>
-            `).join('');
-
-            // Features
-            const features = data.features || {};
-            const featureNames = { llm_extraction: 'LLM Extraction', humanizer: 'AI Humanizer', pdf_export: 'PDF Export', docx_export: 'Word Export' };
-            document.getElementById('featuresGrid').innerHTML = Object.entries(features).map(([key, on]) => `
-                <div style="background:#0d1117;border:1px solid #21262d;border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:8px;">
-                    <span style="width:8px;height:8px;border-radius:50%;background:${on ? '#3fb950' : '#e3b341'};flex-shrink:0;"></span>
-                    <span style="font-size:12px;color:${on ? '#e6edf3' : '#8b949e'};">${featureNames[key] || key}</span>
-                </div>
-            `).join('');
-
-            // Sys info
-            if (data.python_version) {
-                const si = document.getElementById('sysInfo');
-                si.style.display = 'block';
-                si.innerHTML = `<span style="color:#656d76;">Python</span> <span style="color:#e6edf3;">${data.python_version}</span> &nbsp;·&nbsp; <span style="color:#656d76;">Platform</span> <span style="color:#e6edf3;">${data.platform}</span>`;
-            }
-
-            document.getElementById('statusLastChecked').textContent = 'Last checked: just now';
-            document.getElementById('statusPulse').style.color = ok ? '#3fb950' : '#f78166';
-        })
-        .catch(() => {
-            document.getElementById('statusBanner').style.background = 'rgba(247,129,102,0.12)';
-            document.getElementById('statusBanner').style.color = '#f78166';
-            document.getElementById('statusBanner').textContent = '⚠ Could not reach server';
-        });
-}
-
-function closeStatusModal() {
-    document.getElementById('statusModal').style.display = 'none';
-}
-
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeStatusModal(); });
-</script>
-
-<!-- Main content -->
-<div id="main-content">
-
-    <!-- Hero header -->
-    <div class="hero-header">
-        <p class="hero-title">Autonomous Research Agent</p>
-        <p class="hero-subtitle">Discover papers, extract claims, map contradictions, and generate citations — powered by AI.</p>
-    </div>
-
-    <div class="content-area">
-
-        <!-- Research form -->
-        <div class="glass-card mb-4">
-            <div class="card-label">New Research Query</div>
-            <form id="researchForm">
-                <textarea
-                    class="research-input mb-3"
-                    id="topic"
-                    placeholder="e.g., Transformer-based models for climate forecasting — enter any research topic..."
-                    rows="3"
-                    required></textarea>
-
-                <!-- Filters -->
-                <div class="filter-row mb-3">
-                    <div class="filter-group">
-                        <label>Year From</label>
-                        <input type="number" class="form-control-dark" id="yearFrom" placeholder="2015" style="width:90px;">
-                    </div>
-                    <div class="filter-group">
-                        <label>Year To</label>
-                        <input type="number" class="form-control-dark" id="yearTo" placeholder="2024" style="width:90px;">
-                    </div>
-                    <div class="filter-group">
-                        <label>Citation Format</label>
-                        <select class="form-select-dark" id="formatFilter" style="width:140px;">
-                            <option value="custom">Custom (LaTeX)</option>
-                            <option value="bibtex">BibTeX</option>
-                            <option value="apa">APA</option>
-                            <option value="ieee">IEEE</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label>Venue Filter</label>
-                        <select class="form-select-dark" id="journalFilter" style="width:160px;">
-                            <option value="">All Venues</option>
-                        </select>
-                    </div>
-                    <div class="filter-group" style="justify-content:flex-end; flex:1; align-items:flex-end;">
-                        <button type="submit" class="btn-primary-dark">
-                            <i class="fas fa-rocket"></i> Start Research
-                        </button>
-                    </div>
-                </div>
-            </form>
-
-            <!-- Loading indicator -->
-            <div class="loading-overlay" id="loadingIndicator">
-                <div class="spinner-ring"></div>
-                <div>
-                    <div style="font-size:13.5px; font-weight:600; color:var(--accent-blue);">Researching...</div>
-                    <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Analyzing topic, discovering papers, extracting claims</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Features grid (shown before results) -->
-        <div id="featuresSection">
-            <p class="card-label mb-3">Available Tools</p>
-            <div class="feature-grid mb-4">
-                <a href="/literature" class="feature-card">
-                    <div class="feature-icon" style="background:rgba(88,166,255,0.12); color:var(--accent-blue);">
-                        <i class="fas fa-book-open"></i>
-                    </div>
-                    <div class="feature-title">Literature Builder</div>
-                    <div class="feature-desc">Structured academic literature with LaTeX citations</div>
-                </a>
-                <a href="/validator" class="feature-card">
-                    <div class="feature-icon" style="background:rgba(247,129,102,0.12); color:var(--accent-red);">
-                        <i class="fas fa-check-double"></i>
-                    </div>
-                    <div class="feature-title">Reference Validator</div>
-                    <div class="feature-desc">Fix formatting, remove duplicates, verify papers</div>
-                </a>
-                <a href="/citations" class="feature-card">
-                    <div class="feature-icon" style="background:rgba(63,185,80,0.12); color:var(--accent-green);">
-                        <i class="fas fa-quote-right"></i>
-                    </div>
-                    <div class="feature-title">Enhanced Citations</div>
-                    <div class="feature-desc">CrossRef-verified bibliographic data</div>
-                </a>
-                <a href="/humanizer" class="feature-card">
-                    <div class="feature-icon" style="background:rgba(188,140,255,0.12); color:var(--accent-purple);">
-                        <i class="fas fa-feather-alt"></i>
-                    </div>
-                    <div class="feature-title">Humanizer</div>
-                    <div class="feature-desc">Remove AI writing patterns from text</div>
-                </a>
-                <a href="/latex-reorder" class="feature-card">
-                    <div class="feature-icon" style="background:rgba(227,179,65,0.12); color:var(--accent-orange);">
-                        <i class="fas fa-sort-numeric-down"></i>
-                    </div>
-                    <div class="feature-title">LaTeX Reorder</div>
-                    <div class="feature-desc">Reorder bibliography by citation order</div>
-                </a>
-            </div>
-        </div>
-
-        <!-- Results section (hidden until research completes) -->
-        <div id="resultsSection" style="display:none;" class="slide-in">
-
-            <!-- Stats row -->
-            <div class="row g-3 mb-4" id="summaryStats"></div>
-
-            <!-- Export bar -->
-            <div class="export-bar mb-4">
-                <button class="btn-export" onclick="exportResults('json')">
-                    <i class="fas fa-file-code"></i> Download JSON
-                </button>
-                <button class="btn-export" onclick="exportResults('pdf')" style="background:rgba(88,166,255,0.1);color:var(--accent-blue);border-color:rgba(88,166,255,0.25);">
-                    <i class="fas fa-file-pdf"></i> Download PDF Report
-                </button>
-                <button class="btn-export" onclick="exportResults('docx')" style="background:rgba(247,129,102,0.1);color:var(--accent-red);border-color:rgba(247,129,102,0.25);">
-                    <i class="fas fa-file-word"></i> Download Word Report
-                </button>
-                <button class="btn-ghost ms-auto" onclick="clearAllFilters()">
-                    <i class="fas fa-times"></i> Clear Filters
-                </button>
-            </div>
-
-            <!-- Filter bar -->
-            <div class="glass-card mb-4">
-                <div class="filter-row">
-                    <div class="search-input-wrap">
-                        <i class="fas fa-search"></i>
-                        <input type="text" class="form-control-dark" id="globalSearch" placeholder="Search papers, authors, citations...">
-                    </div>
-                    <div class="filter-group">
-                        <label>Venue</label>
-                        <select class="form-select-dark" id="venueResultFilter" style="width:160px;">
-                            <option value="">All Venues</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label>Year</label>
-                        <select class="form-select-dark" id="yearResultFilter" style="width:100px;">
-                            <option value="">All Years</option>
-                        </select>
-                    </div>
-                    <div style="align-self:flex-end; font-size:12px; color:var(--text-muted);">
-                        <span id="filterStats">All results</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tabs -->
-            <div class="glass-card">
-                <div class="results-tabs">
-                    <button class="tab-btn active" data-tab="papers">
-                        <i class="fas fa-file-alt"></i> Papers
-                        <span class="tab-badge" id="papersCount">0</span>
-                    </button>
-                    <button class="tab-btn" data-tab="claims">
-                        <i class="fas fa-tag"></i> Claims
-                        <span class="tab-badge" id="claimsCount">0</span>
-                    </button>
-                    <button class="tab-btn" data-tab="contradictions">
-                        <i class="fas fa-exclamation-triangle"></i> Contradictions
-                        <span class="tab-badge" id="contradictionsCount">0</span>
-                    </button>
-                    <button class="tab-btn" data-tab="gaps">
-                        <i class="fas fa-lightbulb"></i> Gaps
-                        <span class="tab-badge" id="gapsCount">0</span>
-                    </button>
-                    <button class="tab-btn" data-tab="citations">
-                        <i class="fas fa-quote-right"></i> Citations
-                        <span class="tab-badge" id="citationCount">0</span>
-                    </button>
-                </div>
-
-                <!-- Papers panel -->
-                <div class="tab-panel active" id="tab-papers">
-                    <div id="papersSection"></div>
-                </div>
-
-                <!-- Claims panel -->
-                <div class="tab-panel" id="tab-claims">
-                    <div id="claimsSection"></div>
-                </div>
-
-                <!-- Contradictions panel -->
-                <div class="tab-panel" id="tab-contradictions">
-                    <div id="contradictionsSection"></div>
-                </div>
-
-                <!-- Gaps panel -->
-                <div class="tab-panel" id="tab-gaps">
-                    <div id="gapsSection"></div>
-                </div>
-
-                <!-- Citations panel -->
-                <div class="tab-panel" id="tab-citations">
-                    <div id="citationsSection"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Research History -->
-        <div class="glass-card mt-4">
-            <div class="d-flex align-items-center justify-content-between mb-3">
-                <div class="card-label mb-0">Research History</div>
-                <button class="btn-ghost" onclick="loadHistory()">
-                    <i class="fas fa-refresh"></i> Load
-                </button>
-            </div>
-            <div id="historySection" style="color:var(--text-muted); font-size:13px;">
-                Click "Load" to view previous research sessions.
-            </div>
-        </div>
-
+<!-- Features grid -->
+<div id="featuresSection">
+    <p class="card-label mb-3">Available Tools</p>
+    <div class="feature-grid mb-4">
+        <a href="/literature" class="feature-card">
+            <div class="feature-icon" style="background:rgba(88,166,255,0.12);color:var(--accent-blue);"><i class="fas fa-book-open"></i></div>
+            <div class="feature-title">Literature Builder</div>
+            <div class="feature-desc">Structured academic literature with LaTeX citations</div>
+        </a>
+        <a href="/validator" class="feature-card">
+            <div class="feature-icon" style="background:rgba(247,129,102,0.12);color:var(--accent-red);"><i class="fas fa-check-double"></i></div>
+            <div class="feature-title">Reference Validator</div>
+            <div class="feature-desc">Fix formatting, remove duplicates, verify papers</div>
+        </a>
+        <a href="/citations" class="feature-card">
+            <div class="feature-icon" style="background:rgba(63,185,80,0.12);color:var(--accent-green);"><i class="fas fa-quote-right"></i></div>
+            <div class="feature-title">Enhanced Citations</div>
+            <div class="feature-desc">CrossRef-verified bibliographic data</div>
+        </a>
+        <a href="/humanizer" class="feature-card">
+            <div class="feature-icon" style="background:rgba(188,140,255,0.12);color:var(--accent-purple);"><i class="fas fa-feather-alt"></i></div>
+            <div class="feature-title">Humanizer</div>
+            <div class="feature-desc">Remove AI writing patterns from text</div>
+        </a>
+        <a href="/latex-reorder" class="feature-card">
+            <div class="feature-icon" style="background:rgba(227,179,65,0.12);color:var(--accent-orange);"><i class="fas fa-sort-numeric-down"></i></div>
+            <div class="feature-title">LaTeX Reorder</div>
+            <div class="feature-desc">Reorder bibliography by citation order</div>
+        </a>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Results section -->
+<div id="resultsSection" style="display:none;" class="slide-in">
+
+    <div class="row g-3 mb-4" id="summaryStats"></div>
+
+    <div class="export-bar mb-4">
+        <button class="btn-export" onclick="exportResults('json')">
+            <i class="fas fa-file-code"></i> Download JSON
+        </button>
+        <button class="btn-export" onclick="exportResults('pdf')" style="background:rgba(88,166,255,0.1);color:var(--accent-blue);border-color:rgba(88,166,255,0.25);">
+            <i class="fas fa-file-pdf"></i> Download PDF Report
+        </button>
+        <button class="btn-export" onclick="exportResults('docx')" style="background:rgba(247,129,102,0.1);color:var(--accent-red);border-color:rgba(247,129,102,0.25);">
+            <i class="fas fa-file-word"></i> Download Word Report
+        </button>
+        <button class="btn-ghost ms-auto" onclick="clearAllFilters()">
+            <i class="fas fa-times"></i> Clear Filters
+        </button>
+    </div>
+
+    <div class="glass-card mb-4">
+        <div class="filter-row">
+            <div class="search-input-wrap">
+                <i class="fas fa-search"></i>
+                <input type="text" class="form-control-dark" id="globalSearch" placeholder="Search papers, authors, citations...">
+            </div>
+            <div class="filter-group">
+                <label>Venue</label>
+                <select class="form-select-dark" id="venueResultFilter" style="width:160px;">
+                    <option value="">All Venues</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Year</label>
+                <select class="form-select-dark" id="yearResultFilter" style="width:100px;">
+                    <option value="">All Years</option>
+                </select>
+            </div>
+            <div style="align-self:flex-end;font-size:12px;color:var(--text-muted);">
+                <span id="filterStats">All results</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-card">
+        <div class="results-tabs">
+            <button class="tab-btn active" data-tab="papers">
+                <i class="fas fa-file-alt"></i> Papers
+                <span class="tab-badge" id="papersCount">0</span>
+            </button>
+            <button class="tab-btn" data-tab="claims">
+                <i class="fas fa-tag"></i> Claims
+                <span class="tab-badge" id="claimsCount">0</span>
+            </button>
+            <button class="tab-btn" data-tab="contradictions">
+                <i class="fas fa-exclamation-triangle"></i> Contradictions
+                <span class="tab-badge" id="contradictionsCount">0</span>
+            </button>
+            <button class="tab-btn" data-tab="gaps">
+                <i class="fas fa-lightbulb"></i> Gaps
+                <span class="tab-badge" id="gapsCount">0</span>
+            </button>
+            <button class="tab-btn" data-tab="citations">
+                <i class="fas fa-quote-right"></i> Citations
+                <span class="tab-badge" id="citationCount">0</span>
+            </button>
+        </div>
+
+        <div class="tab-panel active" id="tab-papers"><div id="papersSection"></div></div>
+        <div class="tab-panel" id="tab-claims"><div id="claimsSection"></div></div>
+        <div class="tab-panel" id="tab-contradictions"><div id="contradictionsSection"></div></div>
+        <div class="tab-panel" id="tab-gaps"><div id="gapsSection"></div></div>
+        <div class="tab-panel" id="tab-citations"><div id="citationsSection"></div></div>
+    </div>
+</div>
+
+<!-- Research History -->
+<div class="glass-card mt-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <div class="card-label mb-0">Research History</div>
+        <button class="btn-ghost" onclick="loadHistory()">
+            <i class="fas fa-refresh"></i> Load
+        </button>
+    </div>
+    <div id="historySection" style="color:var(--text-muted);font-size:13px;">
+        Click "Load" to view previous research sessions.
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
 <script>
-    // ── State ──
-    let currentResults = null;
-    let allPapers = [], filteredPapers = [];
-    let allClaims = [], filteredClaims = [];
-    let allContradictions = [], filteredContradictions = [];
-    let allGaps = [], filteredGaps = [];
-    let allCitations = [], filteredCitations = [];
+let currentResults = null;
+let allPapers = [], filteredPapers = [];
+let allClaims = [], filteredClaims = [];
+let allContradictions = [], filteredContradictions = [];
+let allGaps = [], filteredGaps = [];
+let allCitations = [], filteredCitations = [];
 
-    // ── Sidebar toggle ──
-    document.getElementById('hamburgerBtn').addEventListener('click', () => {
-        document.getElementById('sidebar').classList.toggle('open');
-        document.getElementById('sidebarOverlay').classList.toggle('active');
+// Tabs
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
     });
-    document.getElementById('sidebarOverlay').addEventListener('click', () => {
-        document.getElementById('sidebar').classList.remove('open');
-        document.getElementById('sidebarOverlay').classList.remove('active');
-    });
+});
 
-    // ── Tabs ──
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+// Research form
+document.getElementById('researchForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const topic = document.getElementById('topic').value.trim();
+    if (!topic) return;
+
+    document.getElementById('loadingIndicator').classList.add('active');
+    document.getElementById('resultsSection').style.display = 'none';
+    document.getElementById('featuresSection').style.display = 'none';
+
+    try {
+        const response = await fetch('/research', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ topic })
         });
-    });
+        const data = await response.json();
 
-    // ── Research form ──
-    document.getElementById('researchForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const topic = document.getElementById('topic').value.trim();
-        if (!topic) return;
+        if (response.ok) {
+            currentResults = data;
+            allPapers = data.papers || [];
+            allClaims = data.claims || [];
+            allContradictions = data.contradictions || [];
+            allGaps = data.research_gaps || [];
+            allCitations = data.citations || [];
 
-        document.getElementById('loadingIndicator').classList.add('active');
-        document.getElementById('resultsSection').style.display = 'none';
-        document.getElementById('featuresSection').style.display = 'none';
+            filteredPapers = [...allPapers];
+            filteredClaims = [...allClaims];
+            filteredContradictions = [...allContradictions];
+            filteredGaps = [...allGaps];
+            filteredCitations = [...allCitations];
 
-        try {
-            const response = await fetch('/research', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ topic })
-            });
-            const data = await response.json();
-
-            if (response.ok) {
-                currentResults = data;
-                allPapers = data.papers || [];
-                allClaims = data.claims || [];
-                allContradictions = data.contradictions || [];
-                allGaps = data.research_gaps || [];
-                allCitations = data.citations || [];
-
-                filteredPapers = [...allPapers];
-                filteredClaims = [...allClaims];
-                filteredContradictions = [...allContradictions];
-                filteredGaps = [...allGaps];
-                filteredCitations = [...allCitations];
-
-                displayResults(data);
-                setupResultFilters();
-
-                document.getElementById('resultsSection').style.display = 'block';
-                document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
-            } else {
-                showError(data.error || 'Research failed');
-                document.getElementById('featuresSection').style.display = 'block';
-            }
-        } catch (err) {
-            showError(err.message);
+            displayResults(data);
+            setupResultFilters();
+            document.getElementById('resultsSection').style.display = 'block';
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        } else {
+            alert('Error: ' + (data.error || 'Research failed'));
             document.getElementById('featuresSection').style.display = 'block';
-        } finally {
-            document.getElementById('loadingIndicator').classList.remove('active');
+        }
+    } catch (err) {
+        alert('Error: ' + err.message);
+        document.getElementById('featuresSection').style.display = 'block';
+    } finally {
+        document.getElementById('loadingIndicator').classList.remove('active');
+    }
+});
+
+function displayResults(data) {
+    const s = data.summary;
+    document.getElementById('summaryStats').innerHTML = `
+        <div class="col-6 col-md-3"><div class="stat-card">
+            <div class="stat-number" style="color:var(--accent-blue);">${s.papers_analyzed}</div>
+            <div class="stat-label">Papers Analyzed</div>
+        </div></div>
+        <div class="col-6 col-md-3"><div class="stat-card">
+            <div class="stat-number" style="color:var(--accent-green);">${s.claims_extracted}</div>
+            <div class="stat-label">Claims Extracted</div>
+        </div></div>
+        <div class="col-6 col-md-3"><div class="stat-card">
+            <div class="stat-number" style="color:var(--accent-red);">${s.contradictions_found}</div>
+            <div class="stat-label">Contradictions</div>
+        </div></div>
+        <div class="col-6 col-md-3"><div class="stat-card">
+            <div class="stat-number" style="color:var(--accent-orange);">${s.research_gaps_identified}</div>
+            <div class="stat-label">Research Gaps</div>
+        </div></div>
+        ${data.usage && data.usage.calls ? `
+        <div class="col-12"><div class="stat-card" style="padding:10px 14px;">
+            <div style="font-size:12.5px;color:var(--text-muted);display:flex;flex-wrap:wrap;gap:14px;justify-content:center;">
+                <span><i class="fas fa-microchip"></i> ${escHtml((data.run_metadata || {}).model || 'LLM')}</span>
+                <span><i class="fas fa-comment-dots"></i> ${data.usage.calls} calls</span>
+                <span><i class="fas fa-arrow-right-arrow-left"></i> ${(data.usage.prompt_tokens || 0).toLocaleString()} in / ${(data.usage.completion_tokens || 0).toLocaleString()} out tokens</span>
+                <span><i class="fas fa-dollar-sign"></i> est. $${(data.usage.estimated_cost_usd || 0).toFixed(4)}</span>
+                ${(data.run_metadata || {}).duration_s ? `<span><i class="fas fa-clock"></i> ${data.run_metadata.duration_s}s</span>` : ''}
+            </div>
+        </div></div>` : ''}
+    `;
+
+    renderPapers(); renderClaims(); renderContradictions(); renderGaps(); renderCitations();
+    updateCounts();
+}
+
+function renderPapers() {
+    document.getElementById('papersCount').textContent = filteredPapers.length;
+    if (!filteredPapers.length) {
+        document.getElementById('papersSection').innerHTML = `<p style="color:var(--text-muted);font-size:13px;">No papers match the current filters.</p>`;
+        return;
+    }
+    document.getElementById('papersSection').innerHTML = filteredPapers.map(p => `
+        <div class="paper-item">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+                <div class="flex-grow-1">
+                    <div class="paper-title">${escHtml(p.title)}</div>
+                    <div class="paper-meta">${escHtml((p.authors || []).join(', '))} &middot; ${p.year} &middot; ${escHtml(p.venue || '')}</div>
+                    <div class="paper-abstract">${escHtml(p.abstract || '')}</div>
+                    ${p.doi || p.url ? `<div class="mt-2"><a href="${p.doi ? (p.doi.startsWith('http') ? p.doi : 'https://doi.org/' + p.doi) : p.url}" target="_blank" class="btn-ghost" style="font-size:12px;padding:5px 10px;"><i class="fas fa-external-link-alt"></i> View Paper</a></div>` : ''}
+                </div>
+                <div class="relevance-badge flex-shrink-0">${(p.relevance_score * 100).toFixed(0)}%</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderClaims() {
+    document.getElementById('claimsCount').textContent = filteredClaims.length;
+    if (!filteredClaims.length) {
+        document.getElementById('claimsSection').innerHTML = `<p style="color:var(--text-muted);font-size:13px;">No claims extracted.</p>`;
+        return;
+    }
+    document.getElementById('claimsSection').innerHTML = filteredClaims.map(c => `
+        <div class="paper-item">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+                <div class="flex-grow-1">
+                    <div class="paper-title" style="font-size:13.5px;">${escHtml(c.statement)}</div>
+                    ${c.metrics && c.metrics.length ? `<div class="mt-1" style="font-size:12px;color:var(--text-muted);">Metrics: ${escHtml(c.metrics.join(', '))}</div>` : ''}
+                    ${c.conditions && c.conditions.length ? `<div style="font-size:12px;color:var(--text-muted);">Conditions: ${escHtml(c.conditions.join(', '))}</div>` : ''}
+                </div>
+                <span class="tag tag-blue">${(c.confidence * 100).toFixed(0)}% conf.</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderContradictions() {
+    document.getElementById('contradictionsCount').textContent = filteredContradictions.length;
+    if (!filteredContradictions.length) {
+        document.getElementById('contradictionsSection').innerHTML = `<p style="color:var(--text-muted);font-size:13px;">No contradictions found.</p>`;
+        return;
+    }
+    document.getElementById('contradictionsSection').innerHTML = filteredContradictions.map(c => `
+        <div class="paper-item" style="border-left:3px solid var(--accent-red);border-radius:0 10px 10px 0;">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+                <div class="flex-grow-1">
+                    <div class="paper-abstract">${escHtml(c.explanation)}</div>
+                    ${c.evidence_claim1 ? `<div style="font-size:12px;color:var(--text-muted);margin-top:6px;border-left:2px solid var(--border-color);padding-left:8px;">
+                        <i class="fas fa-quote-left" style="font-size:10px;"></i> ${escHtml(c.evidence_claim1)}
+                        ${c.paper1_id ? ` <span style="opacity:0.7;">[${escHtml(c.paper1_id)}]</span>` : ''}</div>` : ''}
+                    ${c.evidence_claim2 ? `<div style="font-size:12px;color:var(--text-muted);margin-top:4px;border-left:2px solid var(--border-color);padding-left:8px;">
+                        <i class="fas fa-quote-left" style="font-size:10px;"></i> ${escHtml(c.evidence_claim2)}
+                        ${c.paper2_id ? ` <span style="opacity:0.7;">[${escHtml(c.paper2_id)}]</span>` : ''}</div>` : ''}
+                </div>
+                <div class="d-flex flex-column gap-1 flex-shrink-0 align-items-end">
+                    <span class="tag tag-red">${escHtml(c.type || '')}</span>
+                    ${c.likert_score ? `<span class="tag tag-purple" title="1=strong support, 11=strong contradiction">Likert: ${c.likert_score}/11</span>` : ''}
+                    <span class="tag tag-orange">Severity: ${escHtml(String(typeof c.severity === 'number' ? c.severity.toFixed(2) : (c.severity || '')))}</span>
+                    ${c.detection_method === 'llm_judge' ? `<span class="tag tag-blue">LLM judge</span>` : ''}
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderGaps() {
+    document.getElementById('gapsCount').textContent = filteredGaps.length;
+    if (!filteredGaps.length) {
+        document.getElementById('gapsSection').innerHTML = `<p style="color:var(--text-muted);font-size:13px;">No research gaps identified.</p>`;
+        return;
+    }
+    document.getElementById('gapsSection').innerHTML = filteredGaps.slice(0, 20).map(g => `
+        <div class="gap-item">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+                <div class="flex-grow-1">
+                    <div class="paper-title" style="font-size:13.5px;">${g.rank ? `<span class="tag tag-blue" style="margin-right:6px;">#${g.rank}</span>` : ''}${escHtml(g.description)}</div>
+                    ${g.evidence && g.evidence.length ? `
+                        <div style="font-size:12px;color:var(--text-muted);margin-top:6px;">
+                            ${g.evidence.slice(0,3).map(e => `<div><i class="fas fa-circle-info" style="font-size:10px;"></i> ${escHtml(e)}</div>`).join('')}
+                        </div>` : ''}
+                    ${g.potential_questions && g.potential_questions.length ? `
+                        <ul style="margin-top:6px;margin-bottom:0;padding-left:18px;">
+                            ${g.potential_questions.slice(0,3).map(q => `<li style="font-size:12px;color:var(--text-muted);">${escHtml(q)}</li>`).join('')}
+                        </ul>` : ''}
+                </div>
+                <div class="d-flex flex-column gap-1 flex-shrink-0 align-items-end">
+                    <span class="tag tag-orange">${escHtml(g.type || '')}</span>
+                    <span class="tag tag-green">${(g.priority * 100).toFixed(0)}% priority</span>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderCitations() {
+    const format = document.getElementById('formatFilter').value;
+    document.getElementById('citationCount').textContent = filteredCitations.length;
+    if (!filteredCitations.length) {
+        document.getElementById('citationsSection').innerHTML = `<p style="color:var(--text-muted);font-size:13px;">No citations generated.</p>`;
+        return;
+    }
+    document.getElementById('citationsSection').innerHTML = filteredCitations.map((c, i) => `
+        <div class="citation-item">
+            <div class="d-flex justify-content-between align-items-center gap-2 mb-1">
+                <div class="d-flex gap-2 flex-wrap">
+                    ${c.journal_name ? `<span class="tag tag-blue">${escHtml(c.journal_name)}</span>` : ''}
+                    ${c.year ? `<span class="tag tag-green">${c.year}</span>` : ''}
+                </div>
+                <div class="d-flex gap-2">
+                    ${c.paper_url ? `<a href="${escHtml(c.paper_url)}" target="_blank" class="btn-ghost" style="padding:4px 10px;font-size:12px;"><i class="fas fa-external-link-alt"></i></a>` : ''}
+                    <button class="btn-ghost" style="padding:4px 10px;font-size:12px;" onclick="copyCitation(${i})">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="citation-code" id="citation-${i}">${escHtml(getCitationText(c, format))}</div>
+        </div>
+    `).join('');
+}
+
+function getCitationText(citation, format) {
+    switch (format) {
+        case 'bibtex': return citation.bibtex || '';
+        case 'apa': return citation.apa || '';
+        case 'ieee': return citation.ieee || '';
+        default: return citation.custom_format || citation.bibtex || '';
+    }
+}
+
+function copyCitation(index) {
+    const el = document.getElementById('citation-' + index);
+    if (!el) return;
+    navigator.clipboard.writeText(el.textContent).then(() => {
+        const btn = el.previousElementSibling.querySelector('button');
+        if (btn) {
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => { btn.innerHTML = orig; }, 2000);
         }
     });
+}
 
-    function showError(msg) {
-        alert('Error: ' + msg);
+function updateCounts() {
+    document.getElementById('papersCount').textContent = filteredPapers.length;
+    document.getElementById('claimsCount').textContent = filteredClaims.length;
+    document.getElementById('contradictionsCount').textContent = filteredContradictions.length;
+    document.getElementById('gapsCount').textContent = filteredGaps.length;
+    document.getElementById('citationCount').textContent = filteredCitations.length;
+}
+
+function setupResultFilters() {
+    const venues = [...new Set(allPapers.map(p => p.venue).filter(Boolean))].sort();
+    const years = [...new Set(allPapers.map(p => p.year).filter(Boolean))].sort((a, b) => b - a);
+
+    const venueEl = document.getElementById('venueResultFilter');
+    venueEl.innerHTML = '<option value="">All Venues</option>';
+    venues.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; venueEl.appendChild(o); });
+
+    const journalEl = document.getElementById('journalFilter');
+    journalEl.innerHTML = '<option value="">All Venues</option>';
+    venues.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; journalEl.appendChild(o); });
+
+    const yearEl = document.getElementById('yearResultFilter');
+    yearEl.innerHTML = '<option value="">All Years</option>';
+    years.forEach(y => { const o = document.createElement('option'); o.value = y; o.textContent = y; yearEl.appendChild(o); });
+
+    document.getElementById('globalSearch').addEventListener('input', applyFilters);
+    document.getElementById('venueResultFilter').addEventListener('change', applyFilters);
+    document.getElementById('yearResultFilter').addEventListener('change', applyFilters);
+    document.getElementById('formatFilter').addEventListener('change', renderCitations);
+}
+
+function applyFilters() {
+    const search = document.getElementById('globalSearch').value.toLowerCase();
+    const venue = document.getElementById('venueResultFilter').value;
+    const year = document.getElementById('yearResultFilter').value;
+
+    function matchesPaper(p) {
+        if (venue && p.venue !== venue) return false;
+        if (year && String(p.year) !== year) return false;
+        if (search) {
+            const hay = [p.title, (p.authors || []).join(' '), p.venue, p.abstract].join(' ').toLowerCase();
+            if (!hay.includes(search)) return false;
+        }
+        return true;
     }
 
-    // ── Display results ──
-    function displayResults(data) {
-        const s = data.summary;
-        document.getElementById('summaryStats').innerHTML = `
-            <div class="col-6 col-md-3"><div class="stat-card">
-                <div class="stat-number" style="color:var(--accent-blue);">${s.papers_analyzed}</div>
-                <div class="stat-label">Papers Analyzed</div>
-            </div></div>
-            <div class="col-6 col-md-3"><div class="stat-card">
-                <div class="stat-number" style="color:var(--accent-green);">${s.claims_extracted}</div>
-                <div class="stat-label">Claims Extracted</div>
-            </div></div>
-            <div class="col-6 col-md-3"><div class="stat-card">
-                <div class="stat-number" style="color:var(--accent-red);">${s.contradictions_found}</div>
-                <div class="stat-label">Contradictions</div>
-            </div></div>
-            <div class="col-6 col-md-3"><div class="stat-card">
-                <div class="stat-number" style="color:var(--accent-orange);">${s.research_gaps_identified}</div>
-                <div class="stat-label">Research Gaps</div>
-            </div></div>
-        `;
+    filteredPapers = allPapers.filter(matchesPaper);
+    filteredCitations = allCitations.filter((c, i) => {
+        if (venue && allPapers[i] && allPapers[i].venue !== venue) return false;
+        if (year && c.year && String(c.year) !== year) return false;
+        if (search) return [c.bibtex, c.apa, c.custom_format, c.journal_name].join(' ').toLowerCase().includes(search);
+        return true;
+    });
+    filteredGaps = allGaps.filter(g => !search || [g.description, g.type, ...(g.potential_questions || [])].join(' ').toLowerCase().includes(search));
+    filteredClaims = allClaims.filter(c => !search || c.statement.toLowerCase().includes(search));
+    filteredContradictions = allContradictions.filter(c => !search || c.explanation.toLowerCase().includes(search));
 
-        renderPapers();
-        renderClaims();
-        renderContradictions();
-        renderGaps();
-        renderCitations();
-        updateCounts();
+    renderPapers(); renderClaims(); renderContradictions(); renderGaps(); renderCitations();
+    updateCounts();
+    document.getElementById('filterStats').textContent = `Showing ${filteredPapers.length} / ${allPapers.length} papers`;
+}
+
+function clearAllFilters() {
+    document.getElementById('globalSearch').value = '';
+    document.getElementById('venueResultFilter').value = '';
+    document.getElementById('yearResultFilter').value = '';
+    filteredPapers = [...allPapers]; filteredClaims = [...allClaims];
+    filteredContradictions = [...allContradictions]; filteredGaps = [...allGaps];
+    filteredCitations = [...allCitations];
+    renderPapers(); renderClaims(); renderContradictions(); renderGaps(); renderCitations();
+    updateCounts();
+    document.getElementById('filterStats').textContent = 'All results';
+}
+
+async function exportResults(type) {
+    if (!currentResults) { alert('No results to export. Run a research query first.'); return; }
+    try {
+        const response = await fetch('/export/' + type, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(currentResults)
+        });
+        if (!response.ok) { const err = await response.json(); alert('Export failed: ' + (err.error || 'Unknown error')); return; }
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const cd = response.headers.get('Content-Disposition') || '';
+        const match = cd.match(/filename="?([^"]+)"?/);
+        a.download = match ? match[1] : 'research_export.' + type;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    } catch (err) {
+        alert('Export error: ' + err.message);
     }
+}
 
-    // ── Render helpers ──
-    function renderPapers() {
-        document.getElementById('papersCount').textContent = filteredPapers.length;
-        if (!filteredPapers.length) {
-            document.getElementById('papersSection').innerHTML = `<p style="color:var(--text-muted);font-size:13px;">No papers match the current filters.</p>`;
+async function loadHistory() {
+    try {
+        const response = await fetch('/history');
+        const files = await response.json();
+        if (!files.length) {
+            document.getElementById('historySection').innerHTML = '<p style="color:var(--text-muted);font-size:13px;">No previous research sessions found.</p>';
             return;
         }
-        document.getElementById('papersSection').innerHTML = filteredPapers.map(p => `
-            <div class="paper-item">
-                <div class="d-flex justify-content-between align-items-start gap-2">
-                    <div class="flex-grow-1">
-                        <div class="paper-title">${escHtml(p.title)}</div>
-                        <div class="paper-meta">${escHtml((p.authors || []).join(', '))} &middot; ${p.year} &middot; ${escHtml(p.venue || '')}</div>
-                        <div class="paper-abstract">${escHtml(p.abstract || '')}</div>
-                        ${p.doi || p.url ? `<div class="mt-2"><a href="${p.doi ? (p.doi.startsWith('http') ? p.doi : 'https://doi.org/' + p.doi) : p.url}" target="_blank" class="btn-ghost" style="font-size:12px;padding:5px 10px;"><i class="fas fa-external-link-alt"></i> View Paper</a></div>` : ''}
-                    </div>
-                    <div class="relevance-badge flex-shrink-0">${(p.relevance_score * 100).toFixed(0)}%</div>
+        document.getElementById('historySection').innerHTML = files.map(f => `
+            <div class="history-item">
+                <div>
+                    <div style="font-size:13.5px;font-weight:600;">${escHtml(f.topic)}</div>
+                    <div style="font-size:12px;color:var(--text-muted);">${new Date(f.generated_at).toLocaleString()} &middot; ${f.papers_count} papers &middot; ${f.claims_count} claims</div>
                 </div>
+                <a href="${f.download_url}" class="btn-ghost" style="font-size:12px;padding:6px 12px;" target="_blank">
+                    <i class="fas fa-download"></i> JSON
+                </a>
             </div>
         `).join('');
+    } catch (err) {
+        document.getElementById('historySection').innerHTML = '<p style="color:var(--accent-red);font-size:13px;">Failed to load history.</p>';
     }
+}
 
-    function renderClaims() {
-        document.getElementById('claimsCount').textContent = filteredClaims.length;
-        if (!filteredClaims.length) {
-            document.getElementById('claimsSection').innerHTML = `<p style="color:var(--text-muted);font-size:13px;">No claims extracted.</p>`;
-            return;
-        }
-        document.getElementById('claimsSection').innerHTML = filteredClaims.map(c => `
-            <div class="paper-item">
-                <div class="d-flex justify-content-between align-items-start gap-2">
-                    <div class="flex-grow-1">
-                        <div class="paper-title" style="font-size:13.5px;">${escHtml(c.statement)}</div>
-                        ${c.metrics && c.metrics.length ? `<div class="mt-1" style="font-size:12px;color:var(--text-muted);">Metrics: ${escHtml(c.metrics.join(', '))}</div>` : ''}
-                        ${c.conditions && c.conditions.length ? `<div style="font-size:12px;color:var(--text-muted);">Conditions: ${escHtml(c.conditions.join(', '))}</div>` : ''}
-                    </div>
-                    <span class="tag tag-blue">${(c.confidence * 100).toFixed(0)}% conf.</span>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    function renderContradictions() {
-        document.getElementById('contradictionsCount').textContent = filteredContradictions.length;
-        if (!filteredContradictions.length) {
-            document.getElementById('contradictionsSection').innerHTML = `<p style="color:var(--text-muted);font-size:13px;">No contradictions found.</p>`;
-            return;
-        }
-        document.getElementById('contradictionsSection').innerHTML = filteredContradictions.map(c => `
-            <div class="paper-item" style="border-left:3px solid var(--accent-red);border-radius:0 10px 10px 0;">
-                <div class="d-flex justify-content-between align-items-start gap-2">
-                    <div class="paper-abstract flex-grow-1">${escHtml(c.explanation)}</div>
-                    <div class="d-flex flex-column gap-1 flex-shrink-0 align-items-end">
-                        <span class="tag tag-red">${escHtml(c.type || '')}</span>
-                        <span class="tag tag-orange">Severity: ${escHtml(String(c.severity || ''))}</span>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    function renderGaps() {
-        document.getElementById('gapsCount').textContent = filteredGaps.length;
-        if (!filteredGaps.length) {
-            document.getElementById('gapsSection').innerHTML = `<p style="color:var(--text-muted);font-size:13px;">No research gaps identified.</p>`;
-            return;
-        }
-        document.getElementById('gapsSection').innerHTML = filteredGaps.slice(0, 20).map(g => `
-            <div class="gap-item">
-                <div class="d-flex justify-content-between align-items-start gap-2">
-                    <div class="flex-grow-1">
-                        <div class="paper-title" style="font-size:13.5px;">${escHtml(g.description)}</div>
-                        ${g.potential_questions && g.potential_questions.length ? `
-                            <ul style="margin-top:6px;margin-bottom:0;padding-left:18px;">
-                                ${g.potential_questions.slice(0,3).map(q => `<li style="font-size:12px;color:var(--text-muted);">${escHtml(q)}</li>`).join('')}
-                            </ul>` : ''}
-                    </div>
-                    <div class="d-flex flex-column gap-1 flex-shrink-0 align-items-end">
-                        <span class="tag tag-orange">${escHtml(g.type || '')}</span>
-                        <span class="tag tag-green">${(g.priority * 100).toFixed(0)}% priority</span>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    function renderCitations() {
-        const format = document.getElementById('formatFilter').value;
-        document.getElementById('citationCount').textContent = filteredCitations.length;
-        if (!filteredCitations.length) {
-            document.getElementById('citationsSection').innerHTML = `<p style="color:var(--text-muted);font-size:13px;">No citations generated.</p>`;
-            return;
-        }
-        document.getElementById('citationsSection').innerHTML = filteredCitations.map((c, i) => `
-            <div class="citation-item">
-                <div class="d-flex justify-content-between align-items-center gap-2 mb-1">
-                    <div class="d-flex gap-2 flex-wrap">
-                        ${c.journal_name ? `<span class="tag tag-blue">${escHtml(c.journal_name)}</span>` : ''}
-                        ${c.year ? `<span class="tag tag-green">${c.year}</span>` : ''}
-                    </div>
-                    <div class="d-flex gap-2">
-                        ${c.paper_url ? `<a href="${escHtml(c.paper_url)}" target="_blank" class="btn-ghost" style="padding:4px 10px;font-size:12px;"><i class="fas fa-external-link-alt"></i></a>` : ''}
-                        <button class="btn-ghost" style="padding:4px 10px;font-size:12px;" onclick="copyCitation(${i})">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="citation-code" id="citation-${i}">${escHtml(getCitationText(c, format))}</div>
-            </div>
-        `).join('');
-    }
-
-    function getCitationText(citation, format) {
-        switch (format) {
-            case 'bibtex': return citation.bibtex || '';
-            case 'apa': return citation.apa || '';
-            case 'ieee': return citation.ieee || '';
-            default: return citation.custom_format || citation.bibtex || '';
-        }
-    }
-
-    function copyCitation(index) {
-        const el = document.getElementById('citation-' + index);
-        if (!el) return;
-        navigator.clipboard.writeText(el.textContent).then(() => {
-            const btn = el.previousElementSibling.querySelector('button');
-            if (btn) {
-                const orig = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-check"></i>';
-                setTimeout(() => { btn.innerHTML = orig; }, 2000);
-            }
-        });
-    }
-
-    function updateCounts() {
-        document.getElementById('papersCount').textContent = filteredPapers.length;
-        document.getElementById('claimsCount').textContent = filteredClaims.length;
-        document.getElementById('contradictionsCount').textContent = filteredContradictions.length;
-        document.getElementById('gapsCount').textContent = filteredGaps.length;
-        document.getElementById('citationCount').textContent = filteredCitations.length;
-    }
-
-    // ── Filters ──
-    function setupResultFilters() {
-        const venues = [...new Set(allPapers.map(p => p.venue).filter(Boolean))].sort();
-        const years = [...new Set(allPapers.map(p => p.year).filter(Boolean))].sort((a, b) => b - a);
-
-        const venueEl = document.getElementById('venueResultFilter');
-        venueEl.innerHTML = '<option value="">All Venues</option>';
-        venues.forEach(v => {
-            const o = document.createElement('option');
-            o.value = v; o.textContent = v;
-            venueEl.appendChild(o);
-        });
-
-        // Also populate the form-level journal filter
-        const journalEl = document.getElementById('journalFilter');
-        journalEl.innerHTML = '<option value="">All Venues</option>';
-        venues.forEach(v => {
-            const o = document.createElement('option');
-            o.value = v; o.textContent = v;
-            journalEl.appendChild(o);
-        });
-
-        const yearEl = document.getElementById('yearResultFilter');
-        yearEl.innerHTML = '<option value="">All Years</option>';
-        years.forEach(y => {
-            const o = document.createElement('option');
-            o.value = y; o.textContent = y;
-            yearEl.appendChild(o);
-        });
-
-        document.getElementById('globalSearch').addEventListener('input', applyFilters);
-        document.getElementById('venueResultFilter').addEventListener('change', applyFilters);
-        document.getElementById('yearResultFilter').addEventListener('change', applyFilters);
-        document.getElementById('formatFilter').addEventListener('change', renderCitations);
-    }
-
-    function applyFilters() {
-        const search = document.getElementById('globalSearch').value.toLowerCase();
-        const venue = document.getElementById('venueResultFilter').value;
-        const year = document.getElementById('yearResultFilter').value;
-
-        function matchesPaper(p) {
-            if (venue && p.venue !== venue) return false;
-            if (year && String(p.year) !== year) return false;
-            if (search) {
-                const hay = [p.title, (p.authors || []).join(' '), p.venue, p.abstract].join(' ').toLowerCase();
-                if (!hay.includes(search)) return false;
-            }
-            return true;
-        }
-
-        filteredPapers = allPapers.filter(matchesPaper);
-        filteredCitations = allCitations.filter((c, i) => {
-            if (venue && allPapers[i] && allPapers[i].venue !== venue) return false;
-            if (year && c.year && String(c.year) !== year) return false;
-            if (search) {
-                const hay = [c.bibtex, c.apa, c.custom_format, c.journal_name].join(' ').toLowerCase();
-                if (!hay.includes(search)) return false;
-            }
-            return true;
-        });
-        filteredGaps = allGaps.filter(g => {
-            if (!search) return true;
-            return [g.description, g.type, ...(g.potential_questions || [])].join(' ').toLowerCase().includes(search);
-        });
-        filteredClaims = allClaims.filter(c => {
-            if (!search) return true;
-            return c.statement.toLowerCase().includes(search);
-        });
-        filteredContradictions = allContradictions.filter(c => {
-            if (!search) return true;
-            return c.explanation.toLowerCase().includes(search);
-        });
-
-        renderPapers(); renderClaims(); renderContradictions(); renderGaps(); renderCitations();
-        updateCounts();
-
-        const total = allPapers.length;
-        document.getElementById('filterStats').textContent = `Showing ${filteredPapers.length} / ${total} papers`;
-    }
-
-    function clearAllFilters() {
-        document.getElementById('globalSearch').value = '';
-        document.getElementById('venueResultFilter').value = '';
-        document.getElementById('yearResultFilter').value = '';
-        filteredPapers = [...allPapers];
-        filteredClaims = [...allClaims];
-        filteredContradictions = [...allContradictions];
-        filteredGaps = [...allGaps];
-        filteredCitations = [...allCitations];
-        renderPapers(); renderClaims(); renderContradictions(); renderGaps(); renderCitations();
-        updateCounts();
-        document.getElementById('filterStats').textContent = `All results`;
-    }
-
-    // ── Export ──
-    async function exportResults(type) {
-        if (!currentResults) { alert('No results to export. Run a research query first.'); return; }
-        try {
-            const response = await fetch('/export/' + type, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(currentResults)
-            });
-            if (!response.ok) {
-                const err = await response.json();
-                alert('Export failed: ' + (err.error || 'Unknown error'));
-                return;
-            }
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            const cd = response.headers.get('Content-Disposition') || '';
-            const match = cd.match(/filename="?([^"]+)"?/);
-            a.download = match ? match[1] : 'research_export.' + type;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        } catch (err) {
-            alert('Export error: ' + err.message);
-        }
-    }
-
-    // ── History ──
-    async function loadHistory() {
-        try {
-            const response = await fetch('/history');
-            const files = await response.json();
-            if (!files.length) {
-                document.getElementById('historySection').innerHTML = '<p style="color:var(--text-muted);font-size:13px;">No previous research sessions found.</p>';
-                return;
-            }
-            document.getElementById('historySection').innerHTML = files.map(f => `
-                <div class="history-item">
-                    <div>
-                        <div style="font-size:13.5px;font-weight:600;">${escHtml(f.topic)}</div>
-                        <div style="font-size:12px;color:var(--text-muted);">${new Date(f.generated_at).toLocaleString()} &middot; ${f.papers_count} papers &middot; ${f.claims_count} claims</div>
-                    </div>
-                    <a href="${f.download_url}" class="btn-ghost" style="font-size:12px;padding:6px 12px;" target="_blank">
-                        <i class="fas fa-download"></i> JSON
-                    </a>
-                </div>
-            `).join('');
-        } catch (err) {
-            document.getElementById('historySection').innerHTML = '<p style="color:var(--accent-red);font-size:13px;">Failed to load history.</p>';
-        }
-    }
-
-    // ── Utility ──
-    function escHtml(str) {
-        if (!str) return '';
-        return String(str)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;');
-    }
+function escHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
 </script>
-</body>
-</html>
+{% endblock %}

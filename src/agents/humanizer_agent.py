@@ -1,15 +1,13 @@
 """
 AI Writing Humanizer Agent.
-Accepts extracted text and uses Claude to remove AI writing patterns,
-producing natural prose based on the humanizer skill guidelines.
+Accepts extracted text and uses any available LLM (Anthropic, Groq, Ollama, OpenRouter)
+to remove AI writing patterns, producing natural prose.
 """
 import os
-import re
-import json
-from typing import Optional
+from src.agents.llm_client import chat, provider_info, get_provider
 
 
-HUMANIZER_SYSTEM = """You are an expert writing editor. Your job is to transform AI-generated academic text into natural, human-sounding prose.
+HUMANIZER_SYSTEM = """You are an expert writing editor. Transform AI-generated academic text into natural, human-sounding prose.
 
 Remove these AI writing patterns:
 - Inflated significance claims ("pivotal", "testament", "underscores", "highlights")
@@ -28,7 +26,7 @@ Remove these AI writing patterns:
 - Overused boldface
 - Signposting ("Let's dive in", "Here's what you need to know")
 
-Replace these with:
+Replace with:
 - Direct, specific sentences
 - Active voice with clear actors
 - Concrete details over vague claims
@@ -40,70 +38,60 @@ Return ONLY the humanized text, no meta-commentary."""
 
 
 class HumanizerAgent:
-    """Humanizes AI-generated writing using Claude."""
-
-    def __init__(self):
-        self._client = None
-        self._available = bool(os.environ.get("ANTHROPIC_API_KEY"))
-
-    def _get_client(self):
-        if self._client is None and self._available:
-            try:
-                import anthropic
-                self._client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
-            except ImportError:
-                self._available = False
-        return self._client
+    """Humanizes AI-generated writing using any available LLM."""
 
     def humanize(self, text: str, context: str = "academic") -> dict:
         """
         Humanize text. Returns dict with keys:
-          original, draft, audit_notes, final, method
+          original, draft, audit_notes, final, method, provider
         """
-        client = self._get_client()
-        if client is None:
+        info = provider_info()
+        if not info["available"]:
             return {
                 "original": text,
                 "draft": text,
-                "audit_notes": "LLM unavailable — set ANTHROPIC_API_KEY to enable humanization.",
+                "audit_notes": (
+                    "No LLM available. To enable humanization:\n"
+                    "• Set ANTHROPIC_API_KEY (get one at console.anthropic.com)\n"
+                    "• Set GROQ_API_KEY — free at console.groq.com (fast Llama 3.3 70B)\n"
+                    "• Run Ollama locally: brew install ollama && ollama serve && ollama pull llama3.2\n"
+                    "• Set OPENROUTER_API_KEY — free tier at openrouter.ai"
+                ),
                 "final": text,
                 "method": "passthrough",
+                "provider": None,
             }
 
+        provider = info["provider"]
+
         # Stage 1: Draft humanization
-        draft = self._call_llm(client, HUMANIZER_SYSTEM, text)
+        draft = self._call(f"{HUMANIZER_SYSTEM}\n\nText to humanize:\n{text}")
 
         # Stage 2: Self-audit
         audit_prompt = (
             "What makes the following text still obviously AI-generated? "
             "List only the remaining tells as short bullet points.\n\n" + draft
         )
-        audit_notes = self._call_llm(
-            client,
-            "You are a writing critic. Identify remaining AI writing patterns concisely.",
-            audit_prompt,
-        )
+        audit_notes = self._call(audit_prompt, max_tokens=800)
 
         # Stage 3: Final revision
         final_prompt = (
-            "Revise the text below to fix these remaining AI writing patterns:\n"
-            f"{audit_notes}\n\nText:\n{draft}"
+            f"{HUMANIZER_SYSTEM}\n\n"
+            f"Fix these remaining AI writing patterns in the text:\n{audit_notes}\n\nText:\n{draft}"
         )
-        final = self._call_llm(client, HUMANIZER_SYSTEM, final_prompt)
+        final = self._call(final_prompt)
 
         return {
             "original": text,
             "draft": draft,
             "audit_notes": audit_notes,
             "final": final,
-            "method": "claude",
+            "method": provider,
+            "provider": info["name"],
         }
 
-    def _call_llm(self, client, system: str, user_text: str) -> str:
-        response = client.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=4096,
-            system=system,
-            messages=[{"role": "user", "content": user_text}],
-        )
-        return response.content[0].text.strip()
+    def _call(self, prompt: str, max_tokens: int = 3000) -> str:
+        try:
+            return chat(prompt, max_tokens=max_tokens).strip()
+        except Exception as e:
+            return f"[LLM error: {e}]"

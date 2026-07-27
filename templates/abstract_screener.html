@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+
+{% block title %}Abstract Screener{% endblock %}
+{% block nav_screener %}active{% endblock %}
+
+{% block hero_gradient %}linear-gradient(135deg, #e6edf3 0%, #3fb950 55%, #58a6ff 100%){% endblock %}
+{% block hero_orb1_color %}rgba(63,185,80,0.14){% endblock %}
+{% block hero_orb2_color %}rgba(88,166,255,0.1){% endblock %}
+
+{% block hero_title %}Abstract Screener{% endblock %}
+{% block hero_subtitle %}Batch-screen abstracts for systematic reviews using PRISMA-aligned AI decisions — Include, Maybe, or Exclude.{% endblock %}
+
+{% block extra_css %}
+.decision-include { background: rgba(63,185,80,0.12); color: var(--accent-green); border: 1px solid rgba(63,185,80,0.3); }
+.decision-maybe   { background: rgba(227,179,65,0.12); color: var(--accent-orange); border: 1px solid rgba(227,179,65,0.3); }
+.decision-exclude { background: rgba(247,129,102,0.12); color: var(--accent-red); border: 1px solid rgba(247,129,102,0.3); }
+
+.decision-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 14px; font-size: 11px; font-weight: 700;
+}
+
+.abstract-card {
+    background: var(--bg-card); border: 1px solid var(--border-color);
+    border-radius: 10px; margin-bottom: 10px; overflow: hidden;
+}
+.abstract-card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; border-bottom: 1px solid var(--border-muted);
+    gap: 12px;
+}
+.abstract-card-body { padding: 12px 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+.criteria-input {
+    width: 100%; background: var(--bg-input);
+    border: 1.5px solid var(--border-color); border-radius: 10px;
+    color: var(--text-primary); font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13.5px; padding: 12px 14px; resize: vertical; min-height: 100px;
+    outline: none; transition: border-color 0.2s;
+}
+.criteria-input:focus { border-color: var(--accent-green); box-shadow: 0 0 0 3px rgba(63,185,80,0.1); }
+.criteria-input::placeholder { color: var(--text-muted); }
+
+.abstract-textarea {
+    width: 100%; background: var(--bg-input);
+    border: 1.5px solid var(--border-color); border-radius: 8px;
+    color: var(--text-primary); font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px; padding: 10px 12px; resize: vertical; min-height: 80px;
+    outline: none; transition: border-color 0.2s; margin-bottom: 4px;
+}
+.abstract-textarea:focus { border-color: var(--accent-green); }
+.abstract-textarea::placeholder { color: var(--text-muted); }
+
+.abstract-title-input {
+    width: 100%; background: var(--bg-input);
+    border: 1px solid var(--border-muted); border-radius: 6px;
+    color: var(--text-primary); font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px; padding: 7px 10px; outline: none; margin-bottom: 6px;
+}
+.abstract-title-input::placeholder { color: var(--text-muted); }
+
+.btn-screen {
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+    color: #fff; border: none; border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600;
+    padding: 11px 24px; cursor: pointer; transition: opacity 0.15s, transform 0.15s;
+    display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-screen:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-screen:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.btn-add-abstract {
+    background: rgba(63,185,80,0.1); color: var(--accent-green);
+    border: 1px dashed rgba(63,185,80,0.4); border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px;
+    padding: 10px 16px; cursor: pointer; width: 100%;
+    transition: all 0.15s; margin-top: 8px;
+}
+.btn-add-abstract:hover { background: rgba(63,185,80,0.15); }
+
+.filter-tabs { display: flex; gap: 4px; margin-bottom: 16px; flex-wrap: wrap; }
+.filter-tab {
+    padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    cursor: pointer; border: 1px solid var(--border-color); background: none;
+    color: var(--text-muted); transition: all 0.15s; font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.filter-tab.active-all { background: rgba(139,148,158,0.15); color: var(--text-primary); border-color: var(--text-muted); }
+.filter-tab.active-include { background: rgba(63,185,80,0.12); color: var(--accent-green); border-color: rgba(63,185,80,0.4); }
+.filter-tab.active-maybe { background: rgba(227,179,65,0.12); color: var(--accent-orange); border-color: rgba(227,179,65,0.4); }
+.filter-tab.active-exclude { background: rgba(247,129,102,0.12); color: var(--accent-red); border-color: rgba(247,129,102,0.4); }
+
+.abstract-entry { background: var(--bg-input); border: 1px solid var(--border-muted); border-radius: 8px; padding: 12px; margin-bottom: 8px; }
+{% endblock %}
+
+{% block content %}
+{% if not has_anthropic_key %}
+<div style="background:rgba(247,129,102,0.1);border:1px solid rgba(247,129,102,0.3);border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
+    <i class="fas fa-exclamation-triangle" style="color:var(--accent-red);font-size:18px;flex-shrink:0;"></i>
+    <div>
+        <div style="font-size:13px;font-weight:700;color:var(--accent-red);">ANTHROPIC_API_KEY not set</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">This feature requires Claude AI. Set the <code style="background:rgba(247,129,102,0.1);padding:1px 5px;border-radius:3px;">ANTHROPIC_API_KEY</code> environment variable and restart the server.</div>
+    </div>
+</div>
+{% endif %}
+<div class="glass-card">
+    <div class="card-label">Inclusion / Exclusion Criteria</div>
+    <textarea class="criteria-input" id="criteriaInput"
+        placeholder="Define your screening criteria, e.g.:&#10;INCLUDE: Studies on adult humans (18+), randomised controlled trials, published 2015–2025, English language.&#10;EXCLUDE: Animal studies, grey literature, conference abstracts without full text, non-English."></textarea>
+</div>
+
+<div class="glass-card">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <div class="card-label mb-0">Abstracts to Screen</div>
+        <span id="abstractCount" style="font-size:12px;color:var(--text-muted);">0 abstracts</span>
+    </div>
+    <div id="abstractsList"></div>
+    <button class="btn-add-abstract" onclick="addAbstractEntry()">
+        <i class="fas fa-plus"></i> Add Abstract
+    </button>
+    <div class="d-flex align-items-center gap-3 mt-4">
+        <button class="btn-screen" id="screenBtn" onclick="runScreen()">
+            <i class="fas fa-filter"></i> Screen All Abstracts
+        </button>
+        <div class="loading-bar" id="loadingBar" style="border-color:rgba(63,185,80,0.2);">
+            <div class="spinner-ring" style="border-top-color:var(--accent-green);"></div>
+            <span>Screening with AI — may take a moment...</span>
+        </div>
+    </div>
+</div>
+
+<div id="resultsArea" style="display:none;">
+    <div class="glass-card">
+        <div class="card-label mb-3">Screening Summary</div>
+        <div class="row" id="summaryStats"></div>
+        <div style="margin-top:12px;font-size:13px;color:var(--text-secondary);" id="summaryText"></div>
+    </div>
+
+    <div class="glass-card">
+        <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+            <div class="card-label mb-0">Results</div>
+            <div class="filter-tabs" id="filterTabs">
+                <button class="filter-tab active-all" onclick="setFilter('all', this)">All</button>
+                <button class="filter-tab" onclick="setFilter('INCLUDE', this)">Include</button>
+                <button class="filter-tab" onclick="setFilter('MAYBE', this)">Maybe</button>
+                <button class="filter-tab" onclick="setFilter('EXCLUDE', this)">Exclude</button>
+            </div>
+        </div>
+        <div id="resultsContainer"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let screenResults = [];
+let currentFilter = 'all';
+
+function addAbstractEntry() {
+    const list = document.getElementById('abstractsList');
+    const idx = list.children.length;
+    const div = document.createElement('div');
+    div.className = 'abstract-entry';
+    div.innerHTML = `
+        <div class="d-flex align-items-center justify-content-between mb-1">
+            <span style="font-size:11px;font-weight:700;color:var(--text-muted);">ABSTRACT ${idx + 1}</span>
+            <button onclick="this.closest('.abstract-entry').remove(); updateCount();" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:12px;"><i class="fas fa-times"></i></button>
+        </div>
+        <input type="text" class="abstract-title-input" placeholder="Title (optional)">
+        <textarea class="abstract-textarea" placeholder="Paste abstract text here..."></textarea>
+    `;
+    list.appendChild(div);
+    updateCount();
+}
+
+function updateCount() {
+    document.getElementById('abstractCount').textContent = document.getElementById('abstractsList').children.length + ' abstracts';
+}
+
+async function runScreen() {
+    const entries = document.querySelectorAll('.abstract-entry');
+    const abstracts = Array.from(entries).map(e => ({
+        title: e.querySelector('.abstract-title-input').value.trim() || '',
+        abstract: e.querySelector('.abstract-textarea').value.trim(),
+    })).filter(a => a.abstract);
+
+    if (!abstracts.length) { alert('Please add at least one abstract.'); return; }
+
+    const criteria = document.getElementById('criteriaInput').value.trim();
+    if (!criteria) { alert('Please enter inclusion/exclusion criteria.'); return; }
+
+    const btn = document.getElementById('screenBtn');
+    const loading = document.getElementById('loadingBar');
+    btn.disabled = true; loading.classList.add('active');
+    document.getElementById('resultsArea').style.display = 'none';
+
+    try {
+        const resp = await fetch('/screen-abstracts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ abstracts, criteria }),
+        });
+        const data = await resp.json();
+        if (!resp.ok) { alert('Error: ' + (data.error || 'Screening failed')); return; }
+        screenResults = data.results || [];
+        displayResults(data);
+    } catch (err) {
+        alert('Error: ' + err.message);
+    } finally {
+        btn.disabled = false; loading.classList.remove('active');
+    }
+}
+
+function displayResults(data) {
+    document.getElementById('summaryStats').innerHTML = `
+        <div class="col-4"><div class="stat-card"><div class="stat-number" style="color:var(--accent-green);">${data.include_count}</div><div class="stat-label">Include</div></div></div>
+        <div class="col-4"><div class="stat-card"><div class="stat-number" style="color:var(--accent-orange);">${data.maybe_count}</div><div class="stat-label">Maybe</div></div></div>
+        <div class="col-4"><div class="stat-card"><div class="stat-number" style="color:var(--accent-red);">${data.exclude_count}</div><div class="stat-label">Exclude</div></div></div>
+    `;
+    document.getElementById('summaryText').textContent = data.summary || '';
+
+    currentFilter = 'all';
+    renderFilteredResults();
+
+    document.getElementById('resultsArea').style.display = 'block';
+    document.getElementById('resultsArea').scrollIntoView({ behavior: 'smooth' });
+}
+
+function setFilter(f, btn) {
+    currentFilter = f;
+    document.querySelectorAll('.filter-tab').forEach(t => t.className = 'filter-tab');
+    btn.className = 'filter-tab active-' + f.toLowerCase();
+    renderFilteredResults();
+}
+
+function renderFilteredResults() {
+    const filtered = currentFilter === 'all' ? screenResults : screenResults.filter(r => r.decision === currentFilter);
+    const decConfig = {
+        INCLUDE: { cls: 'decision-include', icon: 'check-circle', label: 'Include' },
+        MAYBE:   { cls: 'decision-maybe',   icon: 'question-circle', label: 'Maybe' },
+        EXCLUDE: { cls: 'decision-exclude', icon: 'times-circle', label: 'Exclude' },
+    };
+    document.getElementById('resultsContainer').innerHTML = filtered.map(r => {
+        const dc = decConfig[r.decision] || decConfig['MAYBE'];
+        const criteria = (r.matched_criteria || []).map(c => `<span class="tag tag-green" style="font-size:10px;">${escHtml(c)}</span>`).join(' ');
+        return `<div class="abstract-card">
+            <div class="abstract-card-header">
+                <div style="flex:1;">
+                    <div style="font-size:13px;font-weight:600;color:var(--text-primary);">
+                        <span style="color:var(--text-muted);margin-right:8px;">#${r.paper_number}</span>${escHtml(r.title || 'Untitled')}
+                    </div>
+                    ${criteria ? `<div style="margin-top:4px;">${criteria}</div>` : ''}
+                </div>
+                <div style="text-align:right;flex-shrink:0;">
+                    <span class="decision-badge ${dc.cls}"><i class="fas fa-${dc.icon}"></i> ${dc.label}</span>
+                    <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">${r.confidence}% confidence</div>
+                </div>
+            </div>
+            <div class="abstract-card-body">
+                ${escHtml(r.reasoning || '')}
+                ${r.concerns ? `<div style="color:var(--accent-orange);margin-top:6px;font-size:12px;"><i class="fas fa-exclamation-triangle"></i> ${escHtml(r.concerns)}</div>` : ''}
+            </div>
+        </div>`;
+    }).join('') || '<div style="text-align:center;padding:32px;color:var(--text-muted);font-size:13px;">No results for this filter.</div>';
+}
+
+function escHtml(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// Add 3 empty entries to start
+addAbstractEntry(); addAbstractEntry(); addAbstractEntry();
+</script>
+{% endblock %}

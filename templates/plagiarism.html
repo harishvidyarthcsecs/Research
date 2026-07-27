@@ -1,0 +1,326 @@
+{% extends 'base.html' %}
+
+{% block title %}Similarity Checker{% endblock %}
+{% block nav_plagiarism %}active{% endblock %}
+
+{% block hero_gradient %}linear-gradient(135deg, #e6edf3 0%, #f78166 50%, #e3b341 100%){% endblock %}
+{% block hero_orb1_color %}rgba(247,129,102,0.14){% endblock %}
+{% block hero_orb2_color %}rgba(227,179,65,0.1){% endblock %}
+
+{% block hero_title %}Similarity Checker{% endblock %}
+{% block hero_subtitle %}Detect semantic overlap between your text and published literature using Semantic Scholar + AI analysis.{% endblock %}
+
+{% block extra_css %}
+.risk-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;
+}
+.risk-high { background: rgba(247,129,102,0.15); color: var(--accent-red); border: 1px solid rgba(247,129,102,0.3); }
+.risk-medium { background: rgba(227,179,65,0.15); color: var(--accent-orange); border: 1px solid rgba(227,179,65,0.3); }
+.risk-low { background: rgba(63,185,80,0.15); color: var(--accent-green); border: 1px solid rgba(63,185,80,0.3); }
+.risk-unknown { background: rgba(139,148,158,0.15); color: var(--text-muted); border: 1px solid rgba(139,148,158,0.3); }
+
+.match-card {
+    background: var(--bg-card); border: 1px solid var(--border-color);
+    border-radius: 10px; padding: 16px 20px; margin-bottom: 12px;
+    transition: border-color 0.2s;
+}
+.match-card:hover { border-color: var(--accent-red); }
+.match-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+.match-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+.match-assessment { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+.overlap-tag { display: inline-block; background: rgba(247,129,102,0.1); color: var(--accent-red); border-radius: 4px; padding: 2px 8px; font-size: 11px; margin: 2px; }
+
+.score-ring-wrap { text-align: center; }
+.score-ring {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 800; color: var(--text-primary);
+    border: 4px solid var(--border-color);
+    position: relative;
+}
+.score-ring.high { border-color: var(--accent-red); box-shadow: 0 0 20px rgba(247,129,102,0.2); }
+.score-ring.medium { border-color: var(--accent-orange); box-shadow: 0 0 20px rgba(227,179,65,0.2); }
+.score-ring.low { border-color: var(--accent-green); box-shadow: 0 0 20px rgba(63,185,80,0.2); }
+
+.text-input-big {
+    width: 100%; background: var(--bg-input);
+    border: 1.5px solid var(--border-color); border-radius: 10px;
+    color: var(--text-primary); font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px; padding: 14px 16px; resize: vertical; min-height: 180px;
+    outline: none; transition: border-color 0.2s;
+}
+.text-input-big:focus { border-color: var(--accent-red); box-shadow: 0 0 0 3px rgba(247,129,102,0.1); }
+.text-input-big::placeholder { color: var(--text-muted); }
+
+.btn-check {
+    background: linear-gradient(135deg, var(--accent-red), var(--accent-orange));
+    color: #fff; border: none; border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600;
+    padding: 11px 24px; cursor: pointer; transition: opacity 0.15s, transform 0.15s;
+    display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-check:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-check:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="card-label mb-0">Input Text</div>
+        <span id="wordCount" style="font-size:12px;color:var(--text-muted);">0 words</span>
+    </div>
+    <textarea class="text-input-big" id="textInput" oninput="updateWordCount()"
+        placeholder="Paste your abstract, introduction, or any section you want to check for similarity against published literature (minimum 30 words)..."></textarea>
+    <div class="mt-3">
+        <button class="btn-check" id="checkBtn" onclick="runCheck()">
+            <i class="fas fa-fingerprint"></i> Check Similarity
+        </button>
+    </div>
+    <div class="loading-bar" id="loadingBar" style="margin-top:12px;">
+        <div class="spinner-ring" style="border-top-color:var(--accent-red);"></div>
+        <div>
+            <div id="loadingMsg" style="font-weight:600;">Searching literature databases...</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Checking OpenAlex · CrossRef · Semantic Scholar — this takes 20–40 seconds</div>
+        </div>
+    </div>
+    <div id="errorBox" style="display:none;margin-top:12px;padding:12px 16px;background:rgba(247,129,102,0.1);border:1px solid rgba(247,129,102,0.3);border-radius:8px;font-size:13px;color:var(--accent-red);"></div>
+</div>
+
+<div id="resultsArea" style="display:none;">
+    <div class="glass-card">
+        <div class="row align-items-center">
+            <div class="col-md-4 score-ring-wrap">
+                <div class="score-ring" id="scoreRing">0%</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">Max Similarity Score</div>
+            </div>
+            <div class="col-md-8">
+                <div style="margin-bottom:12px;">
+                    <span class="risk-badge" id="overallRiskBadge"></span>
+                </div>
+                <div id="summaryText" style="font-size:14px;color:var(--text-secondary);line-height:1.6;"></div>
+                <div class="d-flex gap-4 mt-3" id="statsRow"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sentence-level highlight view -->
+    <div class="glass-card" id="sentenceCard" style="display:none;">
+        <div class="card-label mb-2">Sentence-Level Analysis</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Each sentence is coloured by risk level detected by AI.</div>
+        <div id="sentenceContainer" style="font-size:14px;line-height:2;"></div>
+        <div class="d-flex gap-3 mt-3" style="font-size:12px;color:var(--text-muted);">
+            <span><span style="background:rgba(247,129,102,0.3);border-radius:3px;padding:1px 6px;">■</span> High risk</span>
+            <span><span style="background:rgba(227,179,65,0.3);border-radius:3px;padding:1px 6px;">■</span> Medium risk</span>
+            <span><span style="background:rgba(63,185,80,0.15);border-radius:3px;padding:1px 6px;">■</span> Low risk</span>
+        </div>
+    </div>
+
+    <div class="glass-card">
+        <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+            <div class="card-label mb-0">Similar Papers Found</div>
+            <div id="sourceFilterRow" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+        </div>
+        <div id="matchesContainer"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function updateWordCount() {
+    const text = document.getElementById('textInput').value.trim();
+    const words = text ? text.split(/\s+/).length : 0;
+    const el = document.getElementById('wordCount');
+    el.textContent = words + ' words';
+    el.style.color = words >= 30 ? 'var(--accent-green)' : 'var(--accent-red)';
+}
+
+function showError(msg) {
+    const box = document.getElementById('errorBox');
+    box.textContent = msg;
+    box.style.display = 'block';
+}
+
+function hideError() {
+    document.getElementById('errorBox').style.display = 'none';
+}
+
+async function runCheck() {
+    const text = document.getElementById('textInput').value.trim();
+    if (!text) { showError('Please paste some text to check.'); return; }
+    const words = text.split(/\s+/).length;
+    if (words < 30) { showError('Please provide at least 30 words for meaningful analysis. Current: ' + words + ' words.'); return; }
+
+    const btn = document.getElementById('checkBtn');
+    const loading = document.getElementById('loadingBar');
+    hideError();
+    btn.disabled = true;
+    loading.classList.add('active');
+    document.getElementById('resultsArea').style.display = 'none';
+
+    const msgs = [
+        'Querying OpenAlex database...',
+        'Querying CrossRef database...',
+        'Querying Semantic Scholar...',
+        'Running AI similarity analysis...',
+        'Scoring matches...',
+    ];
+    let mi = 0;
+    const msgEl = document.getElementById('loadingMsg');
+    const ticker = setInterval(() => { msgEl.textContent = msgs[mi++ % msgs.length]; }, 5000);
+
+    try {
+        const resp = await fetch('/check-plagiarism', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text }),
+        });
+        const data = await resp.json();
+        if (!resp.ok) { showError('Error: ' + (data.error || 'Check failed')); return; }
+        displayResults(data);
+    } catch (err) {
+        showError('Network error: ' + err.message + '. Make sure the server is running.');
+    } finally {
+        clearInterval(ticker);
+        btn.disabled = false;
+        loading.classList.remove('active');
+    }
+}
+
+function displayResults(data) {
+    const risk  = (data.overall_risk || 'UNKNOWN').toUpperCase();
+    const score = data.overall_score || 0;
+
+    // Score ring
+    const ring = document.getElementById('scoreRing');
+    ring.textContent = score + '%';
+    ring.className = 'score-ring ' + risk.toLowerCase();
+
+    // Risk badge
+    const badge = document.getElementById('overallRiskBadge');
+    const riskClass = { HIGH:'risk-high', MEDIUM:'risk-medium', LOW:'risk-low', UNKNOWN:'risk-unknown' };
+    const riskIcon  = { HIGH:'exclamation-triangle', MEDIUM:'exclamation-circle', LOW:'check-circle', UNKNOWN:'question-circle' };
+    badge.className = 'risk-badge ' + (riskClass[risk] || 'risk-unknown');
+    badge.innerHTML = `<i class="fas fa-${riskIcon[risk] || 'question-circle'}"></i> ${risk} RISK`;
+
+    // AI badge
+    const aiNote = data.ai_analyzed
+        ? `<span class="tag tag-green" style="font-size:11px;"><i class="fas fa-robot"></i> AI-Analyzed</span>`
+        : `<span class="tag tag-orange" style="font-size:11px;"><i class="fas fa-keyboard"></i> Keyword Match</span>`;
+    document.getElementById('summaryText').innerHTML =
+        `<div style="margin-bottom:8px;">${aiNote}</div>${escHtml(data.summary || '')}`;
+
+    // Stats
+    document.getElementById('statsRow').innerHTML = `
+        <div><div style="font-size:22px;font-weight:800;color:var(--text-primary);">${data.papers_checked || 0}</div><div style="font-size:12px;color:var(--text-muted);">Papers Checked</div></div>
+        <div><div style="font-size:22px;font-weight:800;color:var(--text-primary);">${(data.matches||[]).length}</div><div style="font-size:12px;color:var(--text-muted);">Matches Found</div></div>
+        <div><div style="font-size:22px;font-weight:800;color:var(--text-primary);">${data.input_length || 0}</div><div style="font-size:12px;color:var(--text-muted);">Words Analyzed</div></div>
+    `;
+
+    // Sentence highlights (only when AI analyzed)
+    const sentences = data.sentences || [];
+    if (sentences.length && data.ai_analyzed) {
+        const sentBg = {
+            HIGH:    'background:rgba(247,129,102,0.25);border-bottom:2px solid var(--accent-red);',
+            MEDIUM:  'background:rgba(227,179,65,0.2);border-bottom:2px solid var(--accent-orange);',
+            LOW:     'background:rgba(63,185,80,0.1);border-bottom:1px solid var(--accent-green);',
+            UNKNOWN: '',
+        };
+        document.getElementById('sentenceContainer').innerHTML = sentences.map(s => {
+            const bg = sentBg[s.risk] || '';
+            const title = s.risk !== 'LOW' && s.risk !== 'UNKNOWN'
+                ? ` title="${s.risk} RISK — flagged by AI"`  : '';
+            return `<span style="${bg}border-radius:3px;padding:2px 3px;margin:2px 0;display:inline;"${title}>${escHtml(s.text)} </span>`;
+        }).join(' ');
+        document.getElementById('sentenceCard').style.display = 'block';
+    } else {
+        document.getElementById('sentenceCard').style.display = 'none';
+    }
+
+    // Source filter chips
+    const matches = data.matches || [];
+    const sources = [...new Set(matches.map(m => m.source).filter(Boolean))];
+    document.getElementById('sourceFilterRow').innerHTML = sources.map(s =>
+        `<button class="filter-chip active" data-src="${s}" onclick="toggleSource('${s}',this)"
+            style="font-size:11px;padding:3px 10px;border-radius:12px;border:1px solid var(--border-color);
+            background:var(--bg-card-hover);color:var(--text-secondary);cursor:pointer;font-family:inherit;">
+            ${s}
+        </button>`
+    ).join('');
+
+    renderMatches(matches);
+
+    document.getElementById('resultsArea').style.display = 'block';
+    document.getElementById('resultsArea').scrollIntoView({ behavior: 'smooth' });
+}
+
+let _allMatches = [];
+function renderMatches(matches) {
+    _allMatches = matches;
+    const activeSourceBtns = document.querySelectorAll('.filter-chip.active');
+    const activeSrcs = activeSourceBtns.length
+        ? new Set([...activeSourceBtns].map(b => b.dataset.src))
+        : null;
+    const filtered = activeSrcs ? matches.filter(m => activeSrcs.has(m.source)) : matches;
+
+    if (!filtered.length) {
+        document.getElementById('matchesContainer').innerHTML =
+            '<div style="color:var(--text-muted);text-align:center;padding:32px;font-size:13px;"><i class="fas fa-check-circle" style="color:var(--accent-green);font-size:2rem;margin-bottom:10px;display:block;"></i>No significant matches found.</div>';
+        return;
+    }
+
+    const rc = { HIGH:'risk-high', MEDIUM:'risk-medium', LOW:'risk-low' };
+    document.getElementById('matchesContainer').innerHTML = filtered.map(m => {
+        const authors = (m.authors || []).slice(0,3).join(', ') || 'Unknown authors';
+        const tags = (m.overlapping_ideas || []).map(t => `<span class="overlap-tag">${escHtml(t)}</span>`).join('');
+        const safeLink = safeUrl(m.url);
+        const link = safeLink
+            ? `<a href="${escHtml(safeLink)}" target="_blank" rel="noopener noreferrer"
+                style="color:var(--accent-blue);font-size:11px;margin-left:8px;">
+                View Paper <i class="fas fa-external-link-alt"></i></a>` : '';
+        const srcBadge = m.source
+            ? `<span style="font-size:10px;padding:1px 7px;border-radius:10px;background:var(--bg-card-hover);
+                color:var(--text-muted);border:1px solid var(--border-muted);margin-left:6px;">${m.source}</span>` : '';
+        const sentMatches = (m.matching_sentences || []).join(', ');
+        return `<div class="match-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div style="flex:1;">
+                    <div class="match-title">${escHtml(m.title || 'Unknown title')}${link}</div>
+                    <div class="match-meta">
+                        ${escHtml(authors)} · ${m.year || 'N/A'}
+                        ${m.venue ? '· ' + escHtml(m.venue) : ''}
+                        ${srcBadge}
+                        ${m.citation_count ? `<span style="font-size:10px;color:var(--text-muted);margin-left:6px;"><i class="fas fa-quote-right"></i> ${m.citation_count} citations</span>` : ''}
+                    </div>
+                </div>
+                <div style="text-align:right;flex-shrink:0;margin-left:12px;">
+                    <div style="font-size:22px;font-weight:800;color:var(--text-primary);">${m.similarity_score}%</div>
+                    <span class="risk-badge ${rc[m.risk_level]||'risk-low'}" style="font-size:10px;">${m.risk_level}</span>
+                </div>
+            </div>
+            ${m.assessment ? `<div class="match-assessment" style="margin-top:10px;">${escHtml(m.assessment)}</div>` : ''}
+            ${sentMatches ? `<div style="font-size:11px;color:var(--text-muted);margin-top:6px;"><i class="fas fa-highlighter" style="margin-right:4px;"></i>Sentences: ${escHtml(sentMatches)}</div>` : ''}
+            ${tags ? `<div style="margin-top:8px;">${tags}</div>` : ''}
+        </div>`;
+    }).join('');
+}
+
+function toggleSource(src, btn) {
+    btn.classList.toggle('active');
+    btn.style.background = btn.classList.contains('active') ? 'rgba(88,166,255,0.12)' : 'var(--bg-card-hover)';
+    btn.style.color      = btn.classList.contains('active') ? 'var(--accent-blue)' : 'var(--text-secondary)';
+    btn.style.borderColor= btn.classList.contains('active') ? 'var(--accent-blue)' : 'var(--border-color)';
+    renderMatches(_allMatches);
+}
+
+function escHtml(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function safeUrl(url) {
+    if (!url) return '';
+    if (!/^https?:\/\/.{4}/i.test(url)) return '';
+    if (/\.(pdf|xls|xlsx|doc|docx|zip|rar|gz|exe|dmg)(\?.*)?$/i.test(url)) return '';
+    return url;
+}
+</script>
+{% endblock %}

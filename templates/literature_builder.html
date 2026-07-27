@@ -1,1059 +1,267 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Literature Builder - Research Agent</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-primary: #0d1117;
-            --bg-card: #161b22;
-            --bg-card-hover: #1c2333;
-            --bg-input: #0d1117;
-            --accent-blue: #58a6ff;
-            --accent-green: #3fb950;
-            --accent-red: #f78166;
-            --accent-orange: #e3b341;
-            --accent-purple: #bc8cff;
-            --text-primary: #e6edf3;
-            --text-secondary: #8b949e;
-            --text-muted: #656d76;
-            --border-color: #30363d;
-            --border-muted: #21262d;
-            --sidebar-width: 240px;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* ── Sidebar ── */
-        #sidebar {
-            position: fixed;
-            top: 0; left: 0;
-            width: var(--sidebar-width);
-            height: 100vh;
-            background: var(--bg-card);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            z-index: 1000;
-            transition: transform 0.3s ease;
-        }
-
-        .sidebar-brand {
-            padding: 20px 16px 16px;
-            border-bottom: 1px solid var(--border-muted);
-        }
-
-        .sidebar-brand h6 {
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        .sidebar-brand p {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin: 0;
-        }
-
-        .sidebar-logo {
-            width: 32px; height: 32px;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-            border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-
-        .sidebar-nav {
-            flex: 1;
-            padding: 12px 8px;
-            overflow-y: auto;
-        }
-
-        .nav-section-label {
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            padding: 8px 8px 4px;
-        }
-
-        .nav-link-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 10px;
-            border-radius: 6px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 13.5px;
-            font-weight: 500;
-            transition: all 0.15s ease;
-            margin-bottom: 2px;
-        }
-
-        .nav-link-item:hover {
-            background: var(--bg-card-hover);
-            color: var(--text-primary);
-        }
-
-        .nav-link-item.active {
-            background: rgba(88, 166, 255, 0.12);
-            color: var(--accent-blue);
-        }
-
-        .nav-link-item .nav-icon {
-            width: 18px;
-            text-align: center;
-            font-size: 13px;
-        }
-
-        .sidebar-footer {
-            padding: 12px 8px;
-            border-top: 1px solid var(--border-muted);
-        }
-
-        /* ── Main content ── */
-        #main-content {
-            margin-left: var(--sidebar-width);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* ── Hero Header ── */
-        .hero-header {
-            padding: 40px 40px 32px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-header::before {
-            content: '';
-            position: absolute;
-            top: -60px; left: -60px;
-            width: 300px; height: 300px;
-            background: radial-gradient(circle, rgba(63,185,80,0.12) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        .hero-title {
-            font-size: 28px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #e6edf3 0%, #3fb950 50%, #58a6ff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1.2;
-            margin-bottom: 8px;
-        }
-
-        .hero-subtitle {
-            font-size: 14px;
-            color: var(--text-secondary);
-            max-width: 520px;
-        }
-
-        /* ── Content area ── */
-        .content-area {
-            flex: 1;
-            padding: 0 40px 40px;
-        }
-
-        /* ── Cards ── */
-        .glass-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 24px;
-            transition: border-color 0.2s ease;
-        }
-
-        .card-label {
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-        }
-
-        /* ── Inputs ── */
-        .research-input {
-            width: 100%;
-            background: var(--bg-input);
-            border: 1.5px solid var(--border-color);
-            border-radius: 10px;
-            color: var(--text-primary);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 15px;
-            padding: 14px 16px;
-            outline: none;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .research-input:focus {
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 0 3px rgba(88,166,255,0.12);
-        }
-
-        .research-input::placeholder { color: var(--text-muted); }
-
-        .form-control-dark, .form-select-dark {
-            background: var(--bg-input);
-            border: 1px solid var(--border-color);
-            border-radius: 7px;
-            color: var(--text-primary);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 13px;
-            padding: 8px 12px;
-            outline: none;
-            transition: border-color 0.2s;
-            width: 100%;
-        }
-
-        .form-control-dark:focus, .form-select-dark:focus {
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 0 3px rgba(88,166,255,0.1);
-            background: var(--bg-input);
-            color: var(--text-primary);
-        }
-
-        .form-control-dark::placeholder { color: var(--text-muted); }
-
-        .form-select-dark {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b949e' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            padding-right: 30px;
-        }
-
-        /* Bootstrap form overrides */
-        .form-control, .form-select {
-            background: var(--bg-input);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-
-        .form-control:focus, .form-select:focus {
-            background: var(--bg-input);
-            border-color: var(--accent-blue);
-            color: var(--text-primary);
-            box-shadow: 0 0 0 3px rgba(88,166,255,0.12);
-        }
-
-        .form-control::placeholder { color: var(--text-muted); }
-        .form-label { color: var(--text-secondary); font-size: 13px; font-weight: 500; }
-        .form-text { color: var(--text-muted); font-size: 12px; }
-
-        /* ── Checkboxes ── */
-        .form-check-input {
-            background-color: var(--bg-input);
-            border-color: var(--border-color);
-        }
-
-        .form-check-input:checked {
-            background-color: var(--accent-green);
-            border-color: var(--accent-green);
-        }
-
-        .form-check-label { color: var(--text-secondary); font-size: 13px; }
-
-        /* ── Buttons ── */
-        .btn-primary-dark {
-            background: var(--accent-blue);
-            color: #0d1117;
-            border: none;
-            border-radius: 8px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            padding: 10px 20px;
-            cursor: pointer;
-            transition: opacity 0.15s ease, transform 0.15s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-        }
-
-        .btn-primary-dark:hover { opacity: 0.88; transform: translateY(-1px); }
-
-        .btn-ghost {
-            background: transparent;
-            color: var(--text-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 13px;
-            font-weight: 500;
-            padding: 8px 16px;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            text-decoration: none;
-        }
-
-        .btn-ghost:hover {
-            background: var(--bg-card-hover);
-            color: var(--text-primary);
-            border-color: var(--accent-blue);
-        }
-
-        .btn-export {
-            background: rgba(63,185,80,0.12);
-            color: var(--accent-green);
-            border: 1px solid rgba(63,185,80,0.25);
-            border-radius: 8px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 13px;
-            font-weight: 600;
-            padding: 8px 14px;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-export:hover { background: rgba(63,185,80,0.2); }
-
-        /* Bootstrap button overrides */
-        .btn-success { background: var(--accent-green); border-color: var(--accent-green); color: #0d1117; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; }
-        .btn-success:hover { background: #4ac959; border-color: #4ac959; color: #0d1117; }
-        .btn-primary { background: var(--accent-blue); border-color: var(--accent-blue); color: #0d1117; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; }
-        .btn-primary:hover { background: #79bbff; border-color: #79bbff; color: #0d1117; }
-        .btn-secondary { background: var(--bg-card-hover); border-color: var(--border-color); color: var(--text-secondary); font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500; }
-        .btn-secondary:hover { background: var(--border-color); color: var(--text-primary); border-color: var(--border-color); }
-
-        /* ── Filter section ── */
-        .filter-box {
-            background: var(--bg-input);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .filter-box-title {
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0.8px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* ── Stat cards ── */
-        .stat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 32px;
-            font-weight: 800;
-            line-height: 1;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 6px;
-        }
-
-        /* ── Outline ── */
-        .outline-box {
-            background: var(--bg-input);
-            border: 1px solid var(--border-color);
-            border-left: 3px solid var(--accent-blue);
-            border-radius: 0 10px 10px 0;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .outline-box h5 {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 12px;
-        }
-
-        .outline-box p {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-        }
-
-        .outline-box ol {
-            padding-left: 20px;
-            margin: 0;
-        }
-
-        .outline-box ol li {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
-            line-height: 1.5;
-        }
-
-        .outline-box ol li strong {
-            color: var(--text-primary);
-        }
-
-        /* ── Section content ── */
-        .section-content {
-            background: var(--bg-input);
-            border: 1px solid var(--border-muted);
-            border-left: 3px solid var(--accent-purple);
-            border-radius: 0 10px 10px 0;
-            padding: 20px;
-            margin-bottom: 14px;
-        }
-
-        .section-content h5 {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 12px;
-        }
-
-        .section-content p {
-            font-size: 13.5px;
-            color: var(--text-secondary);
-            line-height: 1.7;
-            margin-bottom: 10px;
-        }
-
-        .section-content h6 {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--accent-blue);
-            margin: 14px 0 8px;
-        }
-
-        .word-count {
-            font-size: 11px;
-            font-weight: 400;
-            color: var(--text-muted);
-            font-style: italic;
-        }
-
-        /* ── Bibliography ── */
-        .bibliography-entry {
-            background: var(--bg-input);
-            border: 1px solid var(--border-muted);
-            border-left: 3px solid var(--accent-green);
-            border-radius: 0 8px 8px 0;
-            padding: 10px 14px;
-            margin-bottom: 8px;
-            font-size: 13px;
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-
-        .bibliography-entry small {
-            color: var(--text-muted);
-            font-size: 11px;
-        }
-
-        /* ── Badges ── */
-        .tag {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .tag-blue { background: rgba(88,166,255,0.15); color: var(--accent-blue); }
-        .tag-green { background: rgba(63,185,80,0.15); color: var(--accent-green); }
-        .tag-orange { background: rgba(227,179,65,0.15); color: var(--accent-orange); }
-        .tag-purple { background: rgba(188,140,255,0.15); color: var(--accent-purple); }
-
-        /* Bootstrap badge overrides */
-        .badge.bg-success { background: rgba(63,185,80,0.2) !important; color: var(--accent-green); border: 1px solid rgba(63,185,80,0.3); }
-        .badge.bg-warning { background: rgba(227,179,65,0.2) !important; color: var(--accent-orange); border: 1px solid rgba(227,179,65,0.3); }
-        .badge.bg-info { background: rgba(88,166,255,0.2) !important; color: var(--accent-blue); border: 1px solid rgba(88,166,255,0.3); }
-        .badge.bg-primary { background: rgba(88,166,255,0.2) !important; color: var(--accent-blue); border: 1px solid rgba(88,166,255,0.3); }
-
-        .sa-badge {
-            background: rgba(227,179,65,0.2);
-            color: var(--accent-orange);
-            font-size: 0.7em;
-            padding: 2px 6px;
-            border-radius: 10px;
-            margin-left: 5px;
-            border: 1px solid rgba(227,179,65,0.3);
-        }
-
-        /* ── Loading ── */
-        .loading-spinner {
-            display: none;
-            padding: 16px;
-            background: rgba(88,166,255,0.06);
-            border: 1px solid rgba(88,166,255,0.2);
-            border-radius: 10px;
-            margin-top: 16px;
-        }
-
-        .spinner-ring {
-            width: 20px; height: 20px;
-            border: 2px solid var(--border-color);
-            border-top-color: var(--accent-blue);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            flex-shrink: 0;
-        }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Bootstrap spinner override */
-        .spinner-border { border-color: var(--border-color); border-top-color: var(--accent-green); }
-        .spinner-border.text-success { border-top-color: var(--accent-green); }
-
-        /* ── Export bar ── */
-        .export-bar {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-
-        /* ── Slide-in animation ── */
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .slide-in { animation: slideIn 0.35s ease forwards; }
-
-        /* ── Responsive ── */
-        @media (max-width: 768px) {
-            #sidebar { transform: translateX(-100%); }
-            #sidebar.open { transform: translateX(0); }
-            #main-content { margin-left: 0; }
-            .hero-header, .content-area { padding-left: 20px; padding-right: 20px; }
-            .hero-title { font-size: 22px; }
-        }
-
-        /* Mobile hamburger */
-        .hamburger {
-            display: none;
-            position: fixed;
-            top: 14px; left: 14px;
-            z-index: 1100;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            width: 36px; height: 36px;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--text-secondary);
-        }
-
-        @media (max-width: 768px) { .hamburger { display: flex; } }
-
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
-        }
-
-        .sidebar-overlay.active { display: block; }
-
-        /* ── Section heading ── */
-        .section-heading {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-    </style>
-</head>
-<body>
-
-<!-- Mobile hamburger -->
-<button class="hamburger" id="hamburgerBtn" aria-label="Toggle sidebar">
-    <i class="fas fa-bars"></i>
-</button>
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-<!-- Sidebar -->
-<aside id="sidebar">
-    <div class="sidebar-brand">
-        <div class="sidebar-logo"><i class="fas fa-atom"></i></div>
-        <h6>Research Agent</h6>
-        <p>AI-Powered Research</p>
-    </div>
-
-    <nav class="sidebar-nav">
-        <div class="nav-section-label">Tools</div>
-
-        <a href="/" class="nav-link-item">
-            <span class="nav-icon"><i class="fas fa-search"></i></span>
-            Research
-        </a>
-        <a href="/literature" class="nav-link-item active">
-            <span class="nav-icon"><i class="fas fa-book-open"></i></span>
-            Literature Builder
-        </a>
-        <a href="/validator" class="nav-link-item">
-            <span class="nav-icon"><i class="fas fa-check-double"></i></span>
-            Reference Validator
-        </a>
-        <a href="/citations" class="nav-link-item">
-            <span class="nav-icon"><i class="fas fa-quote-right"></i></span>
-            Enhanced Citations
-        </a>
-
-        <div class="nav-section-label" style="margin-top:12px;">Writing</div>
-
-        <a href="/humanizer" class="nav-link-item">
-            <span class="nav-icon"><i class="fas fa-feather-alt"></i></span>
-            Humanizer
-        </a>
-        <a href="/latex-reorder" class="nav-link-item">
-            <span class="nav-icon"><i class="fas fa-sort-numeric-down"></i></span>
-            LaTeX Reorder
-        </a>
-    </nav>
-
-    <div class="sidebar-footer">
-        <a href="/test" class="nav-link-item" style="font-size:12px;">
-            <span class="nav-icon"><i class="fas fa-heartbeat"></i></span>
-            System Status
-        </a>
-    </div>
-</aside>
-
-<!-- Main content -->
-<div id="main-content">
-
-    <!-- Hero header -->
-    <div class="hero-header">
-        <p class="hero-title">Literature Builder</p>
-        <p class="hero-subtitle">Transform research claims into structured academic literature with proper citations and Q-ranking analysis.</p>
-    </div>
-
-    <div class="content-area">
-
-        <!-- Generation form -->
-        <div class="glass-card mb-4">
-            <div class="card-label">Generate Academic Literature</div>
-            <form id="literatureForm">
-                <div class="mb-3">
-                    <label for="topic" class="form-label">Research Topic</label>
-                    <input type="text" class="research-input" id="topic"
-                           placeholder="e.g., Machine Learning for Climate Change Prediction"
-                           required>
-                    <div class="form-text mt-1">Enter the research topic for literature generation</div>
-                </div>
-
-                <!-- Filters Section -->
-                <div class="filter-box">
-                    <div class="filter-box-title"><i class="fas fa-filter"></i> Literature Filters</div>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <div class="mb-2" style="font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.6px;">Q-Rankings to Include</div>
-                            <div class="d-flex flex-column gap-2">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="includeQ1" checked>
-                                    <label class="form-check-label" for="includeQ1">
-                                        Q1 Papers <span class="tag tag-green ms-1">High Impact</span>
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="includeQ2" checked>
-                                    <label class="form-check-label" for="includeQ2">
-                                        Q2 Papers <span class="tag tag-orange ms-1">Medium Impact</span>
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="includeQ3" checked>
-                                    <label class="form-check-label" for="includeQ3">
-                                        Q3 Papers <span class="tag tag-blue ms-1">Standard</span>
-                                    </label>
-                                </div>
-                            </div>
+{% extends 'base.html' %}
+
+{% block title %}Literature Builder{% endblock %}
+{% block nav_literature %}active{% endblock %}
+
+{% block hero_gradient %}linear-gradient(135deg, #e6edf3 0%, #3fb950 50%, #58a6ff 100%){% endblock %}
+{% block hero_orb1_color %}rgba(63,185,80,0.15){% endblock %}
+{% block hero_orb2_color %}rgba(88,166,255,0.1){% endblock %}
+
+{% block hero_title %}Literature Builder{% endblock %}
+{% block hero_subtitle %}Transform research claims into structured academic literature with proper citations and Q-ranking analysis.{% endblock %}
+
+{% block extra_css %}
+.filter-box {
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.filter-box-title {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.8px;
+    text-transform: uppercase; color: var(--text-muted);
+    margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+}
+.sa-badge {
+    background: rgba(227,179,65,0.2); color: var(--accent-orange);
+    font-size: 10px; font-weight: 700; padding: 2px 7px;
+    border-radius: 4px; border: 1px solid rgba(227,179,65,0.3);
+}
+.outline-box {
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-left: 3px solid var(--accent-blue);
+    border-radius: 0 10px 10px 0;
+    padding: 20px;
+}
+.outline-box h5 { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+.outline-box p  { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+.outline-box ol { padding-left: 20px; }
+.outline-box ol li { font-size: 13.5px; color: var(--text-secondary); margin-bottom: 6px; }
+.section-content {
+    background: var(--bg-input);
+    border: 1px solid var(--border-muted);
+    border-left: 3px solid var(--accent-green);
+    border-radius: 0 10px 10px 0;
+    padding: 20px; margin-bottom: 14px;
+}
+.section-content h5 { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; }
+.section-content p  { font-size: 13.5px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+.section-content h6 { font-size: 13px; font-weight: 700; color: var(--accent-blue); margin: 14px 0 6px; }
+.word-count { font-size: 12px; color: var(--text-muted); font-weight: 400; }
+.bibliography-entry {
+    padding: 10px 14px; margin-bottom: 8px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-muted);
+    border-left: 3px solid var(--accent-green);
+    border-radius: 0 8px 8px 0;
+    font-size: 13px; color: var(--text-secondary); line-height: 1.6;
+}
+.bibliography-entry small { color: var(--text-muted); margin-right: 8px; }
+.section-heading {
+    font-size: 13px; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.8px;
+    margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+}
+.section-heading::after { content: ''; flex: 1; height: 1px; background: var(--border-muted); }
+#loadingSpinner {
+    display: none;
+    background: rgba(63,185,80,0.06);
+    border: 1px solid rgba(63,185,80,0.2);
+    border-radius: 10px;
+    padding: 16px; margin-top: 16px;
+}
+.export-bar { display: flex; gap: 10px; flex-wrap: wrap; }
+{% endblock %}
+
+{% block content %}
+<!-- Generation form -->
+<div class="glass-card">
+    <div class="card-label">Generate Academic Literature</div>
+    <form id="literatureForm">
+        <div class="mb-3">
+            <label for="topic" class="form-label" style="font-size:12px;font-weight:600;color:var(--text-secondary);">Research Topic</label>
+            <input type="text" class="research-input" id="topic"
+                   placeholder="e.g., Machine Learning for Climate Change Prediction" required
+                   style="min-height:unset;resize:none;">
+            <div class="form-text mt-1">Enter the research topic for literature generation</div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-box">
+            <div class="filter-box-title"><i class="fas fa-filter"></i> Literature Filters</div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="mb-2" style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.6px;">Q-Rankings to Include</div>
+                    <div class="d-flex flex-column gap-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="includeQ1" checked>
+                            <label class="form-check-label" for="includeQ1">Q1 Papers <span class="tag tag-green ms-1">High Impact</span></label>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-2" style="font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.6px;">Additional Options</div>
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="includeSA" checked>
-                                <label class="form-check-label" for="includeSA">
-                                    Include SA Papers <span class="sa-badge">SA</span>
-                                </label>
-                            </div>
-                            <div class="mb-2">
-                                <label for="minYear" class="form-label">Minimum Year</label>
-                                <input type="number" class="form-control-dark" id="minYear" placeholder="2020" style="width:120px;">
-                            </div>
-                            <div class="mb-2">
-                                <label for="maxSections" class="form-label">Max Sections</label>
-                                <input type="number" class="form-control-dark" id="maxSections" value="10" min="1" max="20" style="width:120px;">
-                            </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="includeQ2" checked>
+                            <label class="form-check-label" for="includeQ2">Q2 Papers <span class="tag tag-orange ms-1">Medium Impact</span></label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="includeQ3" checked>
+                            <label class="form-check-label" for="includeQ3">Q3 Papers <span class="tag tag-blue ms-1">Standard</span></label>
                         </div>
                     </div>
                 </div>
-
-                <button type="submit" class="btn-primary-dark">
-                    <i class="fas fa-magic"></i> Generate Literature
-                </button>
-            </form>
-
-            <!-- Loading Spinner -->
-            <div class="loading-spinner mt-3" id="loadingSpinner">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="spinner-ring"></div>
-                    <div>
-                        <div style="font-size:13.5px; font-weight:600; color:var(--accent-green);">Generating Literature...</div>
-                        <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Analyzing claims and building structured literature</div>
+                <div class="col-md-6">
+                    <div class="mb-2" style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.6px;">Additional Options</div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="includeSA" checked>
+                        <label class="form-check-label" for="includeSA">Include SA Papers <span class="sa-badge">SA</span></label>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label" style="font-size:12px;color:var(--text-muted);">Minimum Year</label>
+                        <input type="number" class="form-control-dark" id="minYear" placeholder="2020" style="width:120px;">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label" style="font-size:12px;color:var(--text-muted);">Max Sections</label>
+                        <input type="number" class="form-control-dark" id="maxSections" value="10" min="1" max="20" style="width:120px;">
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Results Section -->
-        <div id="results" style="display: none;" class="slide-in">
+        <button type="submit" class="btn-primary-dark">
+            <i class="fas fa-magic"></i> Generate Literature
+        </button>
+    </form>
 
-            <!-- Statistics -->
-            <div class="section-heading"><i class="fas fa-chart-bar"></i> Literature Statistics</div>
-            <div class="row g-3 mb-4" id="statsSection"></div>
-
-            <!-- Outline -->
-            <div class="outline-box mb-4">
-                <div class="section-heading mb-3"><i class="fas fa-list-ol"></i> Literature Outline</div>
-                <div id="outlineSection"></div>
-            </div>
-
-            <!-- Literature Sections -->
-            <div class="section-heading mb-3"><i class="fas fa-book"></i> Generated Literature</div>
-            <div id="sectionsContainer" class="mb-4"></div>
-
-            <!-- Bibliography -->
-            <div class="glass-card mb-4">
-                <div class="card-label">Bibliography</div>
-                <div id="bibliographySection"></div>
-            </div>
-
-            <!-- Download Section -->
-            <div class="glass-card">
-                <div class="card-label">Download Literature</div>
-                <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Download the generated literature in various formats:</p>
-                <div class="export-bar">
-                    <button class="btn-export" onclick="downloadLiterature('markdown')">
-                        <i class="fas fa-file-alt"></i> Download Markdown
-                    </button>
-                    <button class="btn-export" style="background:rgba(88,166,255,0.1);color:var(--accent-blue);border-color:rgba(88,166,255,0.25);" onclick="downloadLiterature('latex')">
-                        <i class="fas fa-file-code"></i> Download LaTeX
-                    </button>
-                    <button class="btn-export" style="background:rgba(227,179,65,0.1);color:var(--accent-orange);border-color:rgba(227,179,65,0.25);" onclick="downloadLiterature('json')">
-                        <i class="fas fa-file-download"></i> Download JSON
-                    </button>
-                </div>
+    <div id="loadingSpinner">
+        <div class="d-flex align-items-center gap-3">
+            <div class="spinner-ring" style="border-top-color:var(--accent-green);"></div>
+            <div>
+                <div style="font-size:13.5px;font-weight:600;color:var(--accent-green);">Generating Literature...</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Analyzing claims and building structured literature</div>
             </div>
         </div>
-
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Results -->
+<div id="results" style="display:none;">
+    <div class="section-heading"><i class="fas fa-chart-bar"></i> Statistics</div>
+    <div class="row g-3 mb-4" id="statsSection"></div>
+
+    <div class="outline-box mb-4" id="outlineSection"></div>
+
+    <div class="section-heading"><i class="fas fa-book"></i> Generated Literature</div>
+    <div id="sectionsContainer" class="mb-4"></div>
+
+    <div class="glass-card">
+        <div class="card-label">Bibliography</div>
+        <div id="bibliographySection"></div>
+    </div>
+
+    <div class="glass-card">
+        <div class="card-label">Download</div>
+        <div class="export-bar">
+            <button class="btn-export" onclick="downloadLiterature('markdown')"><i class="fas fa-file-alt"></i> Markdown</button>
+            <button class="btn-export" style="background:rgba(88,166,255,0.1);color:var(--accent-blue);border-color:rgba(88,166,255,0.25);" onclick="downloadLiterature('latex')"><i class="fas fa-file-code"></i> LaTeX</button>
+            <button class="btn-export" style="background:rgba(227,179,65,0.1);color:var(--accent-orange);border-color:rgba(227,179,65,0.25);" onclick="downloadLiterature('json')"><i class="fas fa-file-download"></i> JSON</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
 <script>
-    let currentLiterature = null;
+let currentLiterature = null;
 
-    // ── Sidebar toggle ──
-    document.getElementById('hamburgerBtn').addEventListener('click', () => {
-        document.getElementById('sidebar').classList.toggle('open');
-        document.getElementById('sidebarOverlay').classList.toggle('active');
-    });
-    document.getElementById('sidebarOverlay').addEventListener('click', () => {
-        document.getElementById('sidebar').classList.remove('open');
-        document.getElementById('sidebarOverlay').classList.remove('active');
-    });
+document.getElementById('literatureForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const topic = document.getElementById('topic').value.trim();
+    if (!topic) return;
+    const filters = {
+        q_rankings: [],
+        include_sa_papers: document.getElementById('includeSA').checked,
+        min_year: document.getElementById('minYear').value ? parseInt(document.getElementById('minYear').value) : null,
+        max_sections: parseInt(document.getElementById('maxSections').value) || 10
+    };
+    if (document.getElementById('includeQ1').checked) filters.q_rankings.push('Q1');
+    if (document.getElementById('includeQ2').checked) filters.q_rankings.push('Q2');
+    if (document.getElementById('includeQ3').checked) filters.q_rankings.push('Q3');
 
-    document.getElementById('literatureForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
+    document.getElementById('loadingSpinner').style.display = 'block';
+    document.getElementById('results').style.display = 'none';
 
-        const topic = document.getElementById('topic').value.trim();
-        if (!topic) return;
-
-        // Collect filters
-        const filters = {
-            q_rankings: [],
-            include_sa_papers: document.getElementById('includeSA').checked,
-            min_year: document.getElementById('minYear').value ? parseInt(document.getElementById('minYear').value) : null,
-            max_sections: parseInt(document.getElementById('maxSections').value) || 10
-        };
-
-        if (document.getElementById('includeQ1').checked) filters.q_rankings.push('Q1');
-        if (document.getElementById('includeQ2').checked) filters.q_rankings.push('Q2');
-        if (document.getElementById('includeQ3').checked) filters.q_rankings.push('Q3');
-
-        // Show loading
-        document.getElementById('loadingSpinner').style.display = 'block';
-        document.getElementById('results').style.display = 'none';
-
-        try {
-            const response = await fetch('/generate-literature', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ topic: topic, filters: filters })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                currentLiterature = data;
-                displayLiterature(data);
-            } else {
-                alert('Error: ' + data.error);
-            }
-        } catch (error) {
-            alert('Error: ' + error.message);
-        } finally {
-            document.getElementById('loadingSpinner').style.display = 'none';
-        }
-    });
-
-    function displayLiterature(data) {
-        document.getElementById('results').style.display = 'block';
-
-        displayStatistics(data.stats);
-        displayOutline(data.outline);
-        displaySections(data.sections);
-        displayBibliography(data.bibliography);
-
-        document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function displayStatistics(stats) {
-        const statsHtml = `
-            <div class="col-6 col-md-2">
-                <div class="stat-card">
-                    <div class="stat-number" style="color:var(--accent-blue);">${stats.total_sections}</div>
-                    <div class="stat-label">Sections</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-2">
-                <div class="stat-card">
-                    <div class="stat-number" style="color:var(--accent-green);">${stats.total_words}</div>
-                    <div class="stat-label">Words</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-2">
-                <div class="stat-card">
-                    <div class="stat-number" style="color:var(--accent-purple);">${stats.total_papers}</div>
-                    <div class="stat-label">Papers</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-2">
-                <div class="stat-card">
-                    <div class="stat-number" style="color:var(--accent-orange);">${stats.q1_papers}</div>
-                    <div class="stat-label">Q1 Papers</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-2">
-                <div class="stat-card">
-                    <div class="stat-number" style="color:var(--accent-red);">${stats.sa_papers}</div>
-                    <div class="stat-label">SA Papers</div>
-                </div>
-            </div>
-            <div class="col-6 col-md-2">
-                <div class="stat-card">
-                    <div class="stat-number" style="color:var(--accent-blue);">${stats.date_range[1] - stats.date_range[0]}</div>
-                    <div class="stat-label">Year Span</div>
-                </div>
-            </div>
-        `;
-        document.getElementById('statsSection').innerHTML = statsHtml;
-    }
-
-    function displayOutline(outline) {
-        const outlineHtml = `
-            <h5>${outline.title}</h5>
-            <p><strong style="color:var(--text-primary);">Coverage:</strong> ${outline.total_papers} papers, ${outline.total_claims} claims (${outline.date_range[0]}-${outline.date_range[1]})</p>
-            <ol>
-                ${outline.sections.map(section => `
-                    <li><strong>${section.title}</strong> — <span style="color:var(--text-muted);">${section.description}</span></li>
-                `).join('')}
-            </ol>
-        `;
-        document.getElementById('outlineSection').innerHTML = outlineHtml;
-    }
-
-    function displaySections(sections) {
-        const sectionsHtml = sections.map(section => `
-            <div class="section-content">
-                <h5>${section.title} <span class="word-count">(${section.word_count} words)</span></h5>
-                <div class="literature-text">
-                    ${formatLiteratureContent(section.content)}
-                </div>
-                ${section.citations.length > 0 ? `
-                    <div class="mt-3">
-                        <small style="font-size:12px; color:var(--text-muted);">
-                            <i class="fas fa-quote-right" style="font-size:10px;"></i>
-                            <strong style="color:var(--text-secondary);">Citations:</strong> ${section.citations.length} references
-                        </small>
-                    </div>
-                ` : ''}
-            </div>
-        `).join('');
-
-        document.getElementById('sectionsContainer').innerHTML = sectionsHtml;
-    }
-
-    function formatLiteratureContent(content) {
-        // Convert markdown-style headers to HTML
-        content = content.replace(/### (.*)/g, '<h6>$1</h6>');
-
-        // Convert line breaks to paragraphs
-        const paragraphs = content.split('\n\n').filter(p => p.trim());
-        return paragraphs.map(p => `<p>${p.trim()}</p>`).join('');
-    }
-
-    function displayBibliography(bibliography) {
-        const bibliographyHtml = bibliography.map((entry, index) => `
-            <div class="bibliography-entry">
-                <small>[${index + 1}]</small> ${entry}
-            </div>
-        `).join('');
-
-        document.getElementById('bibliographySection').innerHTML = bibliographyHtml;
-    }
-
-    function downloadLiterature(format) {
-        if (!currentLiterature) {
-            alert('No literature to download. Please generate literature first.');
-            return;
-        }
-
-        let content = '';
-        let filename = '';
-        let mimeType = 'text/plain';
-
-        const timestamp = new Date().toISOString().split('T')[0];
-
-        if (format === 'markdown') {
-            content = generateMarkdown(currentLiterature);
-            filename = `literature_${timestamp}.md`;
-            mimeType = 'text/markdown';
-        } else if (format === 'latex') {
-            content = generateLaTeX(currentLiterature);
-            filename = `literature_${timestamp}.tex`;
-            mimeType = 'text/x-tex';
-        } else if (format === 'json') {
-            content = JSON.stringify(currentLiterature, null, 2);
-            filename = `literature_${timestamp}.json`;
-            mimeType = 'application/json';
-        }
-
-        downloadFile(content, filename, mimeType);
-    }
-
-    function generateMarkdown(data) {
-        let markdown = `# ${data.outline.title}\n\n`;
-        markdown += `*Generated on ${new Date(data.generated_at).toLocaleDateString()}*\n\n`;
-
-        // Add statistics
-        markdown += `## Statistics\n\n`;
-        markdown += `- **Papers Analyzed:** ${data.stats.total_papers}\n`;
-        markdown += `- **Total Words:** ${data.stats.total_words}\n`;
-        markdown += `- **Q1 Papers:** ${data.stats.q1_papers}\n`;
-        markdown += `- **SA Papers:** ${data.stats.sa_papers}\n`;
-        markdown += `- **Date Range:** ${data.stats.date_range[0]}-${data.stats.date_range[1]}\n\n`;
-
-        // Add sections
-        data.sections.forEach(section => {
-            markdown += `## ${section.title}\n\n`;
-            markdown += `${section.content}\n\n`;
+    try {
+        const res = await fetch('/generate-literature', {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ topic, filters })
         });
+        const data = await res.json();
+        if (res.ok) { currentLiterature = data; displayLiterature(data); }
+        else alert('Error: ' + data.error);
+    } catch(e) { alert('Error: ' + e.message); }
+    finally { document.getElementById('loadingSpinner').style.display = 'none'; }
+});
 
-        // Add bibliography
-        markdown += `## Bibliography\n\n`;
-        data.bibliography.forEach((entry, index) => {
-            markdown += `${index + 1}. ${entry}\n`;
-        });
+function displayLiterature(data) {
+    document.getElementById('results').style.display = 'block';
+    const s = data.stats;
+    document.getElementById('statsSection').innerHTML = [
+        ['Sections', s.total_sections, 'var(--accent-blue)'],
+        ['Words', s.total_words, 'var(--accent-green)'],
+        ['Papers', s.total_papers, 'var(--accent-purple)'],
+        ['Q1 Papers', s.q1_papers, 'var(--accent-orange)'],
+        ['SA Papers', s.sa_papers, 'var(--accent-red)'],
+        ['Year Span', s.date_range[1]-s.date_range[0], 'var(--accent-blue)'],
+    ].map(([label, val, color]) => `
+        <div class="col-6 col-md-2">
+            <div class="stat-card">
+                <div class="stat-number" style="color:${color};">${val}</div>
+                <div class="stat-label">${label}</div>
+            </div>
+        </div>`).join('');
 
-        return markdown;
+    const o = data.outline;
+    document.getElementById('outlineSection').innerHTML = `
+        <h5>${o.title}</h5>
+        <p><strong style="color:var(--text-primary);">Coverage:</strong> ${o.total_papers} papers, ${o.total_claims} claims (${o.date_range[0]}–${o.date_range[1]})</p>
+        <ol>${o.sections.map(s=>`<li><strong>${s.title}</strong> — <span style="color:var(--text-muted);">${s.description}</span></li>`).join('')}</ol>`;
+
+    document.getElementById('sectionsContainer').innerHTML = data.sections.map(s=>`
+        <div class="section-content">
+            <h5>${s.title} <span class="word-count">(${s.word_count} words)</span></h5>
+            ${s.content.replace(/### (.*)/g,'<h6>$1</h6>').split('\n\n').filter(p=>p.trim()).map(p=>`<p>${p.trim()}</p>`).join('')}
+            ${s.citations.length ? `<small style="color:var(--text-muted);"><i class="fas fa-quote-right" style="font-size:10px;"></i> ${s.citations.length} references</small>` : ''}
+        </div>`).join('');
+
+    document.getElementById('bibliographySection').innerHTML = data.bibliography.map((e,i)=>
+        `<div class="bibliography-entry"><small>[${i+1}]</small> ${e}</div>`).join('');
+
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+}
+
+function downloadLiterature(format) {
+    if (!currentLiterature) { alert('Generate literature first.'); return; }
+    const ts = new Date().toISOString().split('T')[0];
+    let content, filename, mime;
+    if (format === 'markdown') {
+        content = `# ${currentLiterature.outline.title}\n\n`;
+        currentLiterature.sections.forEach(s => { content += `## ${s.title}\n\n${s.content}\n\n`; });
+        content += `## Bibliography\n\n`;
+        currentLiterature.bibliography.forEach((e,i) => { content += `${i+1}. ${e}\n`; });
+        filename = `literature_${ts}.md`; mime = 'text/markdown';
+    } else if (format === 'latex') {
+        content = `\\documentclass{article}\n\\usepackage{cite}\n\\begin{document}\n`;
+        currentLiterature.sections.forEach(s => { content += `\\section{${s.title}}\n${s.content}\n\n`; });
+        content += `\\begin{thebibliography}{99}\n`;
+        currentLiterature.bibliography.forEach(e => { content += `${e}\n`; });
+        content += `\\end{thebibliography}\n\\end{document}`;
+        filename = `literature_${ts}.tex`; mime = 'text/x-tex';
+    } else {
+        content = JSON.stringify(currentLiterature, null, 2);
+        filename = `literature_${ts}.json`; mime = 'application/json';
     }
-
-    function generateLaTeX(data) {
-        let latex = `\\documentclass{article}\n`;
-        latex += `\\usepackage[utf8]{inputenc}\n`;
-        latex += `\\usepackage{cite}\n`;
-        latex += `\\title{${data.outline.title}}\n`;
-        latex += `\\date{${new Date(data.generated_at).toLocaleDateString()}}\n`;
-        latex += `\\begin{document}\n`;
-        latex += `\\maketitle\n\n`;
-
-        // Add sections with proper LaTeX formatting
-        data.sections.forEach(section => {
-            latex += `\\section{${section.title}}\n`;
-            // Content already contains \cite{} commands, so use as-is
-            let content = section.content.replace(/### (.*)/g, '\\subsection{$1}');
-            latex += `${content}\n\n`;
-        });
-
-        // Add bibliography with proper bibitem format
-        latex += `\\begin{thebibliography}{99}\n`;
-        data.bibliography.forEach(entry => {
-            // Bibliography entries already in \bibitem{key} format
-            latex += `${entry}\n`;
-        });
-        latex += `\\end{thebibliography}\n`;
-        latex += `\\end{document}`;
-
-        return latex;
-    }
-
-    function downloadFile(content, filename, mimeType) {
-        const blob = new Blob([content], { type: mimeType });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-    }
+    const a = Object.assign(document.createElement('a'), {href: URL.createObjectURL(new Blob([content],{type:mime})), download: filename});
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
 </script>
-</body>
-</html>
+{% endblock %}

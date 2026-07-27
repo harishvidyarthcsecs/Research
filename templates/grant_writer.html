@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+
+{% block title %}Grant Writer{% endblock %}
+{% block nav_grant %}active{% endblock %}
+
+{% block hero_gradient %}linear-gradient(135deg, #e6edf3 0%, #3fb950 50%, #e3b341 100%){% endblock %}
+{% block hero_orb1_color %}rgba(63,185,80,0.14){% endblock %}
+{% block hero_orb2_color %}rgba(227,179,65,0.1){% endblock %}
+
+{% block hero_title %}Grant Writing Assistant{% endblock %}
+{% block hero_subtitle %}Generate structured, funder-specific grant proposals for NSF, NIH, ERC, Wellcome, Gates, DST-SERB, UKRI, and more.{% endblock %}
+
+{% block extra_css %}
+.funder-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-bottom: 20px; }
+.funder-card {
+    background: var(--bg-input); border: 2px solid var(--border-color);
+    border-radius: 10px; padding: 12px 10px; text-align: center; cursor: pointer;
+    transition: all 0.15s; user-select: none;
+}
+.funder-card:hover { border-color: var(--accent-green); background: rgba(63,185,80,0.04); }
+.funder-card.selected { border-color: var(--accent-green); background: rgba(63,185,80,0.08); }
+.funder-key { font-size: 15px; font-weight: 800; color: var(--text-primary); }
+.funder-country { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
+
+.text-input-sm {
+    width: 100%; background: var(--bg-input);
+    border: 1.5px solid var(--border-color); border-radius: 8px;
+    color: var(--text-primary); font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13.5px; padding: 10px 12px; outline: none; transition: border-color 0.2s;
+}
+.text-input-sm:focus { border-color: var(--accent-green); box-shadow: 0 0 0 3px rgba(63,185,80,0.1); }
+.text-input-sm::placeholder { color: var(--text-muted); }
+
+.desc-input {
+    width: 100%; background: var(--bg-input);
+    border: 1.5px solid var(--border-color); border-radius: 8px;
+    color: var(--text-primary); font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px; padding: 12px 14px; resize: vertical; min-height: 140px;
+    outline: none; transition: border-color 0.2s;
+}
+.desc-input:focus { border-color: var(--accent-green); }
+.desc-input::placeholder { color: var(--text-muted); }
+
+.btn-write {
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-orange));
+    color: #fff; border: none; border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600;
+    padding: 11px 28px; cursor: pointer; transition: opacity 0.15s, transform 0.15s;
+    display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-write:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-write:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.section-card {
+    background: var(--bg-card); border: 1px solid var(--border-color);
+    border-radius: 12px; margin-bottom: 16px; overflow: hidden;
+}
+.section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; border-bottom: 1px solid var(--border-muted);
+    cursor: pointer; transition: background 0.15s; user-select: none;
+}
+.section-header:hover { background: var(--bg-card-hover); }
+.section-name { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+.section-meta { font-size: 11px; color: var(--text-muted); }
+.section-body { padding: 18px; }
+.section-content {
+    font-size: 14px; color: var(--text-secondary); line-height: 1.8;
+    white-space: pre-wrap; background: var(--bg-input); border: 1px solid var(--border-muted);
+    border-radius: 8px; padding: 14px; font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.btn-copy-sm {
+    background: none; border: 1px solid var(--border-color); border-radius: 7px;
+    color: var(--text-muted); font-size: 12px; padding: 5px 12px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 5px; transition: all 0.15s;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.btn-copy-sm:hover { border-color: var(--accent-green); color: var(--accent-green); }
+
+.outcome-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border-muted); }
+.outcome-item:last-child { border-bottom: none; }
+.outcome-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); flex-shrink: 0; margin-top: 6px; }
+
+.reviewer-tip { background: rgba(63,185,80,0.06); border-left: 3px solid var(--accent-green); border-radius: 0 6px 6px 0; padding: 8px 12px; margin-bottom: 8px; font-size: 13px; color: var(--text-secondary); }
+
+.funder-info-bar { background: rgba(63,185,80,0.06); border: 1px solid rgba(63,185,80,0.2); border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; }
+{% endblock %}
+
+{% block content %}
+{% if not has_anthropic_key %}
+<div style="background:rgba(247,129,102,0.1);border:1px solid rgba(247,129,102,0.3);border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
+    <i class="fas fa-exclamation-triangle" style="color:var(--accent-red);font-size:18px;flex-shrink:0;"></i>
+    <div>
+        <div style="font-size:13px;font-weight:700;color:var(--accent-red);">ANTHROPIC_API_KEY not set</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">This feature requires Claude AI. Set the <code style="background:rgba(247,129,102,0.1);padding:1px 5px;border-radius:3px;">ANTHROPIC_API_KEY</code> environment variable and restart the server.</div>
+    </div>
+</div>
+{% endif %}
+<!-- Funder Selection -->
+<div class="glass-card">
+    <div class="card-label mb-2">Select Funding Body</div>
+    <div class="funder-grid" id="funderGrid"></div>
+    <div class="funder-info-bar" id="funderInfoBar" style="display:none;">
+        <div style="font-size:13px;font-weight:700;color:var(--accent-green);" id="funderFullName"></div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:4px;" id="funderSections"></div>
+        <div style="margin-top:8px;" id="funderTips"></div>
+    </div>
+</div>
+
+<!-- Project Details -->
+<div class="glass-card">
+    <div class="card-label mb-3">Project Details</div>
+    <div class="row g-3">
+        <div class="col-12">
+            <label style="font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:5px;display:block;">Project Title *</label>
+            <input class="text-input-sm" id="titleInput" placeholder="Enter a clear, compelling project title">
+        </div>
+        <div class="col-md-6">
+            <label style="font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:5px;display:block;">Research Field *</label>
+            <input class="text-input-sm" id="fieldInput" placeholder="e.g. Computational Biology, Climate Science">
+        </div>
+        <div class="col-md-3">
+            <label style="font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:5px;display:block;">Budget (optional)</label>
+            <input class="text-input-sm" id="budgetInput" placeholder="e.g. $500,000">
+        </div>
+        <div class="col-md-3">
+            <label style="font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:5px;display:block;">Duration (optional)</label>
+            <input class="text-input-sm" id="durationInput" placeholder="e.g. 3 years">
+        </div>
+        <div class="col-12">
+            <label style="font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:5px;display:block;">Team (optional)</label>
+            <input class="text-input-sm" id="teamInput" placeholder="e.g. PI + 2 postdocs + 3 PhD students, collaboration with Oxford and MIT">
+        </div>
+        <div class="col-12">
+            <label style="font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:5px;display:block;">Project Description *</label>
+            <textarea class="desc-input" id="descInput"
+                placeholder="Describe your project: research question, methodology, innovation, expected outcomes, and why this funding body is the right fit..."></textarea>
+        </div>
+    </div>
+    <div class="d-flex align-items-center gap-3 mt-3">
+        <button class="btn-write" id="writeBtn" onclick="runWrite()">
+            <i class="fas fa-pen-fancy"></i> Generate Grant Proposal
+        </button>
+        <div class="loading-bar" id="loadingBar" style="border-color:rgba(63,185,80,0.2);">
+            <div class="spinner-ring" style="border-top-color:var(--accent-green);"></div>
+            <span>Writing proposal — this may take 60–90 seconds...</span>
+        </div>
+    </div>
+</div>
+
+<!-- Results -->
+<div id="resultsArea" style="display:none;">
+    <div class="glass-card">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card-label mb-2">Key Innovations</div>
+                <div id="innovationsList"></div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-label mb-2">Expected Outcomes</div>
+                <div id="outcomesList"></div>
+            </div>
+        </div>
+        <div class="mt-3" id="budgetNotes"></div>
+    </div>
+
+    <div class="glass-card">
+        <div class="card-label mb-3">Reviewer Tips</div>
+        <div id="reviewerTips"></div>
+    </div>
+
+    <div id="sectionsContainer"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const funders = {{ funders | tojson }};
+let selectedFunder = 'NSF';
+
+function initFunders() {
+    const grid = document.getElementById('funderGrid');
+    grid.innerHTML = funders.map(f => `
+        <div class="funder-card${f.key === selectedFunder ? ' selected' : ''}" onclick="selectFunder('${f.key}', this)" title="${f.name}">
+            <div class="funder-key">${f.key}</div>
+            <div class="funder-country">${f.country}</div>
+        </div>
+    `).join('');
+    showFunderInfo(selectedFunder);
+}
+
+function selectFunder(key, el) {
+    selectedFunder = key;
+    document.querySelectorAll('.funder-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    showFunderInfo(key);
+}
+
+async function showFunderInfo(key) {
+    try {
+        const resp = await fetch('/funders');
+        const all = await resp.json();
+        // We already have funders from template, but fetch gives all
+    } catch (e) {}
+    // Use the funders array already loaded
+    const f = funders.find(x => x.key === key);
+    if (f) {
+        document.getElementById('funderFullName').textContent = f.name;
+        document.getElementById('funderInfoBar').style.display = 'block';
+    }
+}
+
+async function runWrite() {
+    const title = document.getElementById('titleInput').value.trim();
+    const desc = document.getElementById('descInput').value.trim();
+    const field = document.getElementById('fieldInput').value.trim();
+    if (!title || !desc) { alert('Project title and description are required.'); return; }
+    if (!field) { alert('Please specify the research field.'); return; }
+
+    const btn = document.getElementById('writeBtn');
+    const loading = document.getElementById('loadingBar');
+    btn.disabled = true; loading.classList.add('active');
+    document.getElementById('resultsArea').style.display = 'none';
+
+    try {
+        const resp = await fetch('/write-grant', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                project_title: title,
+                description: desc,
+                funder: selectedFunder,
+                field,
+                budget: document.getElementById('budgetInput').value.trim(),
+                duration: document.getElementById('durationInput').value.trim(),
+                team: document.getElementById('teamInput').value.trim(),
+            }),
+        });
+        const data = await resp.json();
+        if (!resp.ok) { alert('Error: ' + (data.error || 'Generation failed')); return; }
+        displayResults(data);
+    } catch (err) {
+        alert('Error: ' + err.message);
+    } finally {
+        btn.disabled = false; loading.classList.remove('active');
+    }
+}
+
+function displayResults(data) {
+    // Innovations
+    const innovations = data.key_innovations || [];
+    document.getElementById('innovationsList').innerHTML = innovations.map(i => `
+        <div class="outcome-item"><div class="outcome-dot" style="background:var(--accent-blue);"></div><div style="font-size:13px;color:var(--text-secondary);">${escHtml(i)}</div></div>
+    `).join('') || '<div style="color:var(--text-muted);font-size:13px;">N/A</div>';
+
+    // Outcomes
+    const outcomes = data.expected_outcomes || [];
+    document.getElementById('outcomesList').innerHTML = outcomes.map(o => `
+        <div class="outcome-item"><div class="outcome-dot"></div><div style="font-size:13px;color:var(--text-secondary);">${escHtml(o)}</div></div>
+    `).join('') || '<div style="color:var(--text-muted);font-size:13px;">N/A</div>';
+
+    // Budget notes
+    if (data.budget_notes) {
+        document.getElementById('budgetNotes').innerHTML = `<div style="background:rgba(227,179,65,0.06);border-left:3px solid var(--accent-orange);border-radius:0 6px 6px 0;padding:10px 14px;font-size:13px;color:var(--text-secondary);"><i class="fas fa-coins" style="color:var(--accent-orange);margin-right:7px;"></i>${escHtml(data.budget_notes)}</div>`;
+    }
+
+    // Reviewer tips
+    const tips = data.reviewer_tips || [];
+    document.getElementById('reviewerTips').innerHTML = tips.map(t => `
+        <div class="reviewer-tip"><i class="fas fa-star" style="color:var(--accent-green);margin-right:7px;"></i>${escHtml(t)}</div>
+    `).join('') || '<div style="color:var(--text-muted);font-size:13px;">N/A</div>';
+
+    // Sections
+    const sections = data.sections || [];
+    document.getElementById('sectionsContainer').innerHTML = sections.map((s, i) => `
+        <div class="section-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div>
+                    <div class="section-name">${escHtml(s.name)}</div>
+                    <div class="section-meta">${s.word_count ? s.word_count + ' words' : ''}</div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn-copy-sm" onclick="event.stopPropagation(); copySection(${i})"><i class="fas fa-copy"></i> Copy</button>
+                    <i class="fas fa-chevron-down" style="color:var(--text-muted);transition:transform 0.2s;"></i>
+                </div>
+            </div>
+            <div class="section-body" id="sec_${i}">
+                <div class="section-content" id="sec_content_${i}">${escHtml(s.content || '')}</div>
+            </div>
+        </div>
+    `).join('');
+
+    document.getElementById('resultsArea').style.display = 'block';
+    document.getElementById('resultsArea').scrollIntoView({ behavior: 'smooth' });
+}
+
+function toggleSection(header) {
+    const body = header.nextElementSibling;
+    const icon = header.querySelector('.fa-chevron-down, .fa-chevron-right');
+    const isOpen = body.style.display !== 'none';
+    body.style.display = isOpen ? 'none' : 'block';
+    if (icon) icon.className = `fas fa-chevron-${isOpen ? 'right' : 'down'}`;
+}
+
+function copySection(idx) {
+    const el = document.getElementById('sec_content_' + idx);
+    navigator.clipboard.writeText(el.textContent).then(() => {
+        const btn = document.querySelector(`#sec_${idx}`).previousElementSibling.querySelector('.btn-copy-sm');
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(() => { btn.innerHTML = orig; }, 2000);
+    });
+}
+
+function escHtml(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+initFunders();
+</script>
+{% endblock %}

@@ -42,3 +42,6 @@ secrets.json
 
 # Pickle files (use JSON instead)
 *.pkl
+
+# Test-run scratch output
+test_data/

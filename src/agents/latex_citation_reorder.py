@@ -119,4 +119,5 @@ def _replace_bib_block(source: str, new_bib_block: str) -> str:
         r"\\begin\{thebibliography\}.*?\\end\{thebibliography\}",
         re.DOTALL,
     )
-    return pattern.sub(new_bib_block, source, count=1)
+    # Use a lambda so re.sub never interprets backslashes in new_bib_block as backreferences
+    return pattern.sub(lambda _: new_bib_block, source, count=1)

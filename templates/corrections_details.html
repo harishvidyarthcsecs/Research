@@ -1,243 +1,169 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Validation Corrections - Reference Validator</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #2563eb;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-        }
+{% extends 'base.html' %}
 
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
+{% block title %}Validation Corrections{% endblock %}
+{% block nav_validator %}active{% endblock %}
 
-        .main-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            margin: 2rem auto;
-            max-width: 1400px;
-            overflow: hidden;
-        }
+{% block hero_gradient %}linear-gradient(135deg, #e6edf3 0%, #e3b341 50%, #f78166 100%){% endblock %}
+{% block hero_orb1_color %}rgba(227,179,65,0.12){% endblock %}
+{% block hero_orb2_color %}rgba(247,129,102,0.1){% endblock %}
 
-        .header-section {
-            background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
-            color: white;
-            padding: 2rem;
-            text-align: center;
-        }
+{% block hero_title %}Validation Corrections{% endblock %}
+{% block hero_subtitle %}Comprehensive view of all corrections made to your references.{% endblock %}
 
-        .content-section {
-            padding: 2rem;
-        }
+{% block extra_css %}
+.correction-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+.correction-header {
+    background: rgba(227,179,65,0.08);
+    border-bottom: 1px solid rgba(227,179,65,0.2);
+    padding: 16px 20px;
+}
+.correction-header h4 { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+.correction-header h6 { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
+.correction-body { padding: 16px 20px; }
+.correction-item {
+    background: rgba(227,179,65,0.06);
+    border-left: 3px solid var(--accent-orange);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    margin: 10px 0;
+}
+.field-label { font-size: 12px; font-weight: 700; color: var(--accent-blue); margin-bottom: 8px; }
+.before-after { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+.before-text {
+    background: rgba(247,129,102,0.08);
+    border: 1px solid rgba(247,129,102,0.2);
+    border-radius: 6px; padding: 10px;
+    font-size: 12.5px; color: var(--text-secondary); font-family: 'Fira Code', monospace;
+}
+.after-text {
+    background: rgba(63,185,80,0.08);
+    border: 1px solid rgba(63,185,80,0.2);
+    border-radius: 6px; padding: 10px;
+    font-size: 12.5px; color: var(--text-secondary); font-family: 'Fira Code', monospace;
+}
+.before-text strong, .after-text strong { display: block; margin-bottom: 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+.before-text strong { color: var(--accent-red); }
+.after-text strong { color: var(--accent-green); }
+.stats-summary {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px; padding: 20px; margin-bottom: 24px;
+}
+.stats-summary h5 { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; }
+.btn-back {
+    background: var(--bg-card-hover); color: var(--text-secondary);
+    border: 1px solid var(--border-color); border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 500;
+    padding: 8px 16px; cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s;
+}
+.btn-back:hover { background: var(--border-color); color: var(--text-primary); text-decoration: none; }
+@media (max-width: 768px) { .before-after { grid-template-columns: 1fr; } }
+{% endblock %}
 
-        .correction-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-            overflow: hidden;
-        }
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <a href="javascript:history.back()" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Back to Results
+    </a>
+    <span class="tag tag-orange" id="totalCorrections" style="font-size:13px;padding:6px 14px;">0 Total Corrections</span>
+</div>
 
-        .correction-header {
-            background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
-            border-bottom: 1px solid #fb923c;
-            padding: 1.5rem;
-        }
+<div class="stats-summary">
+    <h5><i class="fas fa-chart-bar" style="margin-right:8px;color:var(--accent-orange);"></i>Corrections Summary</h5>
+    <div class="row" id="correctionsSummary"></div>
+</div>
 
-        .correction-body {
-            padding: 1.5rem;
-        }
-
-        .correction-item {
-            background: #fef3c7;
-            border-left: 4px solid var(--warning-color);
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-
-        .before-after {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        .before-text {
-            background: #fee2e2;
-            border-radius: 6px;
-            padding: 0.75rem;
-        }
-
-        .after-text {
-            background: #dcfce7;
-            border-radius: 6px;
-            padding: 0.75rem;
-        }
-
-        .field-label {
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .back-btn {
-            background: var(--primary-color);
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-weight: 500;
-            padding: 0.75rem 1.5rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .back-btn:hover {
-            background: #1d4ed8;
-            color: white;
-            transform: translateY(-1px);
-        }
-
-        .stats-summary {
-            background: linear-gradient(135deg, #f0f9ff 0%, #dbeafe 100%);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        @media (max-width: 768px) {
-            .before-after {
-                grid-template-columns: 1fr;
-            }
-            
-            .main-container {
-                margin: 1rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="main-container">
-        <div class="header-section">
-            <h1><i class="fas fa-edit"></i> Validation Corrections Details</h1>
-            <p>Comprehensive view of all corrections made to your references</p>
-        </div>
-
-        <div class="content-section">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <a href="javascript:history.back()" class="back-btn">
-                    <i class="fas fa-arrow-left"></i> Back to Results
-                </a>
-                <div>
-                    <span class="badge bg-warning fs-6" id="totalCorrections">0 Total Corrections</span>
-                </div>
-            </div>
-
-            <div class="stats-summary">
-                <h5><i class="fas fa-chart-bar"></i> Corrections Summary</h5>
-                <div class="row" id="correctionsSummary">
-                    <!-- Summary will be populated here -->
-                </div>
-            </div>
-
-            <div id="correctionsContainer">
-                <!-- Corrections will be populated here -->
-            </div>
-        </div>
+<div id="correctionsContainer">
+    <div style="text-align:center;padding:40px;color:var(--text-muted);font-size:13px;">
+        <i class="fas fa-spinner fa-spin" style="font-size:1.5rem;margin-bottom:12px;display:block;"></i>
+        Loading corrections...
     </div>
+</div>
+{% endblock %}
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Get corrections data from URL parameters or localStorage
-        function loadCorrections() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const correctionsData = urlParams.get('data');
-            
-            if (correctionsData) {
-                try {
-                    const corrections = JSON.parse(decodeURIComponent(correctionsData));
-                    displayCorrections(corrections);
-                } catch (e) {
-                    console.error('Error parsing corrections data:', e);
-                    document.getElementById('correctionsContainer').innerHTML = 
-                        '<div class="alert alert-danger">Error loading corrections data.</div>';
-                }
-            } else {
-                document.getElementById('correctionsContainer').innerHTML = 
-                    '<div class="alert alert-info">No corrections data available.</div>';
-            }
+{% block extra_js %}
+<script>
+function loadCorrections() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const correctionsData = urlParams.get('data');
+
+    if (correctionsData) {
+        try {
+            const corrections = JSON.parse(decodeURIComponent(correctionsData));
+            displayCorrections(corrections);
+        } catch (e) {
+            document.getElementById('correctionsContainer').innerHTML =
+                '<div class="glass-card" style="color:var(--accent-red);text-align:center;padding:40px;">Error loading corrections data.</div>';
         }
+    } else {
+        document.getElementById('correctionsContainer').innerHTML =
+            '<div class="glass-card" style="color:var(--text-muted);text-align:center;padding:40px;">No corrections data available.</div>';
+    }
+}
 
-        function displayCorrections(corrections) {
-            let totalCorrections = 0;
-            const summaryData = {};
+function displayCorrections(corrections) {
+    let totalCorrections = 0;
+    const summaryData = {};
 
-            const correctionsHtml = corrections.map(correction => {
-                totalCorrections += correction.corrections_count || 0;
-                
-                // Update summary
-                if (!summaryData[correction.type]) {
-                    summaryData[correction.type] = 0;
-                }
-                summaryData[correction.type] += correction.corrections_count || 0;
+    const html = corrections.map(correction => {
+        totalCorrections += correction.corrections_count || 0;
+        summaryData[correction.type] = (summaryData[correction.type] || 0) + (correction.corrections_count || 0);
 
-                return `
-                    <div class="correction-card">
-                        <div class="correction-header">
-                            <h4><i class="fas fa-edit"></i> ${correction.type} Corrections</h4>
-                            <h6>Reference: <code>${correction.reference_key}</code></h6>
-                            <span class="badge bg-warning">${correction.corrections_count || 0} corrections made</span>
-                        </div>
-                        <div class="correction-body">
-                            ${correction.details ? correction.details.map(detail => `
-                                <div class="correction-item">
-                                    <div class="field-label">
-                                        <i class="fas fa-tag"></i> ${detail.field}
-                                    </div>
-                                    <div class="before-after">
-                                        <div class="before-text">
-                                            <strong>Before:</strong><br>
-                                            <code>${detail.before}</code>
-                                        </div>
-                                        <div class="after-text">
-                                            <strong>After:</strong><br>
-                                            <code>${detail.after}</code>
-                                        </div>
-                                    </div>
-                                </div>
-                            `).join('') : '<div class="alert alert-info">No detailed corrections available</div>'}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            document.getElementById('correctionsContainer').innerHTML = correctionsHtml;
-            document.getElementById('totalCorrections').textContent = `${totalCorrections} Total Corrections`;
-
-            // Display summary
-            const summaryHtml = Object.entries(summaryData).map(([type, count]) => `
-                <div class="col-md-4">
-                    <div class="text-center">
-                        <h3 class="text-warning">${count}</h3>
-                        <small>${type}</small>
-                    </div>
+        return `
+            <div class="correction-card">
+                <div class="correction-header">
+                    <h4><i class="fas fa-edit" style="margin-right:8px;color:var(--accent-orange);"></i>${correction.type} Corrections</h4>
+                    <h6>Reference: <code style="background:rgba(88,166,255,0.1);color:var(--accent-blue);padding:1px 6px;border-radius:4px;">${correction.reference_key}</code></h6>
+                    <span class="tag tag-orange">${correction.corrections_count || 0} corrections made</span>
                 </div>
-            `).join('');
-            document.getElementById('correctionsSummary').innerHTML = summaryHtml;
-        }
+                <div class="correction-body">
+                    ${correction.details ? correction.details.map(detail => `
+                        <div class="correction-item">
+                            <div class="field-label">
+                                <i class="fas fa-tag" style="margin-right:5px;"></i>${detail.field}
+                            </div>
+                            <div class="before-after">
+                                <div class="before-text">
+                                    <strong>Before</strong>
+                                    <code>${escHtml(detail.before)}</code>
+                                </div>
+                                <div class="after-text">
+                                    <strong>After</strong>
+                                    <code>${escHtml(detail.after)}</code>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('') : '<div style="color:var(--text-muted);font-size:13px;">No detailed corrections available</div>'}
+                </div>
+            </div>
+        `;
+    }).join('');
 
-        // Load corrections when page loads
-        document.addEventListener('DOMContentLoaded', loadCorrections);
-    </script>
-</body>
-</html>
+    document.getElementById('correctionsContainer').innerHTML = html;
+    document.getElementById('totalCorrections').textContent = `${totalCorrections} Total Corrections`;
+
+    document.getElementById('correctionsSummary').innerHTML = Object.entries(summaryData).map(([type, count]) => `
+        <div class="col-md-4 mb-3">
+            <div class="stat-card">
+                <div class="stat-number" style="color:var(--accent-orange);">${count}</div>
+                <div class="stat-label">${type}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function escHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+document.addEventListener('DOMContentLoaded', loadCorrections);
+</script>
+{% endblock %}

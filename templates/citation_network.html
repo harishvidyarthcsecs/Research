@@ -1,0 +1,285 @@
+{% extends 'base.html' %}
+
+{% block title %}Citation Network{% endblock %}
+{% block nav_network %}active{% endblock %}
+
+{% block hero_gradient %}linear-gradient(135deg, #e6edf3 0%, #bc8cff 50%, #58a6ff 100%){% endblock %}
+{% block hero_orb1_color %}rgba(188,140,255,0.14){% endblock %}
+{% block hero_orb2_color %}rgba(88,166,255,0.1){% endblock %}
+
+{% block hero_title %}Citation Network Explorer{% endblock %}
+{% block hero_subtitle %}Visualise how papers cite each other. Powered by Semantic Scholar — enter any paper title or DOI.{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+
+.text-input-search {
+    width: 100%; background: var(--bg-input);
+    border: 1.5px solid var(--border-color); border-radius: 8px;
+    color: var(--text-primary); font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px; padding: 12px 14px; outline: none; transition: border-color 0.2s;
+}
+.text-input-search:focus { border-color: var(--accent-purple); box-shadow: 0 0 0 3px rgba(188,140,255,0.1); }
+.text-input-search::placeholder { color: var(--text-muted); }
+
+.btn-explore {
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+    color: #fff; border: none; border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600;
+    padding: 11px 24px; cursor: pointer; transition: opacity 0.15s, transform 0.15s;
+    display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-explore:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-explore:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+#networkCanvas {
+    width: 100%; height: 520px;
+    background: var(--bg-input); border: 1px solid var(--border-muted);
+    border-radius: 10px; position: relative; overflow: hidden;
+}
+
+.node-legend { display: flex; gap: 16px; flex-wrap: wrap; padding: 10px 0; }
+.legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-secondary); }
+.legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+
+.paper-list-item {
+    padding: 10px 0; border-bottom: 1px solid var(--border-muted);
+    display: flex; align-items: flex-start; gap: 10px;
+}
+.paper-list-item:last-child { border-bottom: none; }
+.paper-dot-root { width: 10px; height: 10px; border-radius: 50%; background: #bc8cff; flex-shrink: 0; margin-top: 4px; }
+.paper-dot-citing { width: 10px; height: 10px; border-radius: 50%; background: #3fb950; flex-shrink: 0; margin-top: 4px; }
+.paper-dot-ref { width: 10px; height: 10px; border-radius: 50%; background: #58a6ff; flex-shrink: 0; margin-top: 4px; }
+
+.root-paper-card {
+    background: rgba(188,140,255,0.06); border: 1px solid rgba(188,140,255,0.2);
+    border-radius: 10px; padding: 16px;
+}
+
+.tooltip-box {
+    position: absolute; background: #161b22; border: 1px solid #30363d;
+    border-radius: 8px; padding: 10px 14px; pointer-events: none;
+    font-size: 12px; color: #e6edf3; max-width: 240px; z-index: 100;
+    display: none; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <div class="card-label">Search Paper</div>
+    <div class="d-flex gap-3 align-items-end flex-wrap">
+        <div style="flex:1;min-width:200px;">
+            <input class="text-input-search" id="queryInput"
+                placeholder="Enter paper title, DOI (10.xxxx/...), or Semantic Scholar ID"
+                onkeydown="if(event.key==='Enter') runExplore()">
+        </div>
+        <button class="btn-explore" id="exploreBtn" onclick="runExplore()">
+            <i class="fas fa-project-diagram"></i> Explore Network
+        </button>
+    </div>
+    <div class="loading-bar mt-3" id="loadingBar" style="border-color:rgba(188,140,255,0.2);">
+        <div class="spinner-ring" style="border-top-color:var(--accent-purple);"></div>
+        <span>Fetching citation network from Semantic Scholar...</span>
+    </div>
+</div>
+
+<div id="resultsArea" style="display:none;">
+    <!-- Root paper info -->
+    <div class="glass-card">
+        <div class="card-label mb-2">Root Paper</div>
+        <div class="root-paper-card" id="rootPaperCard"></div>
+        <div class="d-flex gap-4 mt-3" id="networkStats"></div>
+    </div>
+
+    <!-- Network visualisation -->
+    <div class="glass-card">
+        <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+            <div class="card-label mb-0">Citation Graph</div>
+            <div class="node-legend">
+                <div class="legend-item"><div class="legend-dot" style="background:#bc8cff;"></div> Root paper</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#3fb950;"></div> Citing papers</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#58a6ff;"></div> References</div>
+            </div>
+        </div>
+        <div id="networkCanvas">
+            <div class="tooltip-box" id="nodeTooltip"></div>
+            <svg id="networkSvg" width="100%" height="100%"></svg>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:8px;text-align:center;">Drag nodes to rearrange. Scroll to zoom.</div>
+    </div>
+
+    <!-- Paper lists -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="glass-card">
+                <div class="card-label mb-2">Citing Papers <span id="citingCount" style="color:var(--accent-green);"></span></div>
+                <div id="citingList"></div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="glass-card">
+                <div class="card-label mb-2">References <span id="refCount" style="color:var(--accent-blue);"></span></div>
+                <div id="referenceList"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+let networkData = null;
+
+async function runExplore() {
+    const query = document.getElementById('queryInput').value.trim();
+    if (!query) { alert('Please enter a paper title or DOI.'); return; }
+    const btn = document.getElementById('exploreBtn');
+    const loading = document.getElementById('loadingBar');
+    btn.disabled = true; loading.classList.add('active');
+    document.getElementById('resultsArea').style.display = 'none';
+
+    try {
+        const resp = await fetch('/get-citation-network', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query, depth: 1 }),
+        });
+        const data = await resp.json();
+        if (!resp.ok || data.error) { alert('Error: ' + (data.error || 'Network fetch failed')); return; }
+        networkData = data;
+        displayResults(data);
+    } catch (err) {
+        alert('Error: ' + err.message);
+    } finally {
+        btn.disabled = false; loading.classList.remove('active');
+    }
+}
+
+function displayResults(data) {
+    const root = data.root_paper || {};
+    const stats = data.stats || {};
+
+    // Root paper card
+    const authors = (root.authors || []).join(', ') || 'Unknown';
+    document.getElementById('rootPaperCard').innerHTML = `
+        <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:6px;">${escHtml(root.title || 'Unknown')}</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">${escHtml(authors)} · ${root.year || 'N/A'} · ${escHtml(root.venue || '')}</div>
+        ${root.abstract ? `<div style="font-size:13px;color:var(--text-secondary);line-height:1.6;">${escHtml(root.abstract)}</div>` : ''}
+    `;
+
+    document.getElementById('networkStats').innerHTML = `
+        <div><div style="font-size:22px;font-weight:800;color:var(--accent-purple);">${stats.total_nodes || 0}</div><div style="font-size:11px;color:var(--text-muted);">Total Nodes</div></div>
+        <div><div style="font-size:22px;font-weight:800;color:var(--accent-green);">${stats.citing_papers || 0}</div><div style="font-size:11px;color:var(--text-muted);">Citing Papers</div></div>
+        <div><div style="font-size:22px;font-weight:800;color:var(--accent-blue);">${stats.reference_papers || 0}</div><div style="font-size:11px;color:var(--text-muted);">References</div></div>
+        <div><div style="font-size:22px;font-weight:800;color:var(--text-primary);">${root.citation_count || 0}</div><div style="font-size:11px;color:var(--text-muted);">Total Citations</div></div>
+    `;
+
+    // Render D3 graph
+    renderGraph(data.nodes || [], data.links || []);
+
+    // Paper lists
+    const citing = (data.nodes || []).filter(n => n.type === 'citing');
+    const refs   = (data.nodes || []).filter(n => n.type === 'reference');
+
+    document.getElementById('citingCount').textContent = `(${citing.length})`;
+    document.getElementById('refCount').textContent = `(${refs.length})`;
+
+    document.getElementById('citingList').innerHTML = citing.slice(0, 20).map(n => paperListItem(n, 'citing')).join('') || noItems();
+    document.getElementById('referenceList').innerHTML = refs.slice(0, 20).map(n => paperListItem(n, 'ref')).join('') || noItems();
+
+    document.getElementById('resultsArea').style.display = 'block';
+    document.getElementById('resultsArea').scrollIntoView({ behavior: 'smooth' });
+}
+
+function paperListItem(n, type) {
+    const dotClass = type === 'citing' ? 'paper-dot-citing' : 'paper-dot-ref';
+    return `<div class="paper-list-item">
+        <div class="${dotClass}"></div>
+        <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text-primary);">${escHtml(n.title)}</div>
+            <div style="font-size:11px;color:var(--text-muted);">${n.first_author ? escHtml(n.first_author) + ' · ' : ''}${n.year || ''} ${n.citation_count ? '· ' + n.citation_count + ' cites' : ''}</div>
+        </div>
+    </div>`;
+}
+
+function noItems() { return '<div style="color:var(--text-muted);font-size:13px;padding:12px 0;">None found</div>'; }
+
+function renderGraph(nodes, links) {
+    const container = document.getElementById('networkCanvas');
+    const svg = d3.select('#networkSvg');
+    svg.selectAll('*').remove();
+
+    const W = container.clientWidth || 700;
+    const H = container.clientHeight || 520;
+    svg.attr('viewBox', `0 0 ${W} ${H}`);
+
+    const colorMap = { root: '#bc8cff', citing: '#3fb950', reference: '#58a6ff' };
+
+    const sim = d3.forceSimulation(nodes)
+        .force('link', d3.forceLink(links).id(d => d.id).distance(90).strength(0.7))
+        .force('charge', d3.forceManyBody().strength(-200))
+        .force('center', d3.forceCenter(W / 2, H / 2))
+        .force('collision', d3.forceCollide(28));
+
+    // Arrow marker
+    svg.append('defs').append('marker')
+        .attr('id', 'arrow').attr('viewBox', '0 -4 8 8').attr('refX', 18)
+        .attr('markerWidth', 6).attr('markerHeight', 6).attr('orient', 'auto')
+        .append('path').attr('d', 'M0,-4L8,0L0,4').attr('fill', '#30363d');
+
+    const link = svg.append('g').selectAll('line').data(links).join('line')
+        .attr('stroke', '#30363d').attr('stroke-width', 1.5)
+        .attr('marker-end', 'url(#arrow)').attr('opacity', 0.6);
+
+    const node = svg.append('g').selectAll('g').data(nodes).join('g')
+        .call(d3.drag()
+            .on('start', (event, d) => { if (!event.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+            .on('drag', (event, d) => { d.fx = event.x; d.fy = event.y; })
+            .on('end', (event, d) => { if (!event.active) sim.alphaTarget(0); d.fx = null; d.fy = null; }));
+
+    node.append('circle')
+        .attr('r', d => d.type === 'root' ? 18 : 11)
+        .attr('fill', d => colorMap[d.type] || '#8b949e')
+        .attr('fill-opacity', d => d.type === 'root' ? 0.9 : 0.7)
+        .attr('stroke', d => colorMap[d.type] || '#8b949e')
+        .attr('stroke-width', 2);
+
+    node.append('text')
+        .attr('text-anchor', 'middle').attr('dy', '0.35em')
+        .attr('font-size', d => d.type === 'root' ? '10px' : '8px')
+        .attr('fill', '#e6edf3').attr('pointer-events', 'none')
+        .text(d => d.type === 'root' ? '⭐' : (d.year ? String(d.year).slice(2) : ''));
+
+    const tooltip = document.getElementById('nodeTooltip');
+
+    node.on('mouseover', (event, d) => {
+        tooltip.style.display = 'block';
+        tooltip.innerHTML = `<div style="font-weight:700;margin-bottom:4px;">${escHtml(d.title)}</div>
+            <div style="color:#8b949e;">${d.first_author ? escHtml(d.first_author) + ' · ' : ''}${d.year || ''} · ${d.citation_count || 0} cites</div>
+            <div style="margin-top:4px;font-size:10px;padding:2px 6px;border-radius:4px;display:inline-block;background:${colorMap[d.type] || '#333'}22;color:${colorMap[d.type] || '#999'};">${d.type}</div>`;
+    }).on('mousemove', event => {
+        const rect = container.getBoundingClientRect();
+        let x = event.clientX - rect.left + 12;
+        let y = event.clientY - rect.top - 10;
+        if (x + 260 > W) x = x - 270;
+        tooltip.style.left = x + 'px'; tooltip.style.top = y + 'px';
+    }).on('mouseout', () => { tooltip.style.display = 'none'; });
+
+    sim.on('tick', () => {
+        link
+            .attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+            .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+        node.attr('transform', d => `translate(${Math.max(18, Math.min(W - 18, d.x))},${Math.max(18, Math.min(H - 18, d.y))})`);
+    });
+
+    // Zoom
+    const zoom = d3.zoom().scaleExtent([0.3, 4]).on('zoom', e => {
+        svg.selectAll('g').attr('transform', e.transform);
+    });
+    svg.call(zoom);
+}
+
+function escHtml(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+</script>
+{% endblock %}

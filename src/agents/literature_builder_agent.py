@@ -3,14 +3,29 @@ Literature Builder Agent - Transforms extracted claims into structured academic 
 
 This agent converts stored claims into coherent literature sections while preserving
 academic tone, ensuring citation backing, and maintaining traceability.
+
+Primary mode ("llm"): for each claim cluster with real paper abstracts, asks the
+shared LLM client to synthesize one flowing academic paragraph grounded only in
+the supplied abstract text, citing each source with its \\cite{bibitem_key}. This
+replaces the previous fixed sentence-selection heuristic with genuine LLM
+authorship while still constraining the model to the retrieved abstracts (no
+free-standing generation).
+
+Fallback mode ("rules"): the original sentence-extraction/templating pipeline,
+kept as the no-API-key fallback and rule-based ablation baseline
+(set LITERATURE_MODE=rules), mirroring TOPIC_MODE / CONTRADICTION_MODE / GAP_MODE.
 """
 
 import asyncio
+import json
 import logging
+import os
 from typing import List, Dict, Any, Optional, Tuple
 from collections import defaultdict
 import re
 from datetime import datetime
+
+from . import llm_client
 
 # Import requests with fallback
 try:
@@ -39,8 +54,10 @@ logger = logging.getLogger(__name__)
 class LiteratureBuilderAgent:
     """Agent responsible for building structured academic literature from claims."""
     
-    def __init__(self):
+    def __init__(self, mode: Optional[str] = None):
         self.logger = logging.getLogger(f"{__name__}.{self.__class__.__name__}")
+        self.mode = mode  # None = auto: "llm" if a provider is available
+        self.tracker: Optional[llm_client.UsageTracker] = None
         self.q_rankings = {
             'Q1': ['nature', 'science', 'cell', 'lancet', 'nejm', 'jama', 'pnas'],
             'Q2': ['ieee', 'acm', 'springer', 'elsevier', 'wiley'],
@@ -50,7 +67,13 @@ class LiteratureBuilderAgent:
             'systematic review', 'meta-analysis', 'literature review',
             'survey', 'comprehensive review', 'systematic analysis'
         ]
-    
+
+    def _resolve_mode(self) -> str:
+        mode = self.mode or os.getenv("LITERATURE_MODE")
+        if mode in ("llm", "rules"):
+            return mode
+        return "llm" if llm_client.get_provider() is not None else "rules"
+
     async def process(self, research_results: ResearchResults) -> LiteratureDocument:
         """
         Main processing function to build literature from research results.
@@ -61,29 +84,30 @@ class LiteratureBuilderAgent:
         Returns:
             LiteratureDocument: Structured academic literature
         """
-        self.logger.info("Starting literature building process")
-        
+        mode = self._resolve_mode()
+        self.logger.info(f"Starting literature building process (mode={mode})")
+
         try:
             # Step 1: Classify papers by Q-ranking and SA status
             classified_papers = self._classify_papers(research_results.papers)
-            
+
             # Step 2: Cluster claims by themes and methods
             claim_clusters = await self._cluster_claims(
-                research_results.claims, 
+                research_results.claims,
                 research_results.papers,
                 research_results.contradictions,
                 classified_papers
             )
-            
+
             # Step 3: Generate literature outline
             outline = self._generate_outline(
-                claim_clusters, 
+                claim_clusters,
                 research_results.topic_map,
                 research_results.papers
             )
-            
+
             # Step 4: Build literature sections
-            sections = await self._build_sections(claim_clusters, outline)
+            sections = await self._build_sections(claim_clusters, outline, mode)
             
             # Step 5: Generate bibliography
             bibliography = self._generate_bibliography(research_results.papers)
@@ -398,22 +422,23 @@ class LiteratureBuilderAgent:
         )
     
     async def _build_sections(
-        self, 
-        clusters: List[ClaimCluster], 
-        outline: LiteratureOutline
+        self,
+        clusters: List[ClaimCluster],
+        outline: LiteratureOutline,
+        mode: str = "rules"
     ) -> List[LiteratureSection]:
         """Build the actual literature sections."""
-        
+
         sections = []
         cluster_lookup = {c.cluster_id: c for c in clusters}
-        
+
         for section_info in outline.sections:
             section_type = section_info['type']
-            
+
             if section_type == 'introduction':
                 section = await self._build_introduction_section(clusters, outline)
             elif section_type == 'related_work':
-                section = await self._build_related_work_section(clusters, section_info)
+                section = await self._build_related_work_section(clusters, section_info, mode)
             elif section_type == 'comparative_analysis':
                 section = await self._build_comparative_section(clusters, section_info)
             elif section_type == 'trends':
@@ -465,26 +490,27 @@ and identifying trends in the evolution of research approaches over time.
         )
     
     async def _build_related_work_section(
-        self, 
-        clusters: List[ClaimCluster], 
-        section_info: Dict[str, Any]
+        self,
+        clusters: List[ClaimCluster],
+        section_info: Dict[str, Any],
+        mode: str = "rules"
     ) -> LiteratureSection:
         """Build the related work section."""
-        
+
         subsections = []
-        
+
         # Group clusters by method or theme
         method_groups = defaultdict(list)
         for cluster in clusters:
             key = cluster.method or cluster.theme
             method_groups[key].append(cluster)
-        
+
         content_parts = []
         all_citations = []
         all_claim_ids = []
-        
+
         for method, method_clusters in method_groups.items():
-            subsection_content = await self._build_method_subsection(method, method_clusters)
+            subsection_content = await self._build_method_subsection(method, method_clusters, mode)
             content_parts.append(subsection_content['content'])
             all_citations.extend(subsection_content['citations'])
             all_claim_ids.extend(subsection_content['claim_ids'])
@@ -500,18 +526,19 @@ and identifying trends in the evolution of research approaches over time.
         )
     
     async def _build_method_subsection(
-        self, 
-        method: str, 
-        clusters: List[ClaimCluster]
+        self,
+        method: str,
+        clusters: List[ClaimCluster],
+        mode: str = "rules"
     ) -> Dict[str, Any]:
         """Build a subsection for a specific method or theme."""
-        
+
         paragraphs = []
         citations = []
         claim_ids = []
-        
+
         for cluster in clusters:
-            paragraph, para_citations, para_claim_ids = await self._build_cluster_paragraph(cluster)
+            paragraph, para_citations, para_claim_ids = await self._build_cluster_paragraph(cluster, mode)
             paragraphs.append(paragraph)
             citations.extend(para_citations)
             claim_ids.extend(para_claim_ids)
@@ -525,8 +552,9 @@ and identifying trends in the evolution of research approaches over time.
         }
     
     async def _build_cluster_paragraph(
-        self, 
-        cluster: ClaimCluster
+        self,
+        cluster: ClaimCluster,
+        mode: str = "rules"
     ) -> Tuple[str, List[str], List[str]]:
         """Build literature from actual paper abstracts with LaTeX citations."""
         
@@ -577,11 +605,17 @@ and identifying trends in the evolution of research approaches over time.
         # Construct literature content from actual abstracts
         content_parts = []
         
-        if abstracts_data:
+        llm_paragraph = None
+        if abstracts_data and mode == "llm":
+            llm_paragraph = self._llm_synthesize_paragraph(cluster, abstracts_data[:5])
+
+        if llm_paragraph:
+            content_parts.append(llm_paragraph)
+        elif abstracts_data:
             # Create thematic introduction
             theme_intro = f"Research in {cluster.theme.lower()} has focused on {cluster.research_objective}. "
             content_parts.append(theme_intro)
-            
+
             # Process abstracts to create coherent literature (limit to top 5 papers)
             for i, abstract_info in enumerate(abstracts_data[:5]):
                 abstract_text = abstract_info['abstract']
@@ -670,6 +704,49 @@ and identifying trends in the evolution of research approaches over time.
         
         return full_paragraph, citations, claim_ids
     
+    def _llm_synthesize_paragraph(
+        self,
+        cluster: ClaimCluster,
+        abstracts_data: List[Dict[str, Any]]
+    ) -> Optional[str]:
+        """Ask the LLM to synthesize one literature-review paragraph, grounded
+        strictly in the supplied abstracts, citing each with \\cite{bibitem_key}.
+        Returns None on any failure so the caller falls back to the
+        sentence-extraction heuristic."""
+        sources = "\n\n".join(
+            f"[{a['bibitem_key']}] {a['abstract'][:1200]}"
+            for a in abstracts_data
+        )
+        prompt = (
+            "Write ONE flowing academic literature-review paragraph (120-220 words) "
+            f"synthesizing the following paper abstracts on the theme of "
+            f"'{cluster.theme}' ({cluster.research_objective}). "
+            "Use only facts stated in the abstracts below — do not invent results, "
+            "numbers, or claims not present in the text. Write in third person "
+            "academic tone. Cite each source inline with LaTeX \\cite{key} using "
+            "the bracketed key shown before each abstract, placed right after the "
+            "sentence that draws on it. Return ONLY the paragraph text, no heading, "
+            "no markdown, no preamble.\n\n"
+            f"Sources:\n{sources}"
+        )
+        try:
+            raw = llm_client.chat(
+                prompt,
+                max_tokens=512,
+                temperature=0.2,
+                tracker=self.tracker,
+                purpose="literature_synthesis",
+            ).strip()
+            raw = re.sub(r"^```\w*\s*", "", raw)
+            raw = re.sub(r"\s*```$", "", raw)
+            if not raw or "\\cite{" not in raw:
+                self.logger.warning("LLM literature synthesis missing citations; falling back")
+                return None
+            return raw + " "
+        except Exception as e:
+            self.logger.warning(f"LLM literature synthesis failed: {e}; falling back to rules")
+            return None
+
     def _generate_bibitem_key(self, paper):
         """Generate bibitem key from authors and year (e.g., KaPa23)."""
         if not paper.authors:

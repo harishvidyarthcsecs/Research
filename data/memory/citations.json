@@ -1,303 +1,65 @@
 [
   {
-    "paper_id": "10_1142_s0129054122420096",
-    "bibtex": "@article{10_1142_s0129054122420096,\n  title={Locating Number of Biswapped Networks},\n  author={Muhammad Faisal Nadeem and Waqar Ali and Hafiz Muhammad Afzal Siddiqui},\n  journal={International Journal of Foundations of Computer Science},\n  year={2022},\n  doi={10.1142/s0129054122420096},\n  url={https://doi.org/10.1142/s0129054122420096}\n}",
-    "apa": "Nadeem, M. F., Ali, W., & Siddiqui, H. M. A. (2022). Locating Number of Biswapped Networks. International Journal of Foundations of Computer Science.",
-    "ieee": "Muhammad Faisal Nadeem, Waqar Ali, Hafiz Muhammad Afzal Siddiqui, \"Locating Number of Biswapped Networks,\" International Journal of Foundations of Computer Science, 2022.",
-    "mla": "Nadeem, M. F., et al.. \"Locating Number of Biswapped Networks.\" International Journal of Foundations of Computer Science, 2022."
+    "paper_id": "10_18421_tem152_24",
+    "bibtex": "@article{10_18421_tem152_24,\n  title={Evaluating Transformer-Based Foundation Models for Time-Series Forecasting Across Multiple Horizons},\n  author={Miranda Harizaj and Alfons Harizaj and Olgerta Idrizi},\n  journal={TEM Journal},\n  year={2026},\n  doi={10.18421/tem152-24},\n  url={https://doi.org/10.18421/tem152-24}\n}",
+    "apa": "Harizaj, M., Harizaj, A., & Idrizi, O. (2026). Evaluating Transformer-Based Foundation Models for Time-Series Forecasting Across Multiple Horizons. TEM Journal.",
+    "ieee": "Miranda Harizaj, Alfons Harizaj, Olgerta Idrizi, \"Evaluating Transformer-Based Foundation Models for Time-Series Forecasting Across Multiple Horizons,\" TEM Journal, 2026.",
+    "mla": "Harizaj, M., et al.. \"Evaluating Transformer-Based Foundation Models for Time-Series Forecasting Across Multiple Horizons.\" TEM Journal, 2026."
   },
   {
-    "paper_id": "10_1088_1361_6501_acffe7",
-    "bibtex": "@article{10_1088_1361_6501_acffe7,\n  title={A comparison between certain graph parameters of biswapped networks and their maximal twin-preserving subgraphs with applications in determining complexity},\n  author={Anam Rani and Asfand Fahad and Iffat Fida Hussain and Usman Ali and Muhammad Ashraf},\n  journal={Measurement Science and Technology},\n  year={2024},\n  doi={10.1088/1361-6501/acffe7},\n  url={https://doi.org/10.1088/1361-6501/acffe7}\n}",
-    "apa": "Rani, A., Fahad, A., Hussain, I. F., Ali, U., & Ashraf, M. (2024). A comparison between certain graph parameters of biswapped networks and their maximal twin-preserving subgraphs with applications in determining complexity. Measurement Science and Technology.",
-    "ieee": "Anam Rani et al., \"A comparison between certain graph parameters of biswapped networks and their maximal twin-preserving subgraphs with applications in determining complexity,\" Measurement Science and Technology, 2024.",
-    "mla": "Rani, A., et al.. \"A comparison between certain graph parameters of biswapped networks and their maximal twin-preserving subgraphs with applications in determining complexity.\" Measurement Science and Technology, 2024."
+    "paper_id": "10_54254_2755_2721_96_20241351",
+    "bibtex": "@article{10_54254_2755_2721_96_20241351,\n  title={Reviews on Transformer-based Models for Financial Time Series Forecasting},\n  author={Heyi Lin},\n  journal={Applied and Computational Engineering},\n  year={2024},\n  doi={10.54254/2755-2721/96/20241351},\n  url={https://doi.org/10.54254/2755-2721/96/20241351}\n}",
+    "apa": "Lin, H. (2024). Reviews on Transformer-based Models for Financial Time Series Forecasting. Applied and Computational Engineering.",
+    "ieee": "Heyi Lin, \"Reviews on Transformer-based Models for Financial Time Series Forecasting,\" Applied and Computational Engineering, 2024.",
+    "mla": "Lin, H.. \"Reviews on Transformer-based Models for Financial Time Series Forecasting.\" Applied and Computational Engineering, 2024."
   },
   {
-    "paper_id": "10_37418_amsj_10_6_15",
-    "bibtex": "@article{10_37418_amsj_10_6_15,\n  title={ON VE-DEGREE AND EV-DEGREE BASED TOPOLOGICAL INDICES OF CERTAIN OTIS BISWAPPED NETWORK},\n  author={N. Zahra and M. Ibrahim},\n  journal={Advances in Mathematics: Scientific Journal},\n  year={2021},\n  doi={10.37418/amsj.10.6.15},\n  url={https://doi.org/10.37418/amsj.10.6.15}\n}",
-    "apa": "Zahra, N. & Ibrahim, M. (2021). ON VE-DEGREE AND EV-DEGREE BASED TOPOLOGICAL INDICES OF CERTAIN OTIS BISWAPPED NETWORK. Advances in Mathematics: Scientific Journal.",
-    "ieee": "N. Zahra, M. Ibrahim, \"ON VE-DEGREE AND EV-DEGREE BASED TOPOLOGICAL INDICES OF CERTAIN OTIS BISWAPPED NETWORK,\" Advances in Mathematics: Scientific Journal, 2021.",
-    "mla": "Zahra, N., and M. Ibrahim. \"ON VE-DEGREE AND EV-DEGREE BASED TOPOLOGICAL INDICES OF CERTAIN OTIS BISWAPPED NETWORK.\" Advances in Mathematics: Scientific Journal, 2021."
+    "paper_id": "10_20944_preprints202502_0009_v1",
+    "bibtex": "@article{10_20944_preprints202502_0009_v1,\n  title={Transformer-Based Models for Probabilistic Time Series Forecasting with Explanatory Variables},\n  author={Ricardo Caetano and Jos\u00e9 Manuel Oliveira and Patr\u00edcia Ramos},\n  journal={},\n  year={2023},\n  doi={10.20944/preprints202502.0009.v1},\n  url={https://doi.org/10.20944/preprints202502.0009.v1}\n}",
+    "apa": "Caetano, R., Oliveira, J. M., & Ramos, P. (2023). Transformer-Based Models for Probabilistic Time Series Forecasting with Explanatory Variables. .",
+    "ieee": "Ricardo Caetano, Jos\u00e9 Manuel Oliveira, Patr\u00edcia Ramos, \"Transformer-Based Models for Probabilistic Time Series Forecasting with Explanatory Variables,\" , 2023.",
+    "mla": "Caetano, R., et al.. \"Transformer-Based Models for Probabilistic Time Series Forecasting with Explanatory Variables.\" , 2023."
   },
   {
-    "paper_id": "10_1007_978_3_540_69501_1_10",
-    "bibtex": "@article{10_1007_978_3_540_69501_1_10,\n  title={Fault Tolerance in the Biswapped Network},\n  author={Wenhong Wei and Wenjun Xiao},\n  journal={Lecture Notes in Computer Science},\n  year={2023},\n  doi={10.1007/978-3-540-69501-1_10},\n  url={https://doi.org/10.1007/978-3-540-69501-1_10}\n}",
-    "apa": "Wei, W. & Xiao, W. (2023). Fault Tolerance in the Biswapped Network. Lecture Notes in Computer Science.",
-    "ieee": "Wenhong Wei, Wenjun Xiao, \"Fault Tolerance in the Biswapped Network,\" Lecture Notes in Computer Science, 2023.",
-    "mla": "Wei, W., and Wenjun Xiao. \"Fault Tolerance in the Biswapped Network.\" Lecture Notes in Computer Science, 2023."
+    "paper_id": "10_22541_au_174980723_33605220_v1",
+    "bibtex": "@article{10_22541_au_174980723_33605220_v1,\n  title={Fusing Convolutional and Transformer Models with Cross-Attention for Multi-Variate Wind Speed Time Series Forecasting},\n  author={Houren Jin and Weihao Qiu and Yuxian Zhao and Yunxuan Dong},\n  journal={},\n  year={2023},\n  doi={10.22541/au.174980723.33605220/v1},\n  url={https://doi.org/10.22541/au.174980723.33605220/v1}\n}",
+    "apa": "Jin, H., Qiu, W., Zhao, Y., & Dong, Y. (2023). Fusing Convolutional and Transformer Models with Cross-Attention for Multi-Variate Wind Speed Time Series Forecasting. .",
+    "ieee": "Houren Jin et al., \"Fusing Convolutional and Transformer Models with Cross-Attention for Multi-Variate Wind Speed Time Series Forecasting,\" , 2023.",
+    "mla": "Jin, H., et al.. \"Fusing Convolutional and Transformer Models with Cross-Attention for Multi-Variate Wind Speed Time Series Forecasting.\" , 2023."
   },
   {
-    "paper_id": "10_1007_978_3_540_76837_1_45",
-    "bibtex": "@article{10_1007_978_3_540_76837_1_45,\n  title={General Biswapped Networks and Their Topological Properties},\n  author={Mingxin He and Wenjun Xiao and Weidong Chen and Wenhong Wei and Zhen Zhang},\n  journal={Lecture Notes in Computer Science},\n  year={2023},\n  doi={10.1007/978-3-540-76837-1_45},\n  url={https://doi.org/10.1007/978-3-540-76837-1_45}\n}",
-    "apa": "He, M., Xiao, W., Chen, W., Wei, W., & Zhang, Z. (2023). General Biswapped Networks and Their Topological Properties. Lecture Notes in Computer Science.",
-    "ieee": "Mingxin He et al., \"General Biswapped Networks and Their Topological Properties,\" Lecture Notes in Computer Science, 2023.",
-    "mla": "He, M., et al.. \"General Biswapped Networks and Their Topological Properties.\" Lecture Notes in Computer Science, 2023."
+    "paper_id": "10_21275_sr231125192357",
+    "bibtex": "@article{10_21275_sr231125192357,\n  title={Time Series Forecasting of Air Pollutant PM2.5 Using Transformer Architecture},\n  author={K. Azhahudurai and V. Veeramanikandan},\n  journal={International Journal of Science and Research (IJSR)},\n  year={2023},\n  doi={10.21275/sr231125192357},\n  url={https://doi.org/10.21275/sr231125192357}\n}",
+    "apa": "Azhahudurai, K. & Veeramanikandan, V. (2023). Time Series Forecasting of Air Pollutant PM2.5 Using Transformer Architecture. International Journal of Science and Research (IJSR).",
+    "ieee": "K. Azhahudurai, V. Veeramanikandan, \"Time Series Forecasting of Air Pollutant PM2.5 Using Transformer Architecture,\" International Journal of Science and Research (IJSR), 2023.",
+    "mla": "Azhahudurai, K., and V. Veeramanikandan. \"Time Series Forecasting of Air Pollutant PM2.5 Using Transformer Architecture.\" International Journal of Science and Research (IJSR), 2023."
   },
   {
-    "paper_id": "10_1007_s13369_018_3135_0",
-    "bibtex": "@article{10_1007_s13369_018_3135_0,\n  title={The Recursive and Symmetrical Optoelectronic Network Architecture: Biswapped Network Hyper Hexa-Cell},\n  author={Ashish Gupta and Bikash Kanti Sarkar},\n  journal={Arabian Journal for Science and Engineering},\n  year={2018},\n  doi={10.1007/s13369-018-3135-0},\n  url={https://doi.org/10.1007/s13369-018-3135-0}\n}",
-    "apa": "Gupta, A. & Sarkar, B. K. (2018). The Recursive and Symmetrical Optoelectronic Network Architecture: Biswapped Network Hyper Hexa-Cell. Arabian Journal for Science and Engineering.",
-    "ieee": "Ashish Gupta, Bikash Kanti Sarkar, \"The Recursive and Symmetrical Optoelectronic Network Architecture: Biswapped Network Hyper Hexa-Cell,\" Arabian Journal for Science and Engineering, 2018.",
-    "mla": "Gupta, A., and Bikash Kanti Sarkar. \"The Recursive and Symmetrical Optoelectronic Network Architecture: Biswapped Network Hyper Hexa-Cell.\" Arabian Journal for Science and Engineering, 2018."
+    "paper_id": "10_2139_ssrn_4375798",
+    "bibtex": "@article{10_2139_ssrn_4375798,\n  title={Time Series Forecasting with Transformer Models and Application to Asset Management},\n  author={Edmond Lezmi and Jiali Xu},\n  journal={SSRN Electronic Journal},\n  year={2023},\n  doi={10.2139/ssrn.4375798},\n  url={https://doi.org/10.2139/ssrn.4375798}\n}",
+    "apa": "Lezmi, E. & Xu, J. (2023). Time Series Forecasting with Transformer Models and Application to Asset Management. SSRN Electronic Journal.",
+    "ieee": "Edmond Lezmi, Jiali Xu, \"Time Series Forecasting with Transformer Models and Application to Asset Management,\" SSRN Electronic Journal, 2023.",
+    "mla": "Lezmi, E., and Jiali Xu. \"Time Series Forecasting with Transformer Models and Application to Asset Management.\" SSRN Electronic Journal, 2023."
   },
   {
-    "paper_id": "10_1109_icis_2008_62",
-    "bibtex": "@inproceedings{10_1109_icis_2008_62,\n  title={Parallel Sorting on the Biswapped Network},\n  author={Wenhong Wei and Wenjun Xiao and Zhen Zhang},\n  booktitle={Seventh IEEE/ACIS International Conference on Computer and Information Science (icis 2008)},\n  year={2008},\n  doi={10.1109/icis.2008.62},\n  url={https://doi.org/10.1109/icis.2008.62}\n}",
-    "apa": "Wei, W., Xiao, W., & Zhang, Z. (2008). Parallel Sorting on the Biswapped Network. In Seventh IEEE/ACIS International Conference on Computer and Information Science (icis 2008).",
-    "ieee": "Wenhong Wei, Wenjun Xiao, Zhen Zhang, \"Parallel Sorting on the Biswapped Network,\" in Seventh IEEE/ACIS International Conference on Computer and Information Science (icis 2008), 2008.",
-    "mla": "Wei, W., et al.. \"Parallel Sorting on the Biswapped Network.\" Seventh IEEE/ACIS International Conference on Computer and Information Science (icis 2008), 2008."
+    "paper_id": "10_14711_thesis_991013039228703412",
+    "bibtex": "@article{10_14711_thesis_991013039228703412,\n  title={Interpretable trend-seasonality pattern of transformer in time series forecasting},\n  author={Yaowei Huang},\n  journal={},\n  year={2023},\n  doi={10.14711/thesis-991013039228703412},\n  url={https://doi.org/10.14711/thesis-991013039228703412}\n}",
+    "apa": "Huang, Y. (2023). Interpretable trend-seasonality pattern of transformer in time series forecasting. .",
+    "ieee": "Yaowei Huang, \"Interpretable trend-seasonality pattern of transformer in time series forecasting,\" , 2023.",
+    "mla": "Huang, Y.. \"Interpretable trend-seasonality pattern of transformer in time series forecasting.\" , 2023."
   },
   {
-    "paper_id": "10_1007_978_3_540_69384_0_40",
-    "bibtex": "@article{10_1007_978_3_540_69384_0_40,\n  title={Algorithms of Basic Communication Operation on the Biswapped Network},\n  author={Wenhong Wei and Wenjun Xiao},\n  journal={Lecture Notes in Computer Science},\n  year={2008},\n  doi={10.1007/978-3-540-69384-0_40},\n  url={https://doi.org/10.1007/978-3-540-69384-0_40}\n}",
-    "apa": "Wei, W. & Xiao, W. (2008). Algorithms of Basic Communication Operation on the Biswapped Network. Lecture Notes in Computer Science.",
-    "ieee": "Wenhong Wei, Wenjun Xiao, \"Algorithms of Basic Communication Operation on the Biswapped Network,\" Lecture Notes in Computer Science, 2008.",
-    "mla": "Wei, W., and Wenjun Xiao. \"Algorithms of Basic Communication Operation on the Biswapped Network.\" Lecture Notes in Computer Science, 2008."
+    "paper_id": "10_1016_b978_0_12_295183_1_50014_5",
+    "bibtex": "@article{10_1016_b978_0_12_295183_1_50014_5,\n  title={BUILDING MULTIPLE TIME SERIES FORECASTING MODELS},\n  author={C.W.J. GRANGER and PAUL NEWBOLD},\n  journal={Forecasting Economic Time Series},\n  year={1986},\n  doi={10.1016/b978-0-12-295183-1.50014-5},\n  url={https://doi.org/10.1016/b978-0-12-295183-1.50014-5}\n}",
+    "apa": "GRANGER, C. & NEWBOLD, P. (1986). BUILDING MULTIPLE TIME SERIES FORECASTING MODELS. Forecasting Economic Time Series.",
+    "ieee": "C.W.J. GRANGER, PAUL NEWBOLD, \"BUILDING MULTIPLE TIME SERIES FORECASTING MODELS,\" Forecasting Economic Time Series, 1986.",
+    "mla": "GRANGER, C., and PAUL NEWBOLD. \"BUILDING MULTIPLE TIME SERIES FORECASTING MODELS.\" Forecasting Economic Time Series, 1986."
   },
   {
-    "paper_id": "10_1016_j_tcs_2013_06_002",
-    "bibtex": "@article{10_1016_j_tcs_2013_06_002,\n  title={Fault isolation and identification in general biswapped networks under the PMC diagnostic model},\n  author={Chang-Hsiung Tsai and Jheng-Cheng Chen},\n  journal={Theoretical Computer Science},\n  year={2013},\n  doi={10.1016/j.tcs.2013.06.002},\n  url={https://doi.org/10.1016/j.tcs.2013.06.002}\n}",
-    "apa": "Tsai, C. & Chen, J. (2013). Fault isolation and identification in general biswapped networks under the PMC diagnostic model. Theoretical Computer Science.",
-    "ieee": "Chang-Hsiung Tsai, Jheng-Cheng Chen, \"Fault isolation and identification in general biswapped networks under the PMC diagnostic model,\" Theoretical Computer Science, 2013.",
-    "mla": "Tsai, C., and Jheng-Cheng Chen. \"Fault isolation and identification in general biswapped networks under the PMC diagnostic model.\" Theoretical Computer Science, 2013."
-  },
-  {
-    "paper_id": "10_1016_j_cam_2026_117500",
-    "bibtex": "@article{10_1016_j_cam_2026_117500,\n  title={Exploration of M-polynomial and entropy measures of biswapped networks with connection number approaches},\n  author={Nasreen Almohanna and Ali Ahmad and Khawlah Alhulwah and Ali N.A. Koam and Hamdan Alshehri},\n  journal={Journal of Computational and Applied Mathematics},\n  year={2026},\n  doi={10.1016/j.cam.2026.117500},\n  url={https://doi.org/10.1016/j.cam.2026.117500}\n}",
-    "apa": "Almohanna, N., Ahmad, A., Alhulwah, K., Koam, A. N., & Alshehri, H. (2026). Exploration of M-polynomial and entropy measures of biswapped networks with connection number approaches. Journal of Computational and Applied Mathematics.",
-    "ieee": "Nasreen Almohanna et al., \"Exploration of M-polynomial and entropy measures of biswapped networks with connection number approaches,\" Journal of Computational and Applied Mathematics, 2026.",
-    "mla": "Almohanna, N., et al.. \"Exploration of M-polynomial and entropy measures of biswapped networks with connection number approaches.\" Journal of Computational and Applied Mathematics, 2026."
-  },
-  {
-    "paper_id": "10_1038_s41598_025_29965_5",
-    "bibtex": "@article{10_1038_s41598_025_29965_5,\n  title={Average distance between the processors of biswapped networks},\n  author={S. Prabhu and M. Anitha and N. Harish Vidyarth and Paul Manuel},\n  journal={Scientific Reports},\n  year={2025},\n  doi={10.1038/s41598-025-29965-5},\n  url={https://doi.org/10.1038/s41598-025-29965-5}\n}",
-    "apa": "Prabhu, S., Anitha, M., Vidyarth, N. H., & Manuel, P. (2025). Average distance between the processors of biswapped networks. Scientific Reports.",
-    "ieee": "S. Prabhu et al., \"Average distance between the processors of biswapped networks,\" Scientific Reports, 2025.",
-    "mla": "Prabhu, S., et al.. \"Average distance between the processors of biswapped networks.\" Scientific Reports, 2025."
-  },
-  {
-    "paper_id": "10_1109_access_2024_3409420",
-    "bibtex": "@article{10_1109_access_2024_3409420,\n  title={Biswapped Networks and Their Maximal Twin-Preserving Subgraphs With a Motivation on Connection Number in Network-Based Approaches},\n  author={Khawlah Alhulwah and Ali N. A. Koam and Nasreen Almohanna and Ali Ahmad and Muhammad Azeem},\n  journal={IEEE Access},\n  year={2024},\n  doi={10.1109/access.2024.3409420},\n  url={https://doi.org/10.1109/access.2024.3409420}\n}",
-    "apa": "Alhulwah, K., Koam, A. N. A., Almohanna, N., Ahmad, A., & Azeem, M. (2024). Biswapped Networks and Their Maximal Twin-Preserving Subgraphs With a Motivation on Connection Number in Network-Based Approaches. IEEE Access.",
-    "ieee": "Khawlah Alhulwah et al., \"Biswapped Networks and Their Maximal Twin-Preserving Subgraphs With a Motivation on Connection Number in Network-Based Approaches,\" IEEE Access, 2024.",
-    "mla": "Alhulwah, K., et al.. \"Biswapped Networks and Their Maximal Twin-Preserving Subgraphs With a Motivation on Connection Number in Network-Based Approaches.\" IEEE Access, 2024."
-  },
-  {
-    "paper_id": "10_2139_ssrn_5383138",
-    "bibtex": "@article{10_2139_ssrn_5383138,\n  title={Reliability Assessment of Data Center Network Based on Expanded Biswapped Network},\n  author={Qing Xiong and Weibei Fan and Mengjie Lv and Xueli Sun and Guijuan Wang},\n  journal={},\n  year={2023},\n  doi={10.2139/ssrn.5383138},\n  url={https://doi.org/10.2139/ssrn.5383138}\n}",
-    "apa": "Xiong, Q., Fan, W., Lv, M., Sun, X., & Wang, G. (2023). Reliability Assessment of Data Center Network Based on Expanded Biswapped Network. .",
-    "ieee": "Qing Xiong et al., \"Reliability Assessment of Data Center Network Based on Expanded Biswapped Network,\" , 2023.",
-    "mla": "Xiong, Q., et al.. \"Reliability Assessment of Data Center Network Based on Expanded Biswapped Network.\" , 2023."
-  },
-  {
-    "paper_id": "10_3724_sp_j_1087_2009_03218",
-    "bibtex": "@article{10_3724_sp_j_1087_2009_03218,\n  title={Parallel algorithm of matrix multiplication based on Biswapped network},\n  author={Wen-hong WEI and Qing-xia LI and Wen-feng WANG},\n  journal={Journal of Computer Applications},\n  year={2010},\n  doi={10.3724/sp.j.1087.2009.03218},\n  url={https://doi.org/10.3724/sp.j.1087.2009.03218}\n}",
-    "apa": "WEI, W., LI, Q., & WANG, W. (2010). Parallel algorithm of matrix multiplication based on Biswapped network. Journal of Computer Applications.",
-    "ieee": "Wen-hong WEI, Qing-xia LI, Wen-feng WANG, \"Parallel algorithm of matrix multiplication based on Biswapped network,\" Journal of Computer Applications, 2010.",
-    "mla": "WEI, W., et al.. \"Parallel algorithm of matrix multiplication based on Biswapped network.\" Journal of Computer Applications, 2010."
-  },
-  {
-    "paper_id": "10_1109_icinis_2009_46",
-    "bibtex": "@inproceedings{10_1109_icinis_2009_46,\n  title={Load Balancing on the Biswapped Network},\n  author={Yulian Yu and Wenhong Wei},\n  booktitle={2009 Second International Conference on Intelligent Networks and Intelligent Systems},\n  year={2009},\n  doi={10.1109/icinis.2009.46},\n  url={https://doi.org/10.1109/icinis.2009.46}\n}",
-    "apa": "Yu, Y. & Wei, W. (2009). Load Balancing on the Biswapped Network. In 2009 Second International Conference on Intelligent Networks and Intelligent Systems.",
-    "ieee": "Yulian Yu, Wenhong Wei, \"Load Balancing on the Biswapped Network,\" in 2009 Second International Conference on Intelligent Networks and Intelligent Systems, 2009.",
-    "mla": "Yu, Y., and Wenhong Wei. \"Load Balancing on the Biswapped Network.\" 2009 Second International Conference on Intelligent Networks and Intelligent Systems, 2009."
-  },
-  {
-    "paper_id": "10_1109_isecs_2010_62",
-    "bibtex": "@inproceedings{10_1109_isecs_2010_62,\n  title={Load Balancing on Heterogeneous Biswapped Network},\n  author={Wenhong Wei and Yong Li},\n  booktitle={2010 Third International Symposium on Electronic Commerce and Security},\n  year={2010},\n  doi={10.1109/isecs.2010.62},\n  url={https://doi.org/10.1109/isecs.2010.62}\n}",
-    "apa": "Wei, W. & Li, Y. (2010). Load Balancing on Heterogeneous Biswapped Network. In 2010 Third International Symposium on Electronic Commerce and Security.",
-    "ieee": "Wenhong Wei, Yong Li, \"Load Balancing on Heterogeneous Biswapped Network,\" in 2010 Third International Symposium on Electronic Commerce and Security, 2010.",
-    "mla": "Wei, W., and Yong Li. \"Load Balancing on Heterogeneous Biswapped Network.\" 2010 Third International Symposium on Electronic Commerce and Security, 2010."
-  },
-  {
-    "paper_id": "10_5815_ijcnis_2018_08_03",
-    "bibtex": "@article{10_5815_ijcnis_2018_08_03,\n  title={Parallel Prefix Sum Algorithm on Optoelectronic Biswapped Network Hyper Hexa-cell},\n  author={Ashish Gupta and Bikash Kanti Sarkar},\n  journal={International Journal of Computer Network and Information Security},\n  year={2018},\n  doi={10.5815/ijcnis.2018.08.03},\n  url={https://doi.org/10.5815/ijcnis.2018.08.03}\n}",
-    "apa": "Gupta, A. & Sarkar, B. K. (2018). Parallel Prefix Sum Algorithm on Optoelectronic Biswapped Network Hyper Hexa-cell. International Journal of Computer Network and Information Security.",
-    "ieee": "Ashish Gupta, Bikash Kanti Sarkar, \"Parallel Prefix Sum Algorithm on Optoelectronic Biswapped Network Hyper Hexa-cell,\" International Journal of Computer Network and Information Security, 2018.",
-    "mla": "Gupta, A., and Bikash Kanti Sarkar. \"Parallel Prefix Sum Algorithm on Optoelectronic Biswapped Network Hyper Hexa-cell.\" International Journal of Computer Network and Information Security, 2018."
-  },
-  {
-    "paper_id": "10_3724_sp_j_1016_2010_00822",
-    "bibtex": "@article{10_3724_sp_j_1016_2010_00822,\n  title={Topological Properties of Biswapped Networks(BSNs): Node Symmetry and Maximal Fault Tolerance},\n  author={Wei-Dong CHEN and Wen-Jun XIAO},\n  journal={Chinese Journal of Computers},\n  year={2010},\n  doi={10.3724/sp.j.1016.2010.00822},\n  url={https://doi.org/10.3724/sp.j.1016.2010.00822}\n}",
-    "apa": "CHEN, W. & XIAO, W. (2010). Topological Properties of Biswapped Networks(BSNs): Node Symmetry and Maximal Fault Tolerance. Chinese Journal of Computers.",
-    "ieee": "Wei-Dong CHEN, Wen-Jun XIAO, \"Topological Properties of Biswapped Networks(BSNs): Node Symmetry and Maximal Fault Tolerance,\" Chinese Journal of Computers, 2010.",
-    "mla": "CHEN, W., and Wen-Jun XIAO. \"Topological Properties of Biswapped Networks(BSNs): Node Symmetry and Maximal Fault Tolerance.\" Chinese Journal of Computers, 2010."
-  },
-  {
-    "paper_id": "10_1007_s10586_012_0241_8",
-    "bibtex": "@article{10_1007_s10586_012_0241_8,\n  title={Efficient load balancing on biswapped networks},\n  author={Chenggui Zhao},\n  journal={Cluster Computing},\n  year={2014},\n  doi={10.1007/s10586-012-0241-8},\n  url={https://doi.org/10.1007/s10586-012-0241-8}\n}",
-    "apa": "Zhao, C. (2014). Efficient load balancing on biswapped networks. Cluster Computing.",
-    "ieee": "Chenggui Zhao, \"Efficient load balancing on biswapped networks,\" Cluster Computing, 2014.",
-    "mla": "Zhao, C.. \"Efficient load balancing on biswapped networks.\" Cluster Computing, 2014."
-  },
-  {
-    "paper_id": "10_1109_cicomms_2013_6582849",
-    "bibtex": "@inproceedings{10_1109_cicomms_2013_6582849,\n  title={Efficient scheme for load balancing on heterogeneous Biswapped Networks},\n  author={Liting Sun and Chaonan Tong},\n  booktitle={2013 IEEE Symposium on Computational Intelligence for Communication Systems and Networks (CIComms)},\n  year={2013},\n  doi={10.1109/cicomms.2013.6582849},\n  url={https://doi.org/10.1109/cicomms.2013.6582849}\n}",
-    "apa": "Sun, L. & Tong, C. (2013). Efficient scheme for load balancing on heterogeneous Biswapped Networks. In 2013 IEEE Symposium on Computational Intelligence for Communication Systems and Networks (CIComms).",
-    "ieee": "Liting Sun, Chaonan Tong, \"Efficient scheme for load balancing on heterogeneous Biswapped Networks,\" in 2013 IEEE Symposium on Computational Intelligence for Communication Systems and Networks (CIComms), 2013.",
-    "mla": "Sun, L., and Chaonan Tong. \"Efficient scheme for load balancing on heterogeneous Biswapped Networks.\" 2013 IEEE Symposium on Computational Intelligence for Communication Systems and Networks (CIComms), 2013."
-  },
-  {
-    "paper_id": "10_1109_gpc_workshops_2008_69",
-    "bibtex": "@inproceedings{10_1109_gpc_workshops_2008_69,\n  title={Constructing Node-Disjoint Paths in Biswapped Networks (BSNs)},\n  author={Weidong Chen and Wenjun Xiao},\n  booktitle={2008 The 3rd International Conference on Grid and Pervasive Computing - Workshops},\n  year={2008},\n  doi={10.1109/gpc.workshops.2008.69},\n  url={https://doi.org/10.1109/gpc.workshops.2008.69}\n}",
-    "apa": "Chen, W. & Xiao, W. (2008). Constructing Node-Disjoint Paths in Biswapped Networks (BSNs). In 2008 The 3rd International Conference on Grid and Pervasive Computing - Workshops.",
-    "ieee": "Weidong Chen, Wenjun Xiao, \"Constructing Node-Disjoint Paths in Biswapped Networks (BSNs),\" in 2008 The 3rd International Conference on Grid and Pervasive Computing - Workshops, 2008.",
-    "mla": "Chen, W., and Wenjun Xiao. \"Constructing Node-Disjoint Paths in Biswapped Networks (BSNs).\" 2008 The 3rd International Conference on Grid and Pervasive Computing - Workshops, 2008."
-  },
-  {
-    "paper_id": "10_1093_comjnl_bxt034",
-    "bibtex": "@article{10_1093_comjnl_bxt034,\n  title={Node-to-Set Disjoint Paths in Biswapped Networks},\n  author={S. Ling and W. Chen},\n  journal={The Computer Journal},\n  year={2014},\n  doi={10.1093/comjnl/bxt034},\n  url={https://doi.org/10.1093/comjnl/bxt034}\n}",
-    "apa": "Ling, S. & Chen, W. (2014). Node-to-Set Disjoint Paths in Biswapped Networks. The Computer Journal.",
-    "ieee": "S. Ling, W. Chen, \"Node-to-Set Disjoint Paths in Biswapped Networks,\" The Computer Journal, 2014.",
-    "mla": "Ling, S., and W. Chen. \"Node-to-Set Disjoint Paths in Biswapped Networks.\" The Computer Journal, 2014."
-  },
-  {
-    "paper_id": "10_1093_comjnl_bxq083",
-    "bibtex": "@article{10_1093_comjnl_bxq083,\n  title={A Multipath Analysis of Biswapped Networks},\n  author={Y. Xiang and I. A. Stewart},\n  journal={The Computer Journal},\n  year={2011},\n  doi={10.1093/comjnl/bxq083},\n  url={https://doi.org/10.1093/comjnl/bxq083}\n}",
-    "apa": "Xiang, Y. & Stewart, I. A. (2011). A Multipath Analysis of Biswapped Networks. The Computer Journal.",
-    "ieee": "Y. Xiang, I. A. Stewart, \"A Multipath Analysis of Biswapped Networks,\" The Computer Journal, 2011.",
-    "mla": "Xiang, Y., and I. A. Stewart. \"A Multipath Analysis of Biswapped Networks.\" The Computer Journal, 2011."
-  },
-  {
-    "paper_id": "10_1109_snpd_2007_217",
-    "bibtex": "@inproceedings{10_1109_snpd_2007_217,\n  title={Biswapped Networks and Their Topological Properties},\n  author={Wenjun Xiao and Weidong Chen and Mingxin He and Wenhong Wei and Behrooz Parhami},\n  booktitle={Eighth ACIS International Conference on Software Engineering, Artificial Intelligence, Networking, and Parallel/Distributed Computing (SNPD 2007)},\n  year={2007},\n  doi={10.1109/snpd.2007.217},\n  url={https://doi.org/10.1109/snpd.2007.217}\n}",
-    "apa": "Xiao, W., Chen, W., He, M., Wei, W., & Parhami, B. (2007). Biswapped Networks and Their Topological Properties. In Eighth ACIS International Conference on Software Engineering, Artificial Intelligence, Networking, and Parallel/Distributed Computing (SNPD 2007).",
-    "ieee": "Wenjun Xiao et al., \"Biswapped Networks and Their Topological Properties,\" in Eighth ACIS International Conference on Software Engineering, Artificial Intelligence, Networking, and Parallel/Distributed Computing (SNPD 2007), 2007.",
-    "mla": "Xiao, W., et al.. \"Biswapped Networks and Their Topological Properties.\" Eighth ACIS International Conference on Software Engineering, Artificial Intelligence, Networking, and Parallel/Distributed Computing (SNPD 2007), 2007."
-  },
-  {
-    "paper_id": "10_1093_comjnl_bxw050",
-    "bibtex": "@article{10_1093_comjnl_bxw050,\n  title={Node-Pancyclic Properties of Biswapped Networks Based on Cycles in Their Factor Networks},\n  author={Weidong Chen and Shan Ling},\n  journal={The Computer Journal},\n  year={2017},\n  doi={10.1093/comjnl/bxw050},\n  url={https://doi.org/10.1093/comjnl/bxw050}\n}",
-    "apa": "Chen, W. & Ling, S. (2017). Node-Pancyclic Properties of Biswapped Networks Based on Cycles in Their Factor Networks. The Computer Journal.",
-    "ieee": "Weidong Chen, Shan Ling, \"Node-Pancyclic Properties of Biswapped Networks Based on Cycles in Their Factor Networks,\" The Computer Journal, 2017.",
-    "mla": "Chen, W., and Shan Ling. \"Node-Pancyclic Properties of Biswapped Networks Based on Cycles in Their Factor Networks.\" The Computer Journal, 2017."
-  },
-  {
-    "paper_id": "10_1080_00207160_2011_562893",
-    "bibtex": "@article{10_1080_00207160_2011_562893,\n  title={Biswapped networks: a family of interconnection architectures with advantages over swapped or OTIS networks},\n  author={Wenjun Xiao and Behrooz Parhami and Weidong Chen and Mingxin He and Wenhong Wei},\n  journal={International Journal of Computer Mathematics},\n  year={2011},\n  doi={10.1080/00207160.2011.562893},\n  url={https://doi.org/10.1080/00207160.2011.562893}\n}",
-    "apa": "Xiao, W., Parhami, B., Chen, W., He, M., & Wei, W. (2011). Biswapped networks: a family of interconnection architectures with advantages over swapped or OTIS networks. International Journal of Computer Mathematics.",
-    "ieee": "Wenjun Xiao et al., \"Biswapped networks: a family of interconnection architectures with advantages over swapped or OTIS networks,\" International Journal of Computer Mathematics, 2011.",
-    "mla": "Xiao, W., et al.. \"Biswapped networks: a family of interconnection architectures with advantages over swapped or OTIS networks.\" International Journal of Computer Mathematics, 2011."
-  },
-  {
-    "paper_id": "10_1007_s40009_020_00942_y",
-    "bibtex": "@article{10_1007_s40009_020_00942_y,\n  title={Biswapped\u2013Torus Network: A New Efficient Node-Symmetrical Optoelectronic Network},\n  author={Ashish Gupta and Bikash Kanti Sarkar},\n  journal={National Academy Science Letters},\n  year={2021},\n  doi={10.1007/s40009-020-00942-y},\n  url={https://doi.org/10.1007/s40009-020-00942-y}\n}",
-    "apa": "Gupta, A. & Sarkar, B. K. (2021). Biswapped\u2013Torus Network: A New Efficient Node-Symmetrical Optoelectronic Network. National Academy Science Letters.",
-    "ieee": "Ashish Gupta, Bikash Kanti Sarkar, \"Biswapped\u2013Torus Network: A New Efficient Node-Symmetrical Optoelectronic Network,\" National Academy Science Letters, 2021.",
-    "mla": "Gupta, A., and Bikash Kanti Sarkar. \"Biswapped\u2013Torus Network: A New Efficient Node-Symmetrical Optoelectronic Network.\" National Academy Science Letters, 2021."
-  },
-  {
-    "paper_id": "10_1142_s2196888821500159",
-    "bibtex": "@article{10_1142_s2196888821500159,\n  title={Optimized Parallel Prefix Sum Algorithm on Optoelectronic Biswapped-Torus Architecture},\n  author={Ashish Gupta},\n  journal={Vietnam Journal of Computer Science},\n  year={2021},\n  doi={10.1142/s2196888821500159},\n  url={https://doi.org/10.1142/s2196888821500159}\n}",
-    "apa": "Gupta, A. (2021). Optimized Parallel Prefix Sum Algorithm on Optoelectronic Biswapped-Torus Architecture. Vietnam Journal of Computer Science.",
-    "ieee": "Ashish Gupta, \"Optimized Parallel Prefix Sum Algorithm on Optoelectronic Biswapped-Torus Architecture,\" Vietnam Journal of Computer Science, 2021.",
-    "mla": "Gupta, A.. \"Optimized Parallel Prefix Sum Algorithm on Optoelectronic Biswapped-Torus Architecture.\" Vietnam Journal of Computer Science, 2021."
-  },
-  {
-    "paper_id": "10_5815_ijcnis_2022_01_06",
-    "bibtex": "@article{10_5815_ijcnis_2022_01_06,\n  title={Optimized Parallel Counting Sort Algorithm for Distinct Numeric Values on Biswapped Hyper Hexa-Cell Optoelectronic Network},\n  author={Ashish Gupta},\n  journal={International Journal of Computer Network and Information Security},\n  year={2021},\n  doi={10.5815/ijcnis.2022.01.06},\n  url={https://doi.org/10.5815/ijcnis.2022.01.06}\n}",
-    "apa": "Gupta, A. (2021). Optimized Parallel Counting Sort Algorithm for Distinct Numeric Values on Biswapped Hyper Hexa-Cell Optoelectronic Network. International Journal of Computer Network and Information Security.",
-    "ieee": "Ashish Gupta, \"Optimized Parallel Counting Sort Algorithm for Distinct Numeric Values on Biswapped Hyper Hexa-Cell Optoelectronic Network,\" International Journal of Computer Network and Information Security, 2021.",
-    "mla": "Gupta, A.. \"Optimized Parallel Counting Sort Algorithm for Distinct Numeric Values on Biswapped Hyper Hexa-Cell Optoelectronic Network.\" International Journal of Computer Network and Information Security, 2021."
-  },
-  {
-    "paper_id": "10_1016_j_jpdc_2024_105009",
-    "bibtex": "@article{10_1016_j_jpdc_2024_105009,\n  title={Fault-tolerance in biswapped multiprocessor interconnection networks},\n  author={Basem Assiri and Muhammad Faisal Nadeem and Waqar Ali and Ali Ahmad},\n  journal={Journal of Parallel and Distributed Computing},\n  year={2025},\n  doi={10.1016/j.jpdc.2024.105009},\n  url={https://doi.org/10.1016/j.jpdc.2024.105009}\n}",
-    "apa": "Assiri, B., Nadeem, M. F., Ali, W., & Ahmad, A. (2025). Fault-tolerance in biswapped multiprocessor interconnection networks. Journal of Parallel and Distributed Computing.",
-    "ieee": "Basem Assiri et al., \"Fault-tolerance in biswapped multiprocessor interconnection networks,\" Journal of Parallel and Distributed Computing, 2025.",
-    "mla": "Assiri, B., et al.. \"Fault-tolerance in biswapped multiprocessor interconnection networks.\" Journal of Parallel and Distributed Computing, 2025."
-  },
-  {
-    "paper_id": "10_1109_snpd_2007_51",
-    "bibtex": "@inproceedings{10_1109_snpd_2007_51,\n  title={Matrix Multiplication on the Biswapped-Mesh Network},\n  author={Wenhong Wei and Wenjun Xiao},\n  booktitle={Eighth ACIS International Conference on Software Engineering, Artificial Intelligence, Networking, and Parallel/Distributed Computing (SNPD 2007)},\n  year={2007},\n  doi={10.1109/snpd.2007.51},\n  url={https://doi.org/10.1109/snpd.2007.51}\n}",
-    "apa": "Wei, W. & Xiao, W. (2007). Matrix Multiplication on the Biswapped-Mesh Network. In Eighth ACIS International Conference on Software Engineering, Artificial Intelligence, Networking, and Parallel/Distributed Computing (SNPD 2007).",
-    "ieee": "Wenhong Wei, Wenjun Xiao, \"Matrix Multiplication on the Biswapped-Mesh Network,\" in Eighth ACIS International Conference on Software Engineering, Artificial Intelligence, Networking, and Parallel/Distributed Computing (SNPD 2007), 2007.",
-    "mla": "Wei, W., and Wenjun Xiao. \"Matrix Multiplication on the Biswapped-Mesh Network.\" Eighth ACIS International Conference on Software Engineering, Artificial Intelligence, Networking, and Parallel/Distributed Computing (SNPD 2007), 2007."
-  },
-  {
-    "paper_id": "10_3403_30168736",
-    "bibtex": "@article{10_3403_30168736,\n  title={Multimedia home network. Network interfaces for network adapter},\n  author={},\n  journal={},\n  year={2023},\n  doi={10.3403/30168736},\n  url={https://doi.org/10.3403/30168736}\n}",
-    "apa": "Unknown Author (2023). Multimedia home network. Network interfaces for network adapter. .",
-    "ieee": "Unknown Author, \"Multimedia home network. Network interfaces for network adapter,\" , 2023.",
-    "mla": "Unknown Author. \"Multimedia home network. Network interfaces for network adapter.\" , 2023."
-  },
-  {
-    "paper_id": "10_5353_th_b3126831",
-    "bibtex": "@article{10_5353_th_b3126831,\n  title={Business network : network marketing : analysis of network marketing using business network theories},\n  author={Pui-kuen Tang},\n  journal={},\n  year={2023},\n  doi={10.5353/th_b3126831},\n  url={https://doi.org/10.5353/th_b3126831}\n}",
-    "apa": "Tang, P. (2023). Business network : network marketing : analysis of network marketing using business network theories. .",
-    "ieee": "Pui-kuen Tang, \"Business network : network marketing : analysis of network marketing using business network theories,\" , 2023.",
-    "mla": "Tang, P.. \"Business network : network marketing : analysis of network marketing using business network theories.\" , 2023."
-  },
-  {
-    "paper_id": "10_2172_2005192",
-    "bibtex": "@article{10_2172_2005192,\n  title={Network Calculus and Mu2e event building Network},\n  author={Hiu kao},\n  journal={Network Calculus and Mu2e event building Network},\n  year={2023},\n  doi={10.2172/2005192},\n  url={https://doi.org/10.2172/2005192}\n}",
-    "apa": "kao, H. (2023). Network Calculus and Mu2e event building Network. Network Calculus and Mu2e event building Network.",
-    "ieee": "Hiu kao, \"Network Calculus and Mu2e event building Network,\" Network Calculus and Mu2e event building Network, 2023.",
-    "mla": "kao, H.. \"Network Calculus and Mu2e event building Network.\" Network Calculus and Mu2e event building Network, 2023."
-  },
-  {
-    "paper_id": "10_1007_springerreference_19661",
-    "bibtex": "@article{10_1007_springerreference_19661,\n  title={network-network interface},\n  author={},\n  journal={SpringerReference},\n  year={2023},\n  doi={10.1007/springerreference_19661},\n  url={https://doi.org/10.1007/springerreference_19661}\n}",
-    "apa": "Unknown Author (2023). network-network interface. SpringerReference.",
-    "ieee": "Unknown Author, \"network-network interface,\" SpringerReference, 2023.",
-    "mla": "Unknown Author. \"network-network interface.\" SpringerReference, 2023."
-  },
-  {
-    "paper_id": "10_3390_network3010004",
-    "bibtex": "@article{10_3390_network3010004,\n  title={Acknowledgment to the Reviewers of Network in 2022},\n  author={},\n  journal={Network},\n  year={2023},\n  doi={10.3390/network3010004},\n  url={https://doi.org/10.3390/network3010004}\n}",
-    "apa": "Unknown Author (2023). Acknowledgment to the Reviewers of Network in 2022. Network.",
-    "ieee": "Unknown Author, \"Acknowledgment to the Reviewers of Network in 2022,\" Network, 2023.",
-    "mla": "Unknown Author. \"Acknowledgment to the Reviewers of Network in 2022.\" Network, 2023."
-  },
-  {
-    "paper_id": "10_3390_network2010006",
-    "bibtex": "@article{10_3390_network2010006,\n  title={Acknowledgment to Reviewers of Network in 2021},\n  author={},\n  journal={Network},\n  year={2022},\n  doi={10.3390/network2010006},\n  url={https://doi.org/10.3390/network2010006}\n}",
-    "apa": "Unknown Author (2022). Acknowledgment to Reviewers of Network in 2021. Network.",
-    "ieee": "Unknown Author, \"Acknowledgment to Reviewers of Network in 2021,\" Network, 2022.",
-    "mla": "Unknown Author. \"Acknowledgment to Reviewers of Network in 2021.\" Network, 2022."
-  },
-  {
-    "paper_id": "10_1093_ofid_ofv133_1465",
-    "bibtex": "@article{10_1093_ofid_ofv133_1465,\n  title={Preliminary End-of-Season Estimates of 2014/15 Influenza Vaccine Effectiveness in Preventing Laboratory-Confirmed Influenza-Related Hospitalization From the Serious Outcomes Surveillance (SOS) Network of the Canadian Immunization Research Network (CIRN)},\n  author={Shelly Mcneil and Ardith Ambrose and Melissa K. Andrew and Guy Boivin and William Bowie and Gael Dos Santos and May Elsherif and Karen Green and Francois Haguinet and Todd Hatchette and Kevin Katz and Jason Leblanc and Mark Loeb and Donna Mackinnon-Cameron and Anne E. Mccarthy and Janet E. Mcelhaney and Allison Mcgeer and Jeff Powis and David Richardson and Makeda Semret and Rohita Sharma and Vivek Shinde and Daniel Smyth and Sylvie Trottier and Louis Valiquette and Duncan Webster and Lingyun Ye},\n  journal={Open Forum Infectious Diseases},\n  year={2015},\n  doi={10.1093/ofid/ofv133.1465},\n  url={https://doi.org/10.1093/ofid/ofv133.1465}\n}",
-    "apa": "Mcneil, S., Ambrose, A., Andrew, M. K., Boivin, G., Bowie, W., Santos, G. D., Elsherif, M., Green, K., Haguinet, F., Hatchette, T., Katz, K., Leblanc, J., Loeb, M., Mackinnon-Cameron, D., Mccarthy, A. E., Mcelhaney, J. E., Mcgeer, A., Powis, J., Richardson, D., ... Ye, L. (2015). Preliminary End-of-Season Estimates of 2014/15 Influenza Vaccine Effectiveness in Preventing Laboratory-Confirmed Influenza-Related Hospitalization From the Serious Outcomes Surveillance (SOS) Network of the Canadian Immunization Research Network (CIRN). Open Forum Infectious Diseases.",
-    "ieee": "Shelly Mcneil et al., \"Preliminary End-of-Season Estimates of 2014/15 Influenza Vaccine Effectiveness in Preventing Laboratory-Confirmed Influenza-Related Hospitalization From the Serious Outcomes Surveillance (SOS) Network of the Canadian Immunization Research Network (CIRN),\" Open Forum Infectious Diseases, 2015.",
-    "mla": "Mcneil, S., et al.. \"Preliminary End-of-Season Estimates of 2014/15 Influenza Vaccine Effectiveness in Preventing Laboratory-Confirmed Influenza-Related Hospitalization From the Serious Outcomes Surveillance (SOS) Network of the Canadian Immunization Research Network (CIRN).\" Open Forum Infectious Diseases, 2015."
-  },
-  {
-    "paper_id": "10_1109_mnet_2012_6246743",
-    "bibtex": "@article{10_1109_mnet_2012_6246743,\n  title={IEEE Network [cover]},\n  author={},\n  journal={IEEE Network},\n  year={2012},\n  doi={10.1109/mnet.2012.6246743},\n  url={https://doi.org/10.1109/mnet.2012.6246743}\n}",
-    "apa": "Unknown Author (2012). IEEE Network [cover]. IEEE Network.",
-    "ieee": "Unknown Author, \"IEEE Network [cover],\" IEEE Network, 2012.",
-    "mla": "Unknown Author. \"IEEE Network [cover].\" IEEE Network, 2012."
-  },
-  {
-    "paper_id": "10_1109_mnet_2005_1383430",
-    "bibtex": "@article{10_1109_mnet_2005_1383430,\n  title={IEEE Network},\n  author={},\n  journal={IEEE Network},\n  year={2005},\n  doi={10.1109/mnet.2005.1383430},\n  url={https://doi.org/10.1109/mnet.2005.1383430}\n}",
-    "apa": "Unknown Author (2005). IEEE Network. IEEE Network.",
-    "ieee": "Unknown Author, \"IEEE Network,\" IEEE Network, 2005.",
-    "mla": "Unknown Author. \"IEEE Network.\" IEEE Network, 2005."
-  },
-  {
-    "paper_id": "10_1109_mnet_2004_1301013",
-    "bibtex": "@article{10_1109_mnet_2004_1301013,\n  title={Network Systems Design Using Network Processors [Book Review]},\n  author={I. Nikolaidis},\n  journal={IEEE Network},\n  year={2004},\n  doi={10.1109/mnet.2004.1301013},\n  url={https://doi.org/10.1109/mnet.2004.1301013}\n}",
-    "apa": "Nikolaidis, I. (2004). Network Systems Design Using Network Processors [Book Review]. IEEE Network.",
-    "ieee": "I. Nikolaidis, \"Network Systems Design Using Network Processors [Book Review],\" IEEE Network, 2004.",
-    "mla": "Nikolaidis, I.. \"Network Systems Design Using Network Processors [Book Review].\" IEEE Network, 2004."
-  },
-  {
-    "paper_id": "10_1002_0471650129_dob0482",
-    "bibtex": "@article{10_1002_0471650129_dob0482,\n  title={Network (Genetic Network, Metabolic Network, Molecular Network)},\n  author={Denis Thieffry},\n  journal={Dictionary of Bioinformatics and Computational Biology},\n  year={2004},\n  doi={10.1002/0471650129.dob0482},\n  url={https://doi.org/10.1002/0471650129.dob0482}\n}",
-    "apa": "Thieffry, D. (2004). Network (Genetic Network, Metabolic Network, Molecular Network). Dictionary of Bioinformatics and Computational Biology.",
-    "ieee": "Denis Thieffry, \"Network (Genetic Network, Metabolic Network, Molecular Network),\" Dictionary of Bioinformatics and Computational Biology, 2004.",
-    "mla": "Thieffry, D.. \"Network (Genetic Network, Metabolic Network, Molecular Network).\" Dictionary of Bioinformatics and Computational Biology, 2004."
-  },
-  {
-    "paper_id": "unknown_pubmed_paper_41331308_2023",
-    "bibtex": "@article{unknown_pubmed_paper_41331308_2023,\n  title={PubMed Paper 41331308},\n  author={Unknown},\n  journal={PubMed},\n  year={2023},\n  url={https://pubmed.ncbi.nlm.nih.gov/41331308/}\n}",
-    "apa": "Unknown (2023). PubMed Paper 41331308. PubMed.",
-    "ieee": "Unknown, \"PubMed Paper 41331308,\" PubMed, 2023.",
-    "mla": "Unknown. \"PubMed Paper 41331308.\" PubMed, 2023."
+    "paper_id": "10_1017_cbo9781107049994_003",
+    "bibtex": "@article{10_1017_cbo9781107049994_003,\n  title={Univariate time series models},\n  author={},\n  journal={Forecasting, Structural Time Series Models and the Kalman Filter},\n  year={1990},\n  doi={10.1017/cbo9781107049994.003},\n  url={https://doi.org/10.1017/cbo9781107049994.003}\n}",
+    "apa": "Unknown Author (1990). Univariate time series models. Forecasting, Structural Time Series Models and the Kalman Filter.",
+    "ieee": "Unknown Author, \"Univariate time series models,\" Forecasting, Structural Time Series Models and the Kalman Filter, 1990.",
+    "mla": "Unknown Author. \"Univariate time series models.\" Forecasting, Structural Time Series Models and the Kalman Filter, 1990."
   }
 ]

@@ -1,378 +1,259 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LaTeX Citation Reorder — Research Agent</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-    <style>
-        :root {
-            --bg-primary: #0d1117;
-            --bg-card: #161b22;
-            --bg-card-hover: #1c2333;
-            --bg-input: #0d1117;
-            --accent-blue: #58a6ff;
-            --accent-green: #3fb950;
-            --accent-red: #f78166;
-            --accent-orange: #e3b341;
-            --accent-purple: #bc8cff;
-            --text-primary: #e6edf3;
-            --text-secondary: #8b949e;
-            --text-muted: #656d76;
-            --border-color: #30363d;
-            --border-muted: #21262d;
-            --sidebar-width: 240px;
-        }
+{% extends 'base.html' %}
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+{% block title %}LaTeX Citation Reorder{% endblock %}
+{% block nav_latex %}active{% endblock %}
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+{% block hero_gradient %}linear-gradient(135deg, #e6edf3 0%, #e3b341 60%, #f78166 100%){% endblock %}
+{% block hero_orb1_color %}rgba(227,179,65,0.1){% endblock %}
+{% block hero_orb2_color %}rgba(247,129,102,0.1){% endblock %}
 
-        /* ── Sidebar ── */
-        #sidebar {
-            position: fixed; top: 0; left: 0;
-            width: var(--sidebar-width); height: 100vh;
-            background: var(--bg-card); border-right: 1px solid var(--border-color);
-            display: flex; flex-direction: column; z-index: 1000;
-            transition: transform 0.3s ease;
-        }
-        .sidebar-brand { padding: 20px 16px 16px; border-bottom: 1px solid var(--border-muted); }
-        .sidebar-brand h6 { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
-        .sidebar-brand p { font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 0; }
-        .sidebar-logo { width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; margin-bottom: 10px; }
-        .sidebar-nav { flex: 1; padding: 12px 8px; overflow-y: auto; }
-        .nav-section-label { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); padding: 8px 8px 4px; }
-        .nav-link-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; color: var(--text-secondary); text-decoration: none; font-size: 13.5px; font-weight: 500; transition: all 0.15s ease; margin-bottom: 2px; }
-        .nav-link-item:hover { background: var(--bg-card-hover); color: var(--text-primary); }
-        .nav-link-item.active { background: rgba(227,179,65,0.12); color: var(--accent-orange); }
-        .nav-link-item .nav-icon { width: 18px; text-align: center; font-size: 13px; }
-        .sidebar-footer { padding: 12px 8px; border-top: 1px solid var(--border-muted); }
+{% block hero_title %}LaTeX Citation Reorder{% endblock %}
+{% block hero_subtitle %}Upload a <code style="background:rgba(227,179,65,0.12);color:var(--accent-orange);padding:1px 6px;border-radius:4px;">.tex</code> file and reorder bibliography entries so citation numbers match their first appearance in the document body.{% endblock %}
 
-        /* ── Main ── */
-        #main-content { margin-left: var(--sidebar-width); min-height: 100vh; display: flex; flex-direction: column; }
-        .hero-header { padding: 40px 40px 24px; position: relative; overflow: hidden; }
-        .hero-header::before { content: ''; position: absolute; top: -60px; left: -60px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(227,179,65,0.1) 0%, transparent 70%); pointer-events: none; }
-        .hero-title { font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #e6edf3 0%, #e3b341 60%, #f78166 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.2; margin-bottom: 8px; }
-        .hero-subtitle { font-size: 14px; color: var(--text-secondary); max-width: 520px; }
-        .content-area { flex: 1; padding: 0 40px 40px; }
-        .glass-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; }
-        .card-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
 
-        /* ── Drop zone ── */
-        .drop-zone { border: 2px dashed var(--border-color); border-radius: 10px; padding: 48px 24px; text-align: center; cursor: pointer; transition: all 0.2s ease; background: var(--bg-input); }
-        .drop-zone.drag-over { border-color: var(--accent-orange); background: rgba(227,179,65,0.05); }
-        .drop-zone-icon { font-size: 36px; color: var(--text-muted); margin-bottom: 14px; }
-        .drop-zone-text { font-size: 15px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; }
-        .drop-zone-hint { font-size: 12px; color: var(--text-muted); }
-        .drop-zone input[type="file"] { display: none; }
+.drop-zone {
+    border: 2px dashed var(--border-color); border-radius: 10px;
+    padding: 48px 24px; text-align: center; cursor: pointer;
+    transition: all 0.2s; background: var(--bg-input);
+}
+.drop-zone.drag-over { border-color: var(--accent-orange); background: rgba(227,179,65,0.05); }
+.drop-zone-icon { font-size: 36px; color: var(--text-muted); margin-bottom: 14px; }
+.drop-zone-text { font-size: 15px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; }
+.drop-zone-hint { font-size: 12px; color: var(--text-muted); }
+.drop-zone input[type="file"] { display: none; }
 
-        /* ── File indicator ── */
-        .file-chosen { margin-top: 12px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--accent-orange); }
+.file-chosen { margin-top: 12px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--accent-orange); }
 
-        /* ── Buttons ── */
-        .btn-reorder { background: linear-gradient(135deg, var(--accent-orange), var(--accent-red)); color: #fff; border: none; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600; padding: 11px 24px; cursor: pointer; transition: opacity 0.15s ease, transform 0.15s ease; display: inline-flex; align-items: center; gap: 8px; }
-        .btn-reorder:hover { opacity: 0.88; transform: translateY(-1px); }
-        .btn-reorder:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn-reorder {
+    background: linear-gradient(135deg, var(--accent-orange), var(--accent-red));
+    color: #fff; border: none; border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600;
+    padding: 11px 24px; cursor: pointer; transition: opacity 0.15s, transform 0.15s;
+    display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-reorder:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-reorder:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-        .btn-download { background: rgba(63,185,80,0.12); color: var(--accent-green); border: 1px solid rgba(63,185,80,0.25); border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 600; padding: 8px 16px; cursor: pointer; transition: all 0.15s ease; display: inline-flex; align-items: center; gap: 6px; }
-        .btn-download:hover { background: rgba(63,185,80,0.2); }
+.btn-download {
+    background: rgba(63,185,80,0.12); color: var(--accent-green);
+    border: 1px solid rgba(63,185,80,0.25); border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 600;
+    padding: 8px 16px; cursor: pointer; transition: all 0.15s;
+    display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-download:hover { background: rgba(63,185,80,0.2); }
 
-        .btn-copy { background: none; border: 1px solid var(--border-color); border-radius: 7px; color: var(--text-muted); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; padding: 5px 12px; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 5px; }
-        .btn-copy:hover { border-color: var(--accent-orange); color: var(--accent-orange); }
+.btn-copy-sm {
+    background: none; border: 1px solid var(--border-color); border-radius: 7px;
+    color: var(--text-muted); font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px; padding: 5px 12px; cursor: pointer; transition: all 0.15s;
+    display: inline-flex; align-items: center; gap: 5px;
+}
+.btn-copy-sm:hover { border-color: var(--accent-orange); color: var(--accent-orange); }
 
-        /* ── Loading ── */
-        .loading-overlay { display: none; align-items: center; gap: 12px; padding: 16px; background: rgba(227,179,65,0.06); border: 1px solid rgba(227,179,65,0.2); border-radius: 10px; margin-top: 16px; }
-        .loading-overlay.active { display: flex; }
-        .spinner-ring { width: 20px; height: 20px; border: 2px solid var(--border-color); border-top-color: var(--accent-orange); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+.reorder-loading {
+    display: none; align-items: center; gap: 12px; padding: 16px;
+    background: rgba(227,179,65,0.06); border: 1px solid rgba(227,179,65,0.2);
+    border-radius: 10px; margin-top: 16px;
+}
+.reorder-loading.active { display: flex; }
+.spinner-orange { width: 20px; height: 20px; border: 2px solid var(--border-color); border-top-color: var(--accent-orange); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
 
-        /* ── Code block ── */
-        .code-wrap { position: relative; margin-top: 0; }
-        .code-wrap pre { margin: 0; border-radius: 10px; max-height: 500px; overflow-y: auto; font-size: 12.5px; }
-        .code-wrap pre code { font-family: 'Fira Code', 'Consolas', monospace; }
+.code-wrap { position: relative; }
+.code-wrap pre { margin: 0; border-radius: 10px; max-height: 500px; overflow-y: auto; font-size: 12.5px; }
+.code-wrap pre code { font-family: 'Fira Code', 'Consolas', monospace; }
+.hljs { background: var(--bg-input) !important; border: 1px solid var(--border-muted); border-radius: 10px; padding: 16px !important; }
 
-        /* Override highlight.js background */
-        .hljs { background: var(--bg-input) !important; border: 1px solid var(--border-muted); border-radius: 10px; padding: 16px !important; }
+.citation-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.citation-table th { text-align: left; padding: 10px 12px; font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border-color); }
+.citation-table td { padding: 9px 12px; border-bottom: 1px solid var(--border-muted); color: var(--text-secondary); vertical-align: middle; }
+.citation-table tr:last-child td { border-bottom: none; }
+.citation-table tr:hover td { background: var(--bg-card-hover); }
+.num-badge { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; background: rgba(227,179,65,0.15); color: var(--accent-orange); border-radius: 6px; font-size: 12px; font-weight: 700; }
+.key-code { font-family: 'Fira Code', monospace; font-size: 12px; color: var(--accent-blue); background: rgba(88,166,255,0.08); padding: 2px 7px; border-radius: 4px; }
 
-        /* ── Citation table ── */
-        .citation-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .citation-table th { text-align: left; padding: 10px 12px; font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border-color); }
-        .citation-table td { padding: 9px 12px; border-bottom: 1px solid var(--border-muted); color: var(--text-secondary); vertical-align: middle; }
-        .citation-table tr:last-child td { border-bottom: none; }
-        .citation-table tr:hover td { background: var(--bg-card-hover); }
-        .num-badge { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; background: rgba(227,179,65,0.15); color: var(--accent-orange); border-radius: 6px; font-size: 12px; font-weight: 700; }
-        .key-code { font-family: 'Fira Code', monospace; font-size: 12px; color: var(--accent-blue); background: rgba(88,166,255,0.08); padding: 2px 7px; border-radius: 4px; }
+.stats-bar { display: flex; gap: 20px; flex-wrap: wrap; padding: 14px 0 0; }
+.stat-chip { font-size: 13px; color: var(--text-secondary); }
+.stat-chip strong { color: var(--text-primary); }
+{% endblock %}
 
-        /* ── Stats bar ── */
-        .stats-bar { display: flex; gap: 20px; flex-wrap: wrap; padding: 14px 0 0; }
-        .stat-chip { font-size: 13px; color: var(--text-secondary); }
-        .stat-chip strong { color: var(--text-primary); }
+{% block content %}
+<!-- Upload card -->
+<div class="glass-card">
+    <div class="card-label">Upload LaTeX File</div>
 
-        /* ── Responsive ── */
-        @media (max-width: 768px) {
-            #sidebar { transform: translateX(-100%); }
-            #sidebar.open { transform: translateX(0); }
-            #main-content { margin-left: 0; }
-            .hero-header, .content-area { padding-left: 20px; padding-right: 20px; }
-        }
-        .hamburger { display: none; position: fixed; top: 14px; left: 14px; z-index: 1100; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; width: 36px; height: 36px; align-items: center; justify-content: center; cursor: pointer; color: var(--text-secondary); }
-        @media (max-width: 768px) { .hamburger { display: flex; } }
-        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; }
-        .sidebar-overlay.active { display: block; }
-    </style>
-</head>
-<body>
-
-<button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-<aside id="sidebar">
-    <div class="sidebar-brand">
-        <div class="sidebar-logo"><i class="fas fa-atom"></i></div>
-        <h6>Research Agent</h6>
-        <p>AI-Powered Research</p>
-    </div>
-    <nav class="sidebar-nav">
-        <div class="nav-section-label">Tools</div>
-        <a href="/" class="nav-link-item"><span class="nav-icon"><i class="fas fa-search"></i></span>Research</a>
-        <a href="/literature" class="nav-link-item"><span class="nav-icon"><i class="fas fa-book-open"></i></span>Literature Builder</a>
-        <a href="/validator" class="nav-link-item"><span class="nav-icon"><i class="fas fa-check-double"></i></span>Reference Validator</a>
-        <a href="/citations" class="nav-link-item"><span class="nav-icon"><i class="fas fa-quote-right"></i></span>Enhanced Citations</a>
-        <div class="nav-section-label" style="margin-top:12px;">Writing</div>
-        <a href="/humanizer" class="nav-link-item"><span class="nav-icon"><i class="fas fa-feather-alt"></i></span>Humanizer</a>
-        <a href="/latex-reorder" class="nav-link-item active"><span class="nav-icon"><i class="fas fa-sort-numeric-down"></i></span>LaTeX Reorder</a>
-    </nav>
-    <div class="sidebar-footer">
-        <a href="/test" class="nav-link-item" style="font-size:12px;"><span class="nav-icon"><i class="fas fa-heartbeat"></i></span>System Status</a>
-    </div>
-</aside>
-
-<div id="main-content">
-    <div class="hero-header">
-        <p class="hero-title">LaTeX Citation Reorder</p>
-        <p class="hero-subtitle">Upload a <code style="background:rgba(227,179,65,0.12);color:var(--accent-orange);padding:1px 6px;border-radius:4px;">.tex</code> file and reorder bibliography entries so citation numbers match their first appearance in the document body.</p>
+    <div class="drop-zone" id="dropZone" onclick="document.getElementById('texFileInput').click()">
+        <div class="drop-zone-icon"><i class="fas fa-file-code"></i></div>
+        <div class="drop-zone-text">Drop your <strong>.tex</strong> file here or click to browse</div>
+        <div class="drop-zone-hint">The file must contain a <code>\begin{thebibliography}</code> block</div>
+        <input type="file" id="texFileInput" accept=".tex,.txt">
     </div>
 
-    <div class="content-area">
-        <!-- Upload card -->
-        <div class="glass-card mb-4">
-            <div class="card-label">Upload LaTeX File</div>
+    <div class="file-chosen" id="fileChosen" style="display:none;">
+        <i class="fas fa-file-code"></i>
+        <span id="fileChosenName"></span>
+        <button onclick="clearFile()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:12px;margin-left:4px;"><i class="fas fa-times"></i></button>
+    </div>
 
-            <div class="drop-zone" id="dropZone" onclick="document.getElementById('texFileInput').click()">
-                <div class="drop-zone-icon"><i class="fas fa-file-code"></i></div>
-                <div class="drop-zone-text">Drop your <strong>.tex</strong> file here or click to browse</div>
-                <div class="drop-zone-hint">The file must contain a <code>\begin{thebibliography}</code> block</div>
-                <input type="file" id="texFileInput" accept=".tex,.txt">
-            </div>
-
-            <div class="file-chosen" id="fileChosen" style="display:none;">
-                <i class="fas fa-file-code"></i>
-                <span id="fileChosenName"></span>
-                <button onclick="clearFile()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:12px;margin-left:4px;"><i class="fas fa-times"></i></button>
-            </div>
-
-            <div class="d-flex align-items-center gap-3 mt-4">
-                <button class="btn-reorder" id="reorderBtn" onclick="runReorder()">
-                    <i class="fas fa-sort-numeric-down"></i> Reorder Citations
-                </button>
-                <div class="loading-overlay" id="loadingIndicator">
-                    <div class="spinner-ring"></div>
-                    <span style="font-size:13px;color:var(--accent-orange);">Processing LaTeX file...</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Results -->
-        <div id="resultsArea" style="display:none;">
-
-            <!-- Stats + download -->
-            <div class="glass-card mb-4">
-                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
-                    <div>
-                        <div class="card-label mb-1">Result Summary</div>
-                        <div class="stats-bar" id="statsBar"></div>
-                    </div>
-                    <button class="btn-download" id="downloadBtn" onclick="downloadReordered()">
-                        <i class="fas fa-download"></i> Download .tex
-                    </button>
-                </div>
-            </div>
-
-            <!-- Citation map table -->
-            <div class="glass-card mb-4">
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <div class="card-label mb-0">Citation Map</div>
-                    <span style="font-size:12px;color:var(--text-muted);">Original key → assigned number</span>
-                </div>
-                <div style="overflow-x:auto;">
-                    <table class="citation-table" id="citationTable">
-                        <thead>
-                            <tr>
-                                <th>New Number</th>
-                                <th>Citation Key</th>
-                            </tr>
-                        </thead>
-                        <tbody id="citationTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Reordered source -->
-            <div class="glass-card">
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <div class="card-label mb-0">Reordered .tex Source</div>
-                    <button class="btn-copy" onclick="copyCode()">
-                        <i class="fas fa-copy"></i> Copy
-                    </button>
-                </div>
-                <div class="code-wrap">
-                    <pre><code class="language-latex" id="codeBlock"></code></pre>
-                </div>
-            </div>
-
+    <div class="d-flex align-items-center gap-3 mt-4">
+        <button class="btn-reorder" id="reorderBtn" onclick="runReorder()">
+            <i class="fas fa-sort-numeric-down"></i> Reorder Citations
+        </button>
+        <div class="reorder-loading" id="loadingIndicator">
+            <div class="spinner-orange"></div>
+            <span style="font-size:13px;color:var(--accent-orange);">Processing LaTeX file...</span>
         </div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Results -->
+<div id="resultsArea" style="display:none;">
+
+    <div class="glass-card">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div>
+                <div class="card-label mb-1">Result Summary</div>
+                <div class="stats-bar" id="statsBar"></div>
+            </div>
+            <button class="btn-download" onclick="downloadReordered()">
+                <i class="fas fa-download"></i> Download .tex
+            </button>
+        </div>
+    </div>
+
+    <div class="glass-card">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="card-label mb-0">Citation Map</div>
+            <span style="font-size:12px;color:var(--text-muted);">Original key → assigned number</span>
+        </div>
+        <div style="overflow-x:auto;">
+            <table class="citation-table">
+                <thead><tr><th>New Number</th><th>Citation Key</th></tr></thead>
+                <tbody id="citationTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="glass-card">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="card-label mb-0">Reordered .tex Source</div>
+            <button class="btn-copy-sm" onclick="copyCode()">
+                <i class="fas fa-copy"></i> Copy
+            </button>
+        </div>
+        <div class="code-wrap">
+            <pre><code class="language-latex" id="codeBlock"></code></pre>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script>
-    let reorderedSource = null;
-    let reorderedFilename = 'reordered.tex';
+let reorderedSource = null;
+let reorderedFilename = 'reordered.tex';
 
-    // Sidebar
-    document.getElementById('hamburgerBtn').addEventListener('click', () => {
-        document.getElementById('sidebar').classList.toggle('open');
-        document.getElementById('sidebarOverlay').classList.toggle('active');
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('texFileInput');
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) setFile(file);
+});
+fileInput.addEventListener('change', () => { if (fileInput.files[0]) setFile(fileInput.files[0]); });
+
+function setFile(file) {
+    fileInput._selectedFile = file;
+    reorderedFilename = 'reordered_' + file.name;
+    document.getElementById('fileChosen').style.display = 'flex';
+    document.getElementById('fileChosenName').textContent = file.name;
+    dropZone.style.borderColor = 'var(--accent-orange)';
+}
+
+function clearFile() {
+    fileInput.value = '';
+    fileInput._selectedFile = null;
+    document.getElementById('fileChosen').style.display = 'none';
+    dropZone.style.borderColor = '';
+}
+
+async function runReorder() {
+    const file = fileInput._selectedFile || fileInput.files[0];
+    if (!file) { alert('Please select a .tex file first.'); return; }
+
+    const btn = document.getElementById('reorderBtn');
+    const loading = document.getElementById('loadingIndicator');
+    btn.disabled = true;
+    loading.classList.add('active');
+    document.getElementById('resultsArea').style.display = 'none';
+
+    try {
+        const fd = new FormData();
+        fd.append('file', file);
+
+        const response = await fetch('/latex-reorder', { method: 'POST', body: fd });
+        const data = await response.json();
+
+        if (!response.ok) { alert('Error: ' + (data.error || 'Reordering failed')); return; }
+
+        reorderedSource = data.reordered_source;
+
+        document.getElementById('statsBar').innerHTML = `
+            <div class="stat-chip"><strong>${data.total_citations}</strong> total citations</div>
+            <div class="stat-chip"><strong>${data.keys_found_in_body || 0}</strong> cited in body</div>
+        `;
+
+        const sorted = Object.entries(data.citation_map || {}).sort((a, b) => a[1] - b[1]);
+        document.getElementById('citationTableBody').innerHTML = sorted.map(([key, num]) => `
+            <tr>
+                <td><span class="num-badge">${num}</span></td>
+                <td><span class="key-code">${escHtml(key)}</span></td>
+            </tr>
+        `).join('');
+
+        const codeEl = document.getElementById('codeBlock');
+        codeEl.textContent = data.reordered_source || '';
+        hljs.highlightElement(codeEl);
+
+        document.getElementById('resultsArea').style.display = 'block';
+        document.getElementById('resultsArea').scrollIntoView({ behavior: 'smooth' });
+    } catch (err) {
+        alert('Error: ' + err.message);
+    } finally {
+        btn.disabled = false;
+        loading.classList.remove('active');
+    }
+}
+
+function downloadReordered() {
+    if (!reorderedSource) return;
+    const a = Object.assign(document.createElement('a'), {
+        href: URL.createObjectURL(new Blob([reorderedSource], { type: 'text/plain' })),
+        download: reorderedFilename
     });
-    document.getElementById('sidebarOverlay').addEventListener('click', () => {
-        document.getElementById('sidebar').classList.remove('open');
-        document.getElementById('sidebarOverlay').classList.remove('active');
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+function copyCode() {
+    if (!reorderedSource) return;
+    navigator.clipboard.writeText(reorderedSource).then(() => {
+        const btn = event.target.closest('button');
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(() => { btn.innerHTML = orig; }, 2000);
     });
+}
 
-    // Drop zone
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('texFileInput');
-
-    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-    dropZone.addEventListener('drop', e => {
-        e.preventDefault();
-        dropZone.classList.remove('drag-over');
-        const file = e.dataTransfer.files[0];
-        if (file) setFile(file);
-    });
-    fileInput.addEventListener('change', () => {
-        if (fileInput.files[0]) setFile(fileInput.files[0]);
-    });
-
-    function setFile(file) {
-        fileInput._selectedFile = file;
-        reorderedFilename = 'reordered_' + file.name;
-        document.getElementById('fileChosen').style.display = 'flex';
-        document.getElementById('fileChosenName').textContent = file.name;
-        dropZone.style.borderColor = 'var(--accent-orange)';
-    }
-
-    function clearFile() {
-        fileInput.value = '';
-        fileInput._selectedFile = null;
-        document.getElementById('fileChosen').style.display = 'none';
-        dropZone.style.borderColor = '';
-    }
-
-    // Run reorder
-    async function runReorder() {
-        const file = fileInput._selectedFile || fileInput.files[0];
-        if (!file) { alert('Please select a .tex file first.'); return; }
-
-        const btn = document.getElementById('reorderBtn');
-        const loading = document.getElementById('loadingIndicator');
-        btn.disabled = true;
-        loading.classList.add('active');
-        document.getElementById('resultsArea').style.display = 'none';
-
-        try {
-            const fd = new FormData();
-            fd.append('file', file);
-
-            const response = await fetch('/latex-reorder', { method: 'POST', body: fd });
-            const data = await response.json();
-
-            if (!response.ok) {
-                alert('Error: ' + (data.error || 'Reordering failed'));
-                return;
-            }
-
-            reorderedSource = data.reordered_source;
-
-            // Stats bar
-            document.getElementById('statsBar').innerHTML = `
-                <div class="stat-chip"><strong>${data.total_citations}</strong> total citations</div>
-                <div class="stat-chip"><strong>${data.keys_found_in_body || 0}</strong> cited in body</div>
-            `;
-
-            // Citation map table
-            const map = data.citation_map || {};
-            const sorted = Object.entries(map).sort((a, b) => a[1] - b[1]);
-            document.getElementById('citationTableBody').innerHTML = sorted.map(([key, num]) => `
-                <tr>
-                    <td><span class="num-badge">${num}</span></td>
-                    <td><span class="key-code">${escHtml(key)}</span></td>
-                </tr>
-            `).join('');
-
-            // Code block with syntax highlighting
-            const codeEl = document.getElementById('codeBlock');
-            codeEl.textContent = data.reordered_source || '';
-            hljs.highlightElement(codeEl);
-
-            document.getElementById('resultsArea').style.display = 'block';
-            document.getElementById('resultsArea').scrollIntoView({ behavior: 'smooth' });
-
-        } catch (err) {
-            alert('Error: ' + err.message);
-        } finally {
-            btn.disabled = false;
-            loading.classList.remove('active');
-        }
-    }
-
-    function downloadReordered() {
-        if (!reorderedSource) return;
-        const blob = new Blob([reorderedSource], { type: 'text/plain' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = reorderedFilename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-    }
-
-    function copyCode() {
-        if (!reorderedSource) return;
-        navigator.clipboard.writeText(reorderedSource).then(() => {
-            const btn = event.target.closest('button');
-            const orig = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-            setTimeout(() => { btn.innerHTML = orig; }, 2000);
-        });
-    }
-
-    function escHtml(str) {
-        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
+function escHtml(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
 </script>
-</body>
-</html>
+{% endblock %}

@@ -26,6 +26,7 @@ class PaperMetadata(BaseModel):
     url: Optional[str] = None
     relevance_score: float = 0.0
     impact_score: float = 0.0
+    sources: List[str] = []  # which APIs returned this paper (provenance after dedup)
 
 
 class Claim(BaseModel):
@@ -50,16 +51,27 @@ class Contradiction(BaseModel):
     contradiction_type: str  # "direct", "conditional", "methodological"
     explanation: str
     severity: float = 0.0  # 0-1 scale
+    likert_score: Optional[int] = None  # 1=strong support ... 6=neutral ... 11=strong contradiction
+    verdict: Optional[str] = None  # "support" | "neutral" | "contradiction"
+    evidence_claim1: Optional[str] = None  # verbatim sentence from claim1's paper
+    evidence_claim2: Optional[str] = None  # verbatim sentence from claim2's paper
+    paper1_id: Optional[str] = None
+    paper2_id: Optional[str] = None
+    detection_method: str = "pattern"  # "pattern" | "llm_judge"
 
 
 class ResearchGap(BaseModel):
     """Represents an identified research gap."""
     id: str = Field(default_factory=lambda: f"gap_{datetime.now().timestamp()}")
     description: str
-    gap_type: str  # "unexplored_topic", "missing_dataset", "conflicting_results", "underrepresented_condition"
+    gap_type: str  # "methodological" | "dataset" | "unexplored_subtopic" | "evaluation" | "contradiction_driven"
     related_topics: List[str] = []
     potential_questions: List[str] = []
     priority: float = 0.0  # 0-1 scale
+    evidence: List[str] = []  # observations from the corpus supporting this gap
+    score_components: Dict[str, float] = {}  # e.g. {"importance": 0.8, "tractability": 0.6}
+    rank: Optional[int] = None  # 1-based rank after scoring
+    detection_method: str = "rules"  # "rules" | "llm"
 
 
 class TopicMap(BaseModel):
@@ -109,6 +121,8 @@ class ResearchResults(BaseModel):
     generated_at: datetime = Field(default_factory=datetime.now)
     total_papers_analyzed: int = 0
     total_claims_extracted: int = 0
+    run_metadata: Dict[str, Any] = {}  # provider, model, temperature, duration_s
+    usage: Dict[str, Any] = {}  # UsageTracker.summary(): tokens + estimated cost
 
 
 # Literature Builder Models

@@ -1,10 +1,17 @@
 """
-Flask web frontend for the Autonomous Research Agent System - Fixed version.
+Flask web frontend for the Autonomous Research Agent System.
 """
-from flask import Flask, render_template, request, jsonify, send_file
+from dotenv import load_dotenv
+load_dotenv()
+
+from flask import Flask, render_template, request, jsonify, send_file, abort
+from flask_talisman import Talisman
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import asyncio
 import json
 import os
+import re
 import sys
 import tempfile
 from datetime import datetime
@@ -21,9 +28,65 @@ from src.agents.custom_citation_formatter import CustomCitationFormatter
 from src.agents.literature_builder_agent import LiteratureBuilderAgent
 from src.agents.humanizer_agent import HumanizerAgent
 from src.agents.latex_citation_reorder import reorder_citations
+from src.agents.plagiarism_agent import PlagiarismCheckerAgent
+from src.agents.journal_recommender_agent import JournalRecommenderAgent
+from src.agents.abstract_screener_agent import AbstractScreenerAgent
+from src.agents.checklist_agent import ChecklistAgent
+from src.agents.grant_writer_agent import GrantWriterAgent, FUNDER_TEMPLATES
+from src.agents.citation_network_agent import CitationNetworkAgent
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'research-system-secret-key'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', os.urandom(32).hex())
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
+# ── Rate limiting ────────────────────────────────────────────────────────────
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["200 per hour", "30 per minute"],
+    storage_uri="memory://",
+)
+
+# ── Security headers (CSP allows CDN fonts/icons + inline styles needed by app)
+csp = {
+    'default-src': ["'self'"],
+    'script-src':  ["'self'", "'unsafe-inline'",
+                    "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com",
+                    "https://d3js.org"],
+    'style-src':   ["'self'", "'unsafe-inline'",
+                    "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com",
+                    "https://fonts.googleapis.com"],
+    'font-src':    ["'self'", "https://fonts.gstatic.com",
+                    "https://cdnjs.cloudflare.com"],
+    'img-src':     ["'self'", "data:", "https:"],
+    'connect-src': ["'self'"],
+}
+Talisman(
+    app,
+    content_security_policy=csp,
+    force_https=False,               # localhost dev — flip to True in production
+    strict_transport_security=False, # same
+    referrer_policy='strict-origin-when-cross-origin',
+    x_content_type_options=True,
+    x_xss_protection=True,
+)
+
+# ── Input validation helpers ─────────────────────────────────────────────────
+_URL_RE = re.compile(r'^https?://', re.I)
+
+def _safe_text(value, max_len: int = 20000) -> str:
+    """Strip and truncate text input; reject if suspiciously long."""
+    if not isinstance(value, str):
+        return ""
+    return value.strip()[:max_len]
+
+def _validate_url(url: str) -> str:
+    """Return url only if it's a plain http/https web URL, else empty string."""
+    url = (url or "").strip()
+    if _URL_RE.match(url) and len(url) < 2048:
+        return url
+    return ""
 
 # Global system instance
 research_system = None
@@ -340,6 +403,8 @@ def research():
                 'contradictions_found': len(results.contradictions),
                 'research_gaps_identified': len(results.research_gaps)
             },
+            'usage': results.usage,
+            'run_metadata': results.run_metadata,
             'topic_map': {
                 'main_topic': results.topic_map.main_topic,
                 'subtopics': results.topic_map.subtopics,
@@ -375,7 +440,14 @@ def research():
                 {
                     'explanation': contradiction.explanation,
                     'type': contradiction.contradiction_type,
-                    'severity': contradiction.severity
+                    'severity': contradiction.severity,
+                    'likert_score': contradiction.likert_score,
+                    'verdict': contradiction.verdict,
+                    'evidence_claim1': contradiction.evidence_claim1,
+                    'evidence_claim2': contradiction.evidence_claim2,
+                    'paper1_id': contradiction.paper1_id,
+                    'paper2_id': contradiction.paper2_id,
+                    'detection_method': contradiction.detection_method
                 }
                 for contradiction in results.contradictions
             ],
@@ -384,7 +456,10 @@ def research():
                     'description': gap.description,
                     'type': gap.gap_type,
                     'priority': gap.priority,
-                    'potential_questions': gap.potential_questions
+                    'potential_questions': gap.potential_questions,
+                    'evidence': gap.evidence,
+                    'rank': gap.rank,
+                    'detection_method': gap.detection_method
                 }
                 for gap in results.research_gaps
             ],
@@ -907,14 +982,20 @@ def debug_form():
 def test():
     """System status — returns JSON consumed by the status popup in the UI."""
     import platform, sys
+    from src.agents.llm_client import provider_info, _ollama_available
     try:
         system = get_system()
+        llm_info = provider_info()
+        llm_available = llm_info["available"]
+        llm_label = llm_info["name"] if llm_available else "None"
+
         apis = {
             "ArXiv": True,
-            "Semantic Scholar": True,
+            "OpenAlex": True,
             "CrossRef": True,
             "PubMed": True,
-            "Anthropic LLM": bool(os.environ.get("ANTHROPIC_API_KEY")),
+            f"LLM ({llm_label})": llm_available,
+            "Ollama (local)": _ollama_available(),
         }
         return jsonify({
             'status': 'ok',
@@ -922,12 +1003,16 @@ def test():
             'system_initialized': system is not None,
             'python_version': sys.version.split()[0],
             'platform': platform.system(),
+            'llm_provider': llm_info,
             'apis': apis,
             'features': {
-                'llm_extraction': bool(os.environ.get("ANTHROPIC_API_KEY")),
-                'humanizer': bool(os.environ.get("ANTHROPIC_API_KEY")),
+                'llm_extraction': llm_available,
+                'humanizer': llm_available,
                 'pdf_export': True,
                 'docx_export': True,
+                'abstract_screener': llm_available,
+                'grant_writer': llm_available,
+                'checklist': llm_available,
             }
         })
     except Exception as e:
@@ -941,9 +1026,12 @@ def test():
 
 @app.route('/humanizer')
 def humanizer_page():
-    return render_template('humanizer.html')
+    from src.agents.llm_client import provider_info
+    llm = provider_info()
+    return render_template('humanizer.html', llm_info=llm)
 
 
+@limiter.limit("10 per minute")
 @app.route('/humanize', methods=['POST'])
 def humanize():
     try:
@@ -1273,6 +1361,278 @@ def export_docx():
         app.logger.error(f'DOCX export error: {e}')
         import traceback; traceback.print_exc()
         return jsonify({'error': f'Word export failed: {str(e)}'}), 500
+
+
+# ─── Plagiarism / Similarity Checker ───────────────────────────────────────
+
+@app.route('/plagiarism')
+def plagiarism_page():
+    return render_template('plagiarism.html')
+
+
+@limiter.limit("10 per minute")
+@app.route('/check-plagiarism', methods=['POST'])
+def check_plagiarism():
+    try:
+        data = request.get_json(force=True)
+        text = _safe_text(data.get('text'))
+        if not text:
+            return jsonify({'error': 'No text provided'}), 400
+        if len(text.split()) < 30:
+            return jsonify({'error': 'Please provide at least 30 words for meaningful analysis'}), 400
+
+        agent = PlagiarismCheckerAgent()
+        result = agent.check(text)
+        return jsonify(result)
+    except Exception as e:
+        app.logger.error(f'Plagiarism check error: {e}')
+        return jsonify({'error': str(e)}), 500
+
+
+# ─── Journal Fit Recommender ────────────────────────────────────────────────
+
+@app.route('/journal-fit')
+def journal_fit_page():
+    return render_template('journal_fit.html')
+
+
+@limiter.limit("10 per minute")
+@app.route('/recommend-journals', methods=['POST'])
+def recommend_journals():
+    try:
+        data = request.get_json(force=True)
+        abstract = _safe_text(data.get('abstract'))
+        field = (data.get('field') or '').strip()
+        if not abstract:
+            return jsonify({'error': 'Abstract is required'}), 400
+
+        agent = JournalRecommenderAgent()
+        result = agent.recommend(abstract, field)
+        return jsonify(result)
+    except Exception as e:
+        app.logger.error(f'Journal recommendation error: {e}')
+        return jsonify({'error': str(e)}), 500
+
+
+# ─── Abstract Screener ──────────────────────────────────────────────────────
+
+@app.route('/abstract-screener')
+def abstract_screener_page():
+    from src.agents.llm_client import get_provider
+    has_key = get_provider() is not None
+    return render_template('abstract_screener.html', has_anthropic_key=has_key)
+
+
+@limiter.limit("10 per minute")
+@app.route('/screen-abstracts', methods=['POST'])
+def screen_abstracts():
+    try:
+        data = request.get_json(force=True)
+        abstracts = data.get('abstracts') or []
+        criteria = _safe_text(data.get('criteria'))
+        if not abstracts:
+            return jsonify({'error': 'No abstracts provided'}), 400
+        if not criteria:
+            return jsonify({'error': 'Inclusion/exclusion criteria are required'}), 400
+        if len(abstracts) > 100:
+            return jsonify({'error': 'Maximum 100 abstracts per request'}), 400
+
+        agent = AbstractScreenerAgent()
+        result = agent.screen(abstracts, criteria)
+        return jsonify(result)
+    except Exception as e:
+        app.logger.error(f'Abstract screening error: {e}')
+        return jsonify({'error': str(e)}), 500
+
+
+# ─── Pre-Submission Checklist ───────────────────────────────────────────────
+
+@app.route('/checklist')
+def checklist_page():
+    from src.agents.llm_client import get_provider
+    has_key = get_provider() is not None
+    return render_template('checklist.html', has_anthropic_key=has_key)
+
+
+@limiter.limit("10 per minute")
+@app.route('/generate-checklist', methods=['POST'])
+def generate_checklist():
+    try:
+        data = request.get_json(force=True)
+        manuscript_type = (data.get('manuscript_type') or 'Research Article').strip()
+        journal = (data.get('journal') or '').strip()
+        field = (data.get('field') or '').strip()
+        abstract = _safe_text(data.get('abstract'))
+
+        agent = ChecklistAgent()
+        result = agent.generate(manuscript_type, journal, field, abstract)
+        return jsonify(result)
+    except Exception as e:
+        app.logger.error(f'Checklist generation error: {e}')
+        return jsonify({'error': str(e)}), 500
+
+
+# ─── Grant Writer ───────────────────────────────────────────────────────────
+
+@app.route('/grant-writer')
+def grant_writer_page():
+    from src.agents.llm_client import get_provider
+    funders = GrantWriterAgent.get_funders()
+    has_key = get_provider() is not None
+    return render_template('grant_writer.html', funders=funders, has_anthropic_key=has_key)
+
+
+@limiter.limit("10 per minute")
+@app.route('/write-grant', methods=['POST'])
+def write_grant():
+    try:
+        data = request.get_json(force=True)
+        project_title = (data.get('project_title') or '').strip()
+        description = (data.get('description') or '').strip()
+        funder = (data.get('funder') or 'NSF').strip()
+        field = (data.get('field') or '').strip()
+        budget = (data.get('budget') or '').strip()
+        duration = (data.get('duration') or '').strip()
+        team = (data.get('team') or '').strip()
+
+        if not project_title or not description:
+            return jsonify({'error': 'Project title and description are required'}), 400
+
+        agent = GrantWriterAgent()
+        result = agent.write(project_title, description, funder, field, budget, duration, team)
+        return jsonify(result)
+    except Exception as e:
+        app.logger.error(f'Grant writing error: {e}')
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/funders')
+def get_funders():
+    return jsonify(GrantWriterAgent.get_funders())
+
+
+# ─── Citation Network Explorer ──────────────────────────────────────────────
+
+@app.route('/citation-network')
+def citation_network_page():
+    return render_template('citation_network.html')
+
+
+@limiter.limit("10 per minute")
+@app.route('/get-citation-network', methods=['POST'])
+def get_citation_network():
+    try:
+        data = request.get_json(force=True)
+        query = (data.get('query') or '').strip()
+        depth = int(data.get('depth', 1))
+        if not query:
+            return jsonify({'error': 'Paper title or ID is required'}), 400
+
+        agent = CitationNetworkAgent()
+        result = agent.get_network(query, depth)
+        return jsonify(result)
+    except Exception as e:
+        app.logger.error(f'Citation network error: {e}')
+        return jsonify({'error': str(e)}), 500
+
+
+# ─── Benchmark Dashboard ─────────────────────────────────────────────────────
+# Demonstrates the paper's core claim in the running app: the dedicated,
+# separately-measured contradiction/gap-detection pipeline vs a naive
+# single-LLM baseline, on a frozen worked-example corpus from eval/topics/.
+
+def _eval_topics_dir() -> Path:
+    return Path(__file__).resolve().parent / 'eval' / 'topics'
+
+
+def _list_benchmark_topics():
+    topics = []
+    topics_dir = _eval_topics_dir()
+    if topics_dir.exists():
+        for sub in sorted(topics_dir.iterdir()):
+            if sub.is_dir() and (sub / 'papers.json').exists():
+                info = {}
+                topic_json = sub / 'topic.json'
+                if topic_json.exists():
+                    try:
+                        info = json.loads(topic_json.read_text())
+                    except (OSError, json.JSONDecodeError):
+                        info = {}
+                topics.append({'slug': sub.name, 'topic': info.get('topic', sub.name)})
+    return topics
+
+
+@app.route('/benchmark')
+def benchmark_page():
+    return render_template('benchmark.html', topics=_list_benchmark_topics())
+
+
+@limiter.limit("5 per minute")
+@app.route('/run-benchmark', methods=['POST'])
+def run_benchmark():
+    try:
+        data = request.get_json(force=True)
+        slug = (data.get('slug') or '').strip()
+        topics_by_slug = {t['slug']: t for t in _list_benchmark_topics()}
+        if slug not in topics_by_slug:
+            return jsonify({'error': 'Unknown worked-example topic. Run eval.snapshot_topic first.'}), 400
+
+        topic_dir = _eval_topics_dir() / slug
+        papers_payload = json.loads((topic_dir / 'papers.json').read_text())
+        topic_text = topics_by_slug[slug]['topic']
+
+        from src.models.data_models import PaperMetadata
+        from src.agents import llm_client
+
+        def run_pipeline():
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                frozen = [PaperMetadata(**{k: v for k, v in record.items() if k != 'paper_id'})
+                          for record in papers_payload]
+                system = AutonomousResearchSystem()
+                results = loop.run_until_complete(system.research(topic_text, papers=frozen))
+                return {
+                    'claims': len(results.claims),
+                    'contradictions': len(results.contradictions),
+                    'gaps': len(results.research_gaps),
+                    'usage': results.usage,
+                    'run_metadata': results.run_metadata,
+                    'sample_gaps': [g.description for g in results.research_gaps[:3]],
+                }
+            finally:
+                loop.close()
+
+        def run_naive_baseline():
+            from eval.run_baseline import build_prompt, parse_response, to_predictions
+            tracker = llm_client.UsageTracker()
+            prompt = build_prompt(topic_text, papers_payload)
+            try:
+                raw = llm_client.chat(prompt, max_tokens=4000, temperature=0.0,
+                                       tracker=tracker, purpose='baseline')
+                parsed = parse_response(raw)
+            except Exception:
+                tracker.record_parse_failure('baseline')
+                parsed = {'claims': [], 'contradictions': [], 'gaps': []}
+            preds = to_predictions(parsed, papers_payload, tracker.summary())
+            return {
+                'claims': len(preds['claims']),
+                'contradictions': len(preds['contradictions']),
+                'gaps': len(preds['gaps']),
+                'usage': preds['usage'],
+                'sample_gaps': [g.get('description', '') for g in preds['gaps'][:3]],
+            }
+
+        return jsonify({
+            'topic': topic_text,
+            'slug': slug,
+            'papers_analyzed': len(papers_payload),
+            'dedicated_pipeline': run_pipeline(),
+            'naive_baseline': run_naive_baseline(),
+        })
+    except Exception as e:
+        app.logger.error(f'Benchmark run error: {e}')
+        return jsonify({'error': str(e)}), 500
 
 
 if __name__ == '__main__':

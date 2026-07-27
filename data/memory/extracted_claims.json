@@ -1,16 +1,20 @@
 [
   {
-    "id": "10_5815_ijcnis_2022_01_06_regex_0_1779251648.218988",
-    "statement": "In this paper, we present a novel and efficient parallel algorithm for counting sort for sorting distinct numeric values on dh-dimensional Biswapped-Hyper Hexa-Cell optoelectronic network",
-    "paper_id": "10_5815_ijcnis_2022_01_06",
+    "id": "10_22541_au_174980723_33605220_v1_regex_0_1785165082.509775",
+    "statement": "To address these limitations,\nthis research introduces and evaluates a novel hybrid architecture that\ncombines Spatio-Temporal Convolutional Sequence to Sequence models with\nTransformer encoders",
+    "paper_id": "10_22541_au_174980723_33605220_v1",
     "evidence": [
-      "In this paper, we present a novel and efficient parallel algorithm for counting sort for sorting distinct numeric values on dh-dimensional Biswapped-Hyper Hexa-Cell optoelectronic network"
+      "To address these limitations,\nthis research introduces and evaluates a novel hybrid architecture that\ncombines Spatio-Temporal Convolutional Sequence to Sequence models with\nTransformer encoders"
     ],
     "metrics": {},
     "datasets": [],
-    "conditions": [],
+    "conditions": [
+      "Transformer encoders"
+    ],
     "confidence": 0.6,
-    "limitations": [],
+    "limitations": [
+      "To address these limitations,\nthis research introduces and evaluates a novel hybrid architecture that\ncombines Spatio-Temporal Convolutional Sequence to Sequence models with\nTransformer encoders"
+    ],
     "metadata": {}
   }
 ]

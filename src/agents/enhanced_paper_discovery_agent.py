@@ -2,6 +2,8 @@
 Enhanced Paper Discovery Agent - Searches multiple academic databases.
 """
 import asyncio
+import difflib
+import os
 import aiohttp
 from typing import List, Dict, Any, Optional
 import xml.etree.ElementTree as ET
@@ -32,16 +34,19 @@ class EnhancedPaperDiscoveryAgent(BaseAgent):
                 "enabled": True,
                 "requires_key": False,  # Free tier available
                 "base_url": "https://api.semanticscholar.org/graph/v1/paper/search",
-                "api_key": None  # Set this if you have an API key
+                "api_key": os.getenv("S2_API_KEY")  # Optional key raises rate limits
             },
             "crossref": {
                 "enabled": True,
                 "requires_key": False,  # Free but rate limited
                 "base_url": "https://api.crossref.org/works",
-                "email": "your-email@example.com"  # Required for polite pool
+                "email": os.getenv("CROSSREF_EMAIL", "your-email@example.com")  # Required for polite pool
             },
             "pubmed": {
-                "enabled": True,
+                # Disabled: the current implementation only returns placeholder
+                # titles/abstracts, which poison downstream claim extraction.
+                # Re-enable once efetch-based detail retrieval is implemented.
+                "enabled": False,
                 "requires_key": False,  # Free
                 "base_url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
                 "api_key": None  # Optional, increases rate limits
@@ -89,40 +94,49 @@ class EnhancedPaperDiscoveryAgent(BaseAgent):
             self.session = aiohttp.ClientSession()
         
         all_papers = []
-        
-        # Search each enabled source
+
+        # Search each enabled source (keep names parallel to tasks)
         search_tasks = []
-        
+        task_sources = []
+
         if self.apis["arxiv"]["enabled"]:
             search_tasks.append(self._search_arxiv(topic_map))
-        
+            task_sources.append("arxiv")
+
         if self.apis["semantic_scholar"]["enabled"]:
             search_tasks.append(self._search_semantic_scholar(topic_map))
-        
+            task_sources.append("semantic_scholar")
+
         if self.apis["crossref"]["enabled"]:
             search_tasks.append(self._search_crossref(topic_map))
-        
+            task_sources.append("crossref")
+
         if self.apis["pubmed"]["enabled"]:
             search_tasks.append(self._search_pubmed(topic_map))
-        
+            task_sources.append("pubmed")
+
         if self.apis["springer"]["enabled"] and self.apis["springer"]["api_key"]:
             search_tasks.append(self._search_springer(topic_map))
-        
+            task_sources.append("springer")
+
         if self.apis["elsevier"]["enabled"] and self.apis["elsevier"]["api_key"]:
             search_tasks.append(self._search_elsevier(topic_map))
-        
+            task_sources.append("elsevier")
+
         if self.apis["wiley"]["enabled"] and self.apis["wiley"]["api_key"]:
             search_tasks.append(self._search_wiley(topic_map))
-        
+            task_sources.append("wiley")
+
         # Execute searches concurrently
         results = await asyncio.gather(*search_tasks, return_exceptions=True)
-        
-        # Collect results
+
+        # Collect results, stamping source provenance on each paper
         source_counts = {}
-        for i, result in enumerate(results):
-            source_name = list(self.apis.keys())[i] if i < len(self.apis) else f"source_{i}"
-            
+        for source_name, result in zip(task_sources, results):
             if isinstance(result, list):
+                for paper in result:
+                    if not paper.sources:
+                        paper.sources = [source_name]
                 all_papers.extend(result)
                 source_counts[source_name] = len(result)
             elif isinstance(result, Exception):
@@ -186,17 +200,27 @@ class EnhancedPaperDiscoveryAgent(BaseAgent):
         headers = {}
         if self.apis["semantic_scholar"]["api_key"]:
             headers["x-api-key"] = self.apis["semantic_scholar"]["api_key"]
-        
-        try:
-            async with self.session.get(url, params=params, headers=headers) as response:
-                if response.status == 200:
-                    data = await response.json()
-                    papers = self._parse_semantic_scholar_response(data)
-                else:
+
+        # Free tier is ~100 requests / 5 min: back off and retry on 429
+        for attempt, delay in enumerate((0, 3, 10)):
+            if delay:
+                await asyncio.sleep(delay)
+            try:
+                async with self.session.get(url, params=params, headers=headers) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        papers = self._parse_semantic_scholar_response(data)
+                        break
+                    if response.status == 429:
+                        self.logger.warning(
+                            f"Semantic Scholar rate limited (429), attempt {attempt + 1}")
+                        continue
                     self.logger.warning(f"Semantic Scholar API returned {response.status}")
-        except Exception as e:
-            self.logger.error(f"Semantic Scholar search error: {e}")
-        
+                    break
+            except Exception as e:
+                self.logger.error(f"Semantic Scholar search error: {e}")
+                break
+
         return papers
     
     async def _search_crossref(self, topic_map: TopicMap) -> List[PaperMetadata]:
@@ -393,12 +417,12 @@ class EnhancedPaperDiscoveryAgent(BaseAgent):
                 paper = PaperMetadata(
                     title=item.get("title", ""),
                     authors=authors,
-                    year=item.get("year", 2023),
-                    venue=item.get("venue", "Unknown"),
+                    year=item.get("year") or 2023,  # year can be present but null
+                    venue=item.get("venue") or "Unknown",
                     doi=doi,
                     abstract=item.get("abstract", "") or "",  # Handle None abstracts
                     url=item.get("url", ""),
-                    impact_score=item.get("citationCount", 0)
+                    impact_score=item.get("citationCount") or 0
                 )
                 papers.append(paper)
             except Exception as e:
@@ -541,30 +565,63 @@ class EnhancedPaperDiscoveryAgent(BaseAgent):
         
         return papers
     
+    @staticmethod
+    def _normalize_title(title: str) -> str:
+        return re.sub(r'\s+', ' ', re.sub(r'[^\w\s]', '', title.lower())).strip()
+
+    @staticmethod
+    def _merge_paper_records(kept: PaperMetadata, dup: PaperMetadata) -> None:
+        """Fold a duplicate record into the kept one, preferring richer fields."""
+        if not kept.doi and dup.doi:
+            kept.doi = dup.doi
+        if not kept.arxiv_id and dup.arxiv_id:
+            kept.arxiv_id = dup.arxiv_id
+        if len(dup.abstract or "") > len(kept.abstract or ""):
+            kept.abstract = dup.abstract
+        if not kept.url and dup.url:
+            kept.url = dup.url
+        if dup.impact_score > kept.impact_score:
+            kept.impact_score = dup.impact_score
+        for source in dup.sources:
+            if source not in kept.sources:
+                kept.sources.append(source)
+
     def _remove_duplicates(self, papers: List[PaperMetadata]) -> List[PaperMetadata]:
-        """Remove duplicate papers based on title and DOI."""
-        seen_titles = set()
-        seen_dois = set()
-        unique_papers = []
-        
+        """Deduplicate across sources: exact DOI match, exact normalized title,
+        or fuzzy title similarity (>= 0.92) with publication year within 1.
+        Duplicate records are merged so DOI/abstract/source provenance survive."""
+        seen_dois: Dict[str, PaperMetadata] = {}
+        seen_titles: Dict[str, PaperMetadata] = {}
+        unique_papers: List[PaperMetadata] = []
+
         for paper in papers:
-            # Normalize title for comparison
-            normalized_title = re.sub(r'[^\w\s]', '', paper.title.lower()).strip()
-            
-            # Check for duplicates
-            is_duplicate = False
-            
+            normalized_title = self._normalize_title(paper.title)
+
+            match = None
             if paper.doi and paper.doi in seen_dois:
-                is_duplicate = True
+                match = seen_dois[paper.doi]
             elif normalized_title in seen_titles:
-                is_duplicate = True
-            
-            if not is_duplicate:
-                if paper.doi:
-                    seen_dois.add(paper.doi)
-                seen_titles.add(normalized_title)
-                unique_papers.append(paper)
-        
+                match = seen_titles[normalized_title]
+            else:
+                for kept_title, kept in seen_titles.items():
+                    if abs(kept.year - paper.year) > 1:
+                        continue
+                    ratio = difflib.SequenceMatcher(None, normalized_title, kept_title).ratio()
+                    if ratio >= 0.92:
+                        match = kept
+                        break
+
+            if match is not None:
+                self._merge_paper_records(match, paper)
+                if paper.doi and paper.doi not in seen_dois:
+                    seen_dois[paper.doi] = match
+                continue
+
+            if paper.doi:
+                seen_dois[paper.doi] = paper
+            seen_titles[normalized_title] = paper
+            unique_papers.append(paper)
+
         return unique_papers
     
     def _rank_papers(self, papers: List[PaperMetadata], topic_map: TopicMap) -> List[PaperMetadata]:

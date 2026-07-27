@@ -1,9 +1,9 @@
 """
 Paper Reading & Claim Extraction Agent.
-Uses Claude LLM for robust extraction where available, falls back to regex.
+Uses the shared LLM client (any configured provider) for robust extraction,
+falls back to regex when no provider is available.
 """
 import re
-import os
 import json
 import asyncio
 from typing import List, Dict, Any, Optional
@@ -11,6 +11,7 @@ from datetime import datetime
 
 from ..models.data_models import PaperMetadata, Claim
 from .base_agent import BaseAgent
+from . import llm_client
 
 
 class ClaimExtractionAgent(BaseAgent):
@@ -18,20 +19,8 @@ class ClaimExtractionAgent(BaseAgent):
 
     def __init__(self, memory_store=None):
         super().__init__("ClaimExtractionAgent", memory_store)
-        self._anthropic_client = None
-        self._use_llm = bool(os.environ.get("ANTHROPIC_API_KEY"))
-
-    def _get_client(self):
-        if self._anthropic_client is None and self._use_llm:
-            try:
-                import anthropic
-                self._anthropic_client = anthropic.Anthropic(
-                    api_key=os.environ["ANTHROPIC_API_KEY"]
-                )
-            except ImportError:
-                self.logger.warning("anthropic package not installed; falling back to regex extraction")
-                self._use_llm = False
-        return self._anthropic_client
+        self.tracker: Optional[llm_client.UsageTracker] = None
+        self._use_llm = llm_client.get_provider() is not None
 
     async def process(self, papers: List[PaperMetadata]) -> List[Claim]:
         self.log_operation("claim_extraction_start", {"paper_count": len(papers)})
@@ -71,27 +60,26 @@ class ClaimExtractionAgent(BaseAgent):
     # ------------------------------------------------------------------ #
 
     def _llm_extract(self, text: str, paper_id: str, paper: PaperMetadata) -> List[Claim]:
-        client = self._get_client()
-        if client is None:
-            return self._regex_extract(text, paper_id, paper)
-
         prompt = (
             "Extract all scientific claims from the following academic text. "
             "For each claim output a JSON object with keys:\n"
             "  statement (str), claim_type (str), confidence (0.0-1.0), "
             "metrics (dict of metric_name->value), datasets (list of str), "
-            "conditions (list of str), limitations (list of str).\n"
+            "conditions (list of str), limitations (list of str), "
+            "evidence_sentence (str: the verbatim sentence from the text that "
+            "the claim is based on).\n"
             "Return ONLY a JSON array, nothing else.\n\n"
             f"Text:\n{text[:4000]}"
         )
 
         try:
-            response = client.messages.create(
-                model="claude-haiku-4-5-20251001",
+            raw = llm_client.chat(
+                prompt,
                 max_tokens=2048,
-                messages=[{"role": "user", "content": prompt}],
-            )
-            raw = response.content[0].text.strip()
+                temperature=0.0,
+                tracker=self.tracker,
+                purpose="claim_extraction",
+            ).strip()
             # Strip markdown code fences if present
             raw = re.sub(r"^```(?:json)?\s*", "", raw)
             raw = re.sub(r"\s*```$", "", raw)
@@ -99,11 +87,12 @@ class ClaimExtractionAgent(BaseAgent):
             claims = []
             for item in items:
                 claim_id = f"{paper_id}_llm_{datetime.now().timestamp()}_{len(claims)}"
+                evidence = item.get("evidence_sentence") or item.get("statement", "")
                 claims.append(Claim(
                     id=claim_id,
                     statement=item.get("statement", ""),
                     paper_id=paper_id,
-                    evidence=[item.get("statement", "")],
+                    evidence=[evidence],
                     metrics=item.get("metrics", {}),
                     confidence=float(item.get("confidence", 0.7)),
                     datasets=item.get("datasets", []),
@@ -111,6 +100,11 @@ class ClaimExtractionAgent(BaseAgent):
                     limitations=item.get("limitations", []),
                 ))
             return claims
+        except json.JSONDecodeError as e:
+            if self.tracker is not None:
+                self.tracker.record_parse_failure("claim_extraction")
+            self.logger.warning(f"LLM extraction failed for {paper_id}: {e}; falling back to regex")
+            return self._regex_extract(text, paper_id, paper)
         except Exception as e:
             self.logger.warning(f"LLM extraction failed for {paper_id}: {e}; falling back to regex")
             return self._regex_extract(text, paper_id, paper)

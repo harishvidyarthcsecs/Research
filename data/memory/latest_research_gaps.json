@@ -1,8 +1,8 @@
 [
   {
-    "id": "gap_1779251648.22667",
+    "id": "gap_1785165083.022618",
     "description": "Limited use of cross-validation in research",
-    "gap_type": "methodological_gap",
+    "gap_type": "methodological",
     "related_topics": [
       "cross-validation"
     ],
@@ -11,12 +11,19 @@
       "What are the best practices for cross-validation in this domain?",
       "Why is cross-validation not commonly used?"
     ],
-    "priority": 0.8
+    "priority": 0.8,
+    "evidence": [
+      "0 of 1 claims mention cross-validation",
+      "Low-evidence: derived from only 1 extracted claims"
+    ],
+    "score_components": {},
+    "rank": 1,
+    "detection_method": "rules"
   },
   {
-    "id": "gap_1779251648.226685",
+    "id": "gap_1785165083.022645",
     "description": "Limited use of ablation study in research",
-    "gap_type": "methodological_gap",
+    "gap_type": "methodological",
     "related_topics": [
       "ablation study"
     ],
@@ -25,147 +32,13 @@
       "What are the best practices for ablation study in this domain?",
       "Why is ablation study not commonly used?"
     ],
-    "priority": 0.8
-  },
-  {
-    "id": "gap_1779251648.226693",
-    "description": "Limited use of statistical significance in research",
-    "gap_type": "methodological_gap",
-    "related_topics": [
-      "statistical significance"
+    "priority": 0.8,
+    "evidence": [
+      "0 of 1 claims mention ablation study",
+      "Low-evidence: derived from only 1 extracted claims"
     ],
-    "potential_questions": [
-      "How would results change with proper statistical significance?",
-      "What are the best practices for statistical significance in this domain?",
-      "Why is statistical significance not commonly used?"
-    ],
-    "priority": 0.8
-  },
-  {
-    "id": "gap_1779251648.226699",
-    "description": "Limited use of baseline comparison in research",
-    "gap_type": "methodological_gap",
-    "related_topics": [
-      "baseline comparison"
-    ],
-    "potential_questions": [
-      "How would results change with proper baseline comparison?",
-      "What are the best practices for baseline comparison in this domain?",
-      "Why is baseline comparison not commonly used?"
-    ],
-    "priority": 0.8
-  },
-  {
-    "id": "gap_1779251648.226705",
-    "description": "Limited use of error analysis in research",
-    "gap_type": "methodological_gap",
-    "related_topics": [
-      "error analysis"
-    ],
-    "potential_questions": [
-      "How would results change with proper error analysis?",
-      "What are the best practices for error analysis in this domain?",
-      "Why is error analysis not commonly used?"
-    ],
-    "priority": 0.8
-  },
-  {
-    "id": "gap_1779251648.226714",
-    "description": "Limited use of hyperparameter tuning in research",
-    "gap_type": "methodological_gap",
-    "related_topics": [
-      "hyperparameter tuning"
-    ],
-    "potential_questions": [
-      "How would results change with proper hyperparameter tuning?",
-      "What are the best practices for hyperparameter tuning in this domain?",
-      "Why is hyperparameter tuning not commonly used?"
-    ],
-    "priority": 0.8
-  },
-  {
-    "id": "gap_1779251648.226747",
-    "description": "Lack of real-world evaluation in research",
-    "gap_type": "evaluation_gap",
-    "related_topics": [
-      "real-world evaluation"
-    ],
-    "potential_questions": [
-      "How would methods perform in real-world evaluation?",
-      "What are the challenges of conducting real-world evaluation?",
-      "What metrics are appropriate for real-world evaluation?"
-    ],
-    "priority": 0.7
-  },
-  {
-    "id": "gap_1779251648.226753",
-    "description": "Lack of user study in research",
-    "gap_type": "evaluation_gap",
-    "related_topics": [
-      "user study"
-    ],
-    "potential_questions": [
-      "How would methods perform in user study?",
-      "What are the challenges of conducting user study?",
-      "What metrics are appropriate for user study?"
-    ],
-    "priority": 0.7
-  },
-  {
-    "id": "gap_1779251648.226759",
-    "description": "Lack of clinical trial in research",
-    "gap_type": "evaluation_gap",
-    "related_topics": [
-      "clinical trial"
-    ],
-    "potential_questions": [
-      "How would methods perform in clinical trial?",
-      "What are the challenges of conducting clinical trial?",
-      "What metrics are appropriate for clinical trial?"
-    ],
-    "priority": 0.7
-  },
-  {
-    "id": "gap_1779251648.226765",
-    "description": "Lack of longitudinal study in research",
-    "gap_type": "evaluation_gap",
-    "related_topics": [
-      "longitudinal study"
-    ],
-    "potential_questions": [
-      "How would methods perform in longitudinal study?",
-      "What are the challenges of conducting longitudinal study?",
-      "What metrics are appropriate for longitudinal study?"
-    ],
-    "priority": 0.7
-  },
-  {
-    "id": "gap_1779251648.226771",
-    "description": "Lack of multi-domain evaluation in research",
-    "gap_type": "evaluation_gap",
-    "related_topics": [
-      "multi-domain evaluation"
-    ],
-    "potential_questions": [
-      "How would methods perform in multi-domain evaluation?",
-      "What are the challenges of conducting multi-domain evaluation?",
-      "What metrics are appropriate for multi-domain evaluation?"
-    ],
-    "priority": 0.7
-  },
-  {
-    "id": "gap_1779251648.226733",
-    "description": "Need for recent comparative studies",
-    "gap_type": "temporal_gap",
-    "related_topics": [
-      "recent developments",
-      "comparative analysis"
-    ],
-    "potential_questions": [
-      "How do recent methods compare to established ones?",
-      "What are the latest trends and developments?",
-      "Which recent approaches show the most promise?"
-    ],
-    "priority": 0.5
+    "score_components": {},
+    "rank": 2,
+    "detection_method": "rules"
   }
 ]

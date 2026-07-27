@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+
+{% block title %}Pre-Submission Checklist{% endblock %}
+{% block nav_checklist %}active{% endblock %}
+
+{% block hero_gradient %}linear-gradient(135deg, #e6edf3 0%, #e3b341 55%, #3fb950 100%){% endblock %}
+{% block hero_orb1_color %}rgba(227,179,65,0.14){% endblock %}
+{% block hero_orb2_color %}rgba(63,185,80,0.1){% endblock %}
+
+{% block hero_title %}Pre-Submission Checklist{% endblock %}
+{% block hero_subtitle %}Generate a comprehensive, journal-aware checklist before you submit your manuscript.{% endblock %}
+
+{% block extra_css %}
+.text-input-sm {
+    width: 100%; background: var(--bg-input);
+    border: 1.5px solid var(--border-color); border-radius: 8px;
+    color: var(--text-primary); font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13.5px; padding: 10px 12px; outline: none; transition: border-color 0.2s;
+}
+.text-input-sm:focus { border-color: var(--accent-orange); box-shadow: 0 0 0 3px rgba(227,179,65,0.1); }
+.text-input-sm::placeholder { color: var(--text-muted); }
+
+.abstract-input {
+    width: 100%; background: var(--bg-input);
+    border: 1.5px solid var(--border-color); border-radius: 8px;
+    color: var(--text-primary); font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px; padding: 10px 12px; resize: vertical; min-height: 100px;
+    outline: none; transition: border-color 0.2s;
+}
+.abstract-input:focus { border-color: var(--accent-orange); }
+.abstract-input::placeholder { color: var(--text-muted); }
+
+.btn-generate {
+    background: linear-gradient(135deg, var(--accent-orange), var(--accent-green));
+    color: #fff; border: none; border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600;
+    padding: 11px 24px; cursor: pointer; transition: opacity 0.15s, transform 0.15s;
+    display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-generate:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.checklist-category {
+    background: var(--bg-card); border: 1px solid var(--border-color);
+    border-radius: 12px; margin-bottom: 16px; overflow: hidden;
+}
+.checklist-category-header {
+    padding: 14px 18px; display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid var(--border-muted); cursor: pointer;
+    transition: background 0.15s; user-select: none;
+}
+.checklist-category-header:hover { background: var(--bg-card-hover); }
+.cat-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.cat-blue { background: rgba(88,166,255,0.15); color: var(--accent-blue); }
+.cat-green { background: rgba(63,185,80,0.15); color: var(--accent-green); }
+.cat-orange { background: rgba(227,179,65,0.15); color: var(--accent-orange); }
+.cat-purple { background: rgba(188,140,255,0.15); color: var(--accent-purple); }
+.cat-red { background: rgba(247,129,102,0.15); color: var(--accent-red); }
+
+.checklist-items { padding: 8px 0; }
+.checklist-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 18px; border-bottom: 1px solid var(--border-muted); transition: background 0.1s;
+    cursor: pointer;
+}
+.checklist-item:last-child { border-bottom: none; }
+.checklist-item:hover { background: var(--bg-card-hover); }
+.checklist-item.checked { opacity: 0.6; }
+.checklist-item.checked .item-text { text-decoration: line-through; color: var(--text-muted); }
+
+.item-checkbox {
+    width: 18px; height: 18px; border: 2px solid var(--border-color);
+    border-radius: 4px; flex-shrink: 0; margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+}
+.item-checkbox.done { background: var(--accent-green); border-color: var(--accent-green); }
+.item-text { font-size: 13.5px; color: var(--text-primary); flex: 1; }
+.item-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.priority-critical { color: var(--accent-red); font-size: 10px; font-weight: 700; }
+.priority-important { color: var(--accent-orange); font-size: 10px; font-weight: 700; }
+.priority-recommended { color: var(--accent-green); font-size: 10px; font-weight: 700; }
+
+.progress-bar-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.progress-track { flex: 1; height: 8px; background: var(--border-muted); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-orange), var(--accent-green)); transition: width 0.4s ease; }
+{% endblock %}
+
+{% block content %}
+{% if not has_anthropic_key %}
+<div style="background:rgba(247,129,102,0.1);border:1px solid rgba(247,129,102,0.3);border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
+    <i class="fas fa-exclamation-triangle" style="color:var(--accent-red);font-size:18px;flex-shrink:0;"></i>
+    <div>
+        <div style="font-size:13px;font-weight:700;color:var(--accent-red);">ANTHROPIC_API_KEY not set</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">This feature requires Claude AI. Set the <code style="background:rgba(247,129,102,0.1);padding:1px 5px;border-radius:3px;">ANTHROPIC_API_KEY</code> environment variable and restart the server.</div>
+    </div>
+</div>
+{% endif %}
+<div class="glass-card">
+    <div class="card-label mb-3">Manuscript Details</div>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label style="font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:5px;display:block;">Manuscript Type</label>
+            <select class="form-select-dark" id="manuscriptType">
+                <option>Research Article</option>
+                <option>Review Article</option>
+                <option>Systematic Review</option>
+                <option>Meta-Analysis</option>
+                <option>Case Study</option>
+                <option>Clinical Trial</option>
+                <option>Short Communication</option>
+                <option>Letter to the Editor</option>
+                <option>Perspective / Opinion</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label style="font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:5px;display:block;">Target Journal (optional)</label>
+            <input class="text-input-sm" id="journalInput" placeholder="e.g. Nature Medicine, PLOS ONE, IEEE TPAMI">
+        </div>
+        <div class="col-md-6">
+            <label style="font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:5px;display:block;">Research Field</label>
+            <input class="text-input-sm" id="fieldInput" placeholder="e.g. Oncology, Machine Learning, Climate Science">
+        </div>
+        <div class="col-12">
+            <label style="font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:5px;display:block;">Abstract (optional — improves checklist quality)</label>
+            <textarea class="abstract-input" id="abstractInput" placeholder="Paste your abstract for a more tailored checklist..."></textarea>
+        </div>
+    </div>
+    <div class="d-flex align-items-center gap-3 mt-3">
+        <button class="btn-generate" id="generateBtn" onclick="runGenerate()">
+            <i class="fas fa-clipboard-check"></i> Generate Checklist
+        </button>
+        <div class="loading-bar" id="loadingBar" style="border-color:rgba(227,179,65,0.2);">
+            <div class="spinner-ring" style="border-top-color:var(--accent-orange);"></div>
+            <span>Building your personalised checklist...</span>
+        </div>
+    </div>
+</div>
+
+<div id="resultsArea" style="display:none;">
+    <div class="glass-card">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <div>
+                <div class="card-label mb-1">Completion Progress</div>
+                <div class="progress-bar-wrap">
+                    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+                    <span id="progressLabel" style="font-size:12px;color:var(--text-muted);min-width:60px;">0 / 0</span>
+                </div>
+            </div>
+            <div id="journalInfoBadge"></div>
+        </div>
+        <div id="journalTips"></div>
+    </div>
+
+    <div id="checklistContainer"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let checkState = {};
+let totalItems = 0;
+
+async function runGenerate() {
+    const btn = document.getElementById('generateBtn');
+    const loading = document.getElementById('loadingBar');
+    btn.disabled = true; loading.classList.add('active');
+    document.getElementById('resultsArea').style.display = 'none';
+    checkState = {}; totalItems = 0;
+
+    try {
+        const resp = await fetch('/generate-checklist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                manuscript_type: document.getElementById('manuscriptType').value,
+                journal: document.getElementById('journalInput').value.trim(),
+                field: document.getElementById('fieldInput').value.trim(),
+                abstract: document.getElementById('abstractInput').value.trim(),
+            }),
+        });
+        const data = await resp.json();
+        if (!resp.ok) { alert('Error: ' + (data.error || 'Generation failed')); return; }
+        displayChecklist(data);
+    } catch (err) {
+        alert('Error: ' + err.message);
+    } finally {
+        btn.disabled = false; loading.classList.remove('active');
+    }
+}
+
+function displayChecklist(data) {
+    const ji = data.journal_info || {};
+    if (ji.name) {
+        document.getElementById('journalInfoBadge').innerHTML = `
+            <span class="tag tag-blue">${escHtml(ji.name)}</span>
+            ${ji.h_index ? `<span class="tag tag-purple" style="margin-left:4px;">H-${ji.h_index}</span>` : ''}
+        `;
+    }
+
+    const tips = data.journal_tips || [];
+    if (tips.length) {
+        document.getElementById('journalTips').innerHTML = `
+            <div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:8px;">JOURNAL-SPECIFIC TIPS</div>
+            ${tips.map(t => `<div style="background:rgba(227,179,65,0.06);border-left:3px solid var(--accent-orange);border-radius:0 6px 6px 0;padding:8px 12px;margin-bottom:6px;font-size:13px;color:var(--text-secondary);">
+                <i class="fas fa-lightbulb" style="color:var(--accent-orange);margin-right:6px;"></i>${escHtml(t)}
+            </div>`).join('')}
+        `;
+    }
+
+    const categories = data.categories || [];
+    const catColorMap = { blue: 'cat-blue', green: 'cat-green', orange: 'cat-orange', purple: 'cat-purple', red: 'cat-red' };
+
+    let itemIdx = 0;
+    const html = categories.map(cat => {
+        const items = cat.items || [];
+        const catColor = catColorMap[cat.color] || 'cat-blue';
+        return `<div class="checklist-category">
+            <div class="checklist-category-header" onclick="toggleCategory(this)">
+                <div class="cat-icon ${catColor}"><i class="${cat.icon || 'fas fa-list'}"></i></div>
+                <div style="flex:1;">
+                    <div style="font-size:14px;font-weight:700;color:var(--text-primary);">${escHtml(cat.name)}</div>
+                    <div style="font-size:11px;color:var(--text-muted);">${items.length} items</div>
+                </div>
+                <i class="fas fa-chevron-down" style="color:var(--text-muted);transition:transform 0.2s;"></i>
+            </div>
+            <div class="checklist-items">
+                ${items.map(item => {
+                    const id = 'item_' + (itemIdx++);
+                    totalItems++;
+                    checkState[id] = false;
+                    const pClass = { CRITICAL: 'priority-critical', IMPORTANT: 'priority-important', RECOMMENDED: 'priority-recommended' }[item.priority] || 'priority-recommended';
+                    return `<div class="checklist-item" id="${id}" onclick="toggleItem('${id}')">
+                        <div class="item-checkbox" id="cb_${id}"></div>
+                        <div>
+                            <div class="item-text">${escHtml(item.text)}</div>
+                            ${item.description ? `<div class="item-desc">${escHtml(item.description)}</div>` : ''}
+                            <span class="${pClass}">${item.priority || 'RECOMMENDED'}</span>
+                        </div>
+                    </div>`;
+                }).join('')}
+            </div>
+        </div>`;
+    }).join('');
+
+    document.getElementById('checklistContainer').innerHTML = html;
+    updateProgress();
+
+    document.getElementById('resultsArea').style.display = 'block';
+    document.getElementById('resultsArea').scrollIntoView({ behavior: 'smooth' });
+}
+
+function toggleCategory(header) {
+    const body = header.nextElementSibling;
+    const icon = header.querySelector('.fa-chevron-down, .fa-chevron-right');
+    const isOpen = body.style.display !== 'none';
+    body.style.display = isOpen ? 'none' : 'block';
+    if (icon) icon.className = `fas fa-chevron-${isOpen ? 'right' : 'down'}`;
+}
+
+function toggleItem(id) {
+    checkState[id] = !checkState[id];
+    const item = document.getElementById(id);
+    const cb = document.getElementById('cb_' + id);
+    item.classList.toggle('checked', checkState[id]);
+    cb.classList.toggle('done', checkState[id]);
+    if (checkState[id]) cb.innerHTML = '<i class="fas fa-check" style="font-size:10px;color:#fff;"></i>';
+    else cb.innerHTML = '';
+    updateProgress();
+}
+
+function updateProgress() {
+    const done = Object.values(checkState).filter(Boolean).length;
+    const pct = totalItems ? Math.round((done / totalItems) * 100) : 0;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = `${done} / ${totalItems}`;
+}
+
+function escHtml(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+</script>
+{% endblock %}
