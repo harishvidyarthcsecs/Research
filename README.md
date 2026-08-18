@@ -130,6 +130,47 @@ pipeline above:
 - **Multi-Format Citations**: BibTeX, APA, IEEE, MLA
 - **Persistent Memory**: JSON-backed knowledge graph (no fragile pickle files)
 
+## Journal Database
+
+A SQL-backed (SQLite via SQLAlchemy), multi-source journal database — `/journals`
+in the app, API at `/api/journals/*` — that replaces the old flat-JSON
+quartile/APC lookup with real, cited, provenance-tracked data. Every field
+carries its source and fetch/snapshot date; nothing is LLM-guessed.
+
+**Sources and how each is verified:**
+
+| Source | What it gives | Access | Citation |
+|---|---|---|---|
+| Anna University CFR | PhD-scholar-approved journal list (~12,200 journals, ISSN/publisher) | Public page, scraped directly | [cfr.annauniv.edu](https://cfr.annauniv.edu/research/academics/journals-list.php) |
+| SCImago (SJR) | Quartile, SJR score, H-index, subject category | Manually downloaded CSV (Cloudflare blocks automation — verified live) | [scimagojr.com](https://www.scimagojr.com/journalrank.php), free for non-commercial use with citation |
+| DOAJ | APC amount, waiver policy, license, review process | CSV baseline + live API cross-check (`doaj.org/api/search/journals/issn:{issn}`) | [doaj.org](https://doaj.org) |
+| Elsevier | APC price list (hybrid + fully-OA) | Official public XLSX, no login | [elsevier.com/about/policies-and-standards/pricing](https://www.elsevier.com/about/policies-and-standards/pricing) |
+| Wiley | APC price lists (fully-OA + hybrid) | Official public XLSX, no login | [authors.wiley.com](https://authors.wiley.com/author-resources/Journal-Authors/open-access/article-publication-charges/index.html) |
+| Springer Nature | Waiver-eligible country list; per-journal APC (no bulk file exists) | Public page | [springernature.com](https://www.springernature.com/gp/open-science/journals-books/journal-pricing-faqs) |
+| IEEE | APC price list (PDF table) | Official public PDF, no login | [ieeeauthorcenter.ieee.org](https://journals.ieeeauthorcenter.ieee.org/wp-content/uploads/sites/7/IEEE-Article-Processing-Charges-List.pdf) |
+| ACM | Flat-rate APC (list + member price) | Public page | [libraries.acm.org/acmopen](https://libraries.acm.org/acmopen/apc-list-pricing) |
+| Frontiers | Tiered APC price grid | Public page | [frontiersin.org/about/fee-policy](https://www.frontiersin.org/about/fee-policy) |
+| Clarivate Web of Science MJL | JIF, quartile-equivalent, edition (SCIE/SSCI/AHCI/ESCI) | **Requires a Scopus/Elsevier account** — the "no login" claim in an earlier version of this doc was wrong, confirmed by testing live (redirects to `id.elsevier.com` OAuth). Without one: this section shows "unavailable — requires WoS account," never guessed. | [mjl.clarivate.com](https://mjl.clarivate.com/home) |
+| Scopus | CiteScore, ASJC codes, active/discontinued status | **Requires a Scopus/Elsevier account** — same correction, confirmed live: `scopus.com/sources.uri` redirects to Elsevier's OAuth login, no anonymous/public download exists. Without one: shown as "unavailable," never guessed. | [elsevier.com/products/scopus](https://www.elsevier.com/products/scopus) |
+| Taylor & Francis, SAGE | Per-journal APC (no bulk file exists for either) | On-demand per-journal lookup | fetched at point of use, cited per journal |
+| MDPI, Oxford Academic (OUP), PLOS | APC price pages | Cloudflare-blocked to automation at time of writing — probed each run, not silently skipped | logged honestly in `etl_run_log` when unreachable |
+| World Bank | Country income classification (waiver-tier eligibility) | Official public API, no auth | [api.worldbank.org](https://api.worldbank.org/v2/country) |
+
+**Run the ETL pipeline:**
+
+```bash
+python scripts/etl/run_all.py --source all          # everything, then reconcile
+python scripts/etl/run_all.py --source doaj,elsevier # just these two
+python scripts/etl/run_all.py --source all --dry-run # preview only
+```
+
+For Scopus, MJL, and the Elsevier-official Scopus title list: download the
+file yourself (links above) and drop it in `data/incoming/` — that directory
+is gitignored, each file has its own third-party redistribution terms.
+
+Every ETL run is logged to the `etl_run_log` table (source, counts, status,
+errors) — visible at `GET /api/admin/etl/status`.
+
 ## Installation
 
 ```bash
@@ -141,6 +182,9 @@ source venv/bin/activate   # Windows: venv\Scripts\activate
 
 pip install -r requirements.txt
 mkdir -p data/memory output
+
+alembic upgrade head        # journal database schema
+python scripts/etl/run_all.py --source all   # populate it (takes a few minutes)
 ```
 
 Create a `.env` file with at least one LLM provider key — see

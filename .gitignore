@@ -26,6 +26,21 @@ debug_response.json
 output/
 data/memory/
 
+# Third-party source data — download it yourself from scimagojr.com, then run
+# scripts/build_journal_index.py --merge-only. Not redistributed here.
+data/scimago_raw.csv
+
+# Journal database — rebuild locally with scripts/etl/run_all.py, not committed.
+data/journal_database.db
+data/journal_database.db-journal
+# Manually-downloaded third-party source files (Scopus source list, MJL export,
+# DOAJ CSV) — each has its own redistribution terms, not committed here.
+data/incoming/
+
+# Journal-database frontend build output
+frontend-journals/node_modules/
+frontend-journals/dist/
+
 # IDE
 .vscode/
 .idea/

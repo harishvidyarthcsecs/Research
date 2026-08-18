@@ -545,9 +545,17 @@
         </a>
 
         <div class="nav-section-label" style="margin-top:12px;">Discovery</div>
+        <a href="/access" class="nav-link-item {% block nav_access %}{% endblock %}">
+            <span class="nav-icon"><i class="fas fa-unlock"></i></span>
+            Paper Access
+        </a>
         <a href="/journal-fit" class="nav-link-item {% block nav_journal %}{% endblock %}">
             <span class="nav-icon"><i class="fas fa-compass"></i></span>
             Journal Fit
+        </a>
+        <a href="/journals" class="nav-link-item {% block nav_journal_db %}{% endblock %}">
+            <span class="nav-icon"><i class="fas fa-database"></i></span>
+            Journal Database
         </a>
         <a href="/abstract-screener" class="nav-link-item {% block nav_screener %}{% endblock %}">
             <span class="nav-icon"><i class="fas fa-filter"></i></span>

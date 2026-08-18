@@ -10,3 +10,12 @@ PyMuPDF>=1.23.0
 reportlab>=4.0.0
 python-docx>=1.1.0
 anthropic>=0.34.0
+
+# Journal database (SQL-backed multi-source journal/APC tracking)
+SQLAlchemy>=2.0.0
+alembic>=1.13.0
+beautifulsoup4>=4.12.0
+lxml>=5.0.0
+openpyxl>=3.1.0
+cloudscraper>=1.2.71
+pdfplumber>=0.11.0

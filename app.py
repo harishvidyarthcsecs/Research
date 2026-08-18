@@ -4,13 +4,15 @@ Flask web frontend for the Autonomous Research Agent System.
 from dotenv import load_dotenv
 load_dotenv()
 
-from flask import Flask, render_template, request, jsonify, send_file, abort
+from flask import (Flask, render_template, request, jsonify, send_file, abort,
+                   Response, stream_with_context)
 from flask_talisman import Talisman
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import asyncio
 import json
 import os
+import queue
 import re
 import sys
 import tempfile
@@ -24,16 +26,23 @@ from werkzeug.utils import secure_filename
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
 from src.research_system import AutonomousResearchSystem
+from src.jobs import JOBS, STAGES, LITERATURE_STAGES, ResearchCancelled, is_sentinel, sse_format
 from src.agents.custom_citation_formatter import CustomCitationFormatter
-from src.agents.literature_builder_agent import LiteratureBuilderAgent
+from src.agents.literature_builder_agent import LiteratureBuilderAgent, apply_literature_filter
 from src.agents.humanizer_agent import HumanizerAgent
 from src.agents.latex_citation_reorder import reorder_citations
+from src.agents.prisma_diagram import render_svg as render_prisma_svg
+from src.agents.literature_export import evidence_table_to_csv, document_to_latex
+from src.models.data_models import LiteratureFilter
 from src.agents.plagiarism_agent import PlagiarismCheckerAgent
 from src.agents.journal_recommender_agent import JournalRecommenderAgent
 from src.agents.abstract_screener_agent import AbstractScreenerAgent
 from src.agents.checklist_agent import ChecklistAgent
 from src.agents.grant_writer_agent import GrantWriterAgent, FUNDER_TEMPLATES
 from src.agents.citation_network_agent import CitationNetworkAgent
+from src.agents.access_router_agent import resolve_access
+from src.blueprints.journals import journals_bp
+from src.db.engine import init_db
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', os.urandom(32).hex())
@@ -71,6 +80,10 @@ Talisman(
     x_content_type_options=True,
     x_xss_protection=True,
 )
+
+# ── Journal database (SQL-backed multi-source journal/APC tracking) ─────────
+init_db()
+app.register_blueprint(journals_bp)
 
 # ── Input validation helpers ─────────────────────────────────────────────────
 _URL_RE = re.compile(r'^https?://', re.I)
@@ -375,25 +388,13 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/research', methods=['POST'])
-def research():
-    """Perform research on a topic."""
+def _serialize_results(results):
+    """Convert ResearchResults into the JSON payload the frontend expects.
+
+    Shared by the legacy blocking /research route and the job-based flow so
+    both return an identical contract.
+    """
     try:
-        data = request.get_json()
-        topic = data.get('topic', '').strip()
-        
-        if not topic:
-            return jsonify({'error': 'Topic is required'}), 400
-        
-        print(f"Starting research on topic: {topic}")
-        
-        # Run research in a separate thread to avoid event loop conflicts
-        future = executor.submit(run_research_in_thread, topic)
-        results = future.result(timeout=300)  # 5 minute timeout
-        
-        print(f"Research completed successfully")
-        
-        # Convert results to JSON-serializable format
         response_data = {
             'topic': results.topic_map.main_topic,
             'generated_at': results.generated_at.isoformat(),
@@ -478,19 +479,48 @@ def research():
                 for citation, paper in zip(results.citations, results.papers)
             ]
         }
-        
-        # Save results to file
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"research_{timestamp}.json"
-        filepath = Path("output") / filename
-        
-        with open(filepath, 'w') as f:
-            json.dump(response_data, f, indent=2, default=str)
-        
-        response_data['download_url'] = f'/download/{filename}'
-        
-        return jsonify(response_data)
-        
+    except AttributeError as e:
+        raise ValueError(f"Malformed research results: {e}") from e
+
+    return response_data
+
+
+def _save_results_file(response_data):
+    """Persist a completed run to output/ and attach its download URL."""
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"research_{timestamp}.json"
+    filepath = Path("output") / filename
+
+    with open(filepath, 'w') as f:
+        json.dump(response_data, f, indent=2, default=str)
+
+    response_data['download_url'] = f'/download/{filename}'
+    return response_data
+
+
+@app.route('/research', methods=['POST'])
+def research():
+    """Blocking research run. Kept for scripts and backwards compatibility.
+
+    The browser uses /research/start instead so it can stream progress.
+    """
+    try:
+        data = request.get_json()
+        topic = data.get('topic', '').strip()
+
+        if not topic:
+            return jsonify({'error': 'Topic is required'}), 400
+
+        print(f"Starting research on topic: {topic}")
+
+        # Run research in a separate thread to avoid event loop conflicts
+        future = executor.submit(run_research_in_thread, topic)
+        results = future.result(timeout=300)  # 5 minute timeout
+
+        print("Research completed successfully")
+
+        return jsonify(_save_results_file(_serialize_results(results)))
+
     except concurrent.futures.TimeoutError:
         return jsonify({'error': 'Research timed out. Please try a more specific topic.'}), 500
     except Exception as e:
@@ -498,6 +528,129 @@ def research():
         import traceback
         traceback.print_exc()
         return jsonify({'error': f'Research failed: {str(e)}'}), 500
+
+
+# ── Job-based research: start → stream progress → fetch result ───────────────
+
+def _run_research_job(job):
+    """Worker body for one research job. Runs on its own thread + event loop."""
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    def progress(stage, name, state, **detail):
+        # Cancellation is checked at every stage boundary, so a cancelled run
+        # stops within one stage instead of burning the full 5 minutes.
+        job.check_cancelled()
+        job.emit('stage', stage=stage, name=name, state=state, detail=detail)
+
+    try:
+        job.status = 'running'
+        job.emit('start', topic=job.topic, stages=[
+            {'stage': n, 'name': label} for n, label in STAGES
+        ])
+
+        system = get_system()
+        results = loop.run_until_complete(system.research(job.topic, progress=progress))
+
+        payload = _save_results_file(_serialize_results(results))
+        job.finish('done', result=payload)
+        print(f"Research job {job.id} completed")
+
+    except ResearchCancelled:
+        job.finish('cancelled', error='Cancelled by user')
+        print(f"Research job {job.id} cancelled")
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        job.finish('error', error=str(e))
+        print(f"Research job {job.id} failed: {e}")
+    finally:
+        loop.close()
+
+
+@app.route('/research/start', methods=['POST'])
+def research_start():
+    """Queue a research run and return its job id immediately."""
+    data = request.get_json(silent=True) or {}
+    topic = _safe_text(data.get('topic', ''), max_len=500)
+
+    if not topic:
+        return jsonify({'error': 'Topic is required'}), 400
+
+    job = JOBS.create(topic)
+    threading.Thread(target=_run_research_job, args=(job,), daemon=True).start()
+
+    return jsonify({
+        'job_id': job.id,
+        'topic': job.topic,
+        'stages': [{'stage': n, 'name': label} for n, label in STAGES],
+    }), 202
+
+
+def _job_sse_response(job_id: str):
+    """Stream a job's stage events as Server-Sent Events. Shared by /research/events
+    and /generate-literature/events since both ride the same Job/JobRegistry."""
+    job = JOBS.get(job_id)
+    if job is None:
+        return jsonify({'error': 'Unknown job'}), 404
+
+    @stream_with_context
+    def stream():
+        q = job.subscribe()
+        try:
+            while True:
+                try:
+                    item = q.get(timeout=15)
+                except queue.Empty:
+                    yield ': keepalive\n\n'   # stops proxies idling the connection out
+                    continue
+                if is_sentinel(item):
+                    break
+                yield sse_format(item)
+        finally:
+            job.unsubscribe(q)
+
+    return Response(stream(), mimetype='text/event-stream', headers={
+        'Cache-Control': 'no-cache',
+        'X-Accel-Buffering': 'no',
+        'Connection': 'keep-alive',
+    })
+
+
+def _job_cancel_response(job_id: str):
+    """Ask a running job to stop at its next stage boundary. Shared by
+    /research/cancel and /generate-literature/cancel."""
+    job = JOBS.get(job_id)
+    if job is None:
+        return jsonify({'error': 'Unknown job'}), 404
+
+    job.cancel()
+    return jsonify({'job_id': job.id, 'status': 'cancelling'})
+
+
+@app.route('/research/events/<job_id>')
+@limiter.exempt
+def research_events(job_id):
+    return _job_sse_response(job_id)
+
+
+@app.route('/research/result/<job_id>')
+def research_result(job_id):
+    """Fetch a finished job's payload, or its current status if still running."""
+    job = JOBS.get(job_id)
+    if job is None:
+        return jsonify({'error': 'Unknown job'}), 404
+
+    if job.status == 'done':
+        return jsonify(job.result)
+    if job.status in ('error', 'cancelled'):
+        return jsonify({'error': job.error or job.status, 'status': job.status}), 409
+    return jsonify(job.summary()), 202
+
+
+@app.route('/research/cancel/<job_id>', methods=['POST'])
+def research_cancel(job_id):
+    return _job_cancel_response(job_id)
 
 
 @app.route('/download/<filename>')
@@ -822,27 +975,121 @@ def run_reference_validation(content: str, file_format: str, options: dict):
         loop.close()
 
 
+def _serialize_literature_result(topic: str, literature_document, literature_agent) -> dict:
+    """Shared JSON contract for both the blocking and job-based literature routes.
+
+    Adds evidence_table / synthesis_matrix / prisma (+ prisma_svg) on top of the
+    original outline/sections/bibliography/stats contract — additive, so the
+    existing frontend rendering keeps working unchanged.
+    """
+    stats = literature_agent.get_literature_stats(literature_document)
+
+    result = {
+        'topic': topic,
+        'outline': {
+            'title': literature_document.outline.title,
+            'sections': literature_document.outline.sections,
+            'total_papers': literature_document.outline.total_papers,
+            'total_claims': literature_document.outline.total_claims,
+            'date_range': literature_document.outline.date_range,
+            'estimated_word_count': getattr(literature_document.outline, 'estimated_word_count', 0)
+        },
+        'sections': [
+            {
+                'section_type': section.section_type,
+                'title': section.title,
+                'content': section.content,
+                'citations': section.citations,
+                'claim_ids': section.claim_ids,
+                'word_count': section.word_count
+            }
+            for section in literature_document.sections
+        ],
+        'bibliography': literature_document.bibliography,
+        'metadata': literature_document.metadata,
+        'stats': stats,
+        'evidence_table': [row.model_dump() for row in literature_document.evidence_table],
+        'synthesis_matrix': (
+            literature_document.synthesis_matrix.model_dump()
+            if literature_document.synthesis_matrix else None
+        ),
+        'prisma': literature_document.prisma.model_dump() if literature_document.prisma else None,
+        'prisma_svg': render_prisma_svg(literature_document.prisma) if literature_document.prisma else None,
+        'generated_at': literature_document.generated_at.isoformat()
+    }
+    return result
+
+
+def _build_literature_filter(filters: dict) -> LiteratureFilter:
+    """Build a LiteratureFilter from the UI's posted filters dict, tolerating
+    missing/malformed keys rather than raising."""
+    try:
+        return LiteratureFilter(
+            q_rankings=filters.get('q_rankings') or ['Q1', 'Q2', 'Q3'],
+            include_sa_papers=bool(filters.get('include_sa_papers', True)),
+            min_year=filters.get('min_year') or None,
+            max_year=filters.get('max_year') or None,
+            min_confidence=float(filters.get('min_confidence') or 0.0),
+        )
+    except (TypeError, ValueError):
+        return LiteratureFilter()
+
+
+def run_literature_generation(topic: str, filters: dict, progress=None):
+    """Run literature generation. Used by both the blocking route and the
+    SSE job worker (progress is None for the former)."""
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    try:
+        app.logger.info(f"Starting research for topic: {topic}")
+        system = get_system()
+        research_results = loop.run_until_complete(system.research(topic, progress=progress))
+
+        app.logger.info(f"Research completed. Found {len(research_results.papers)} papers, {len(research_results.claims)} claims")
+
+        research_results = apply_literature_filter(research_results, _build_literature_filter(filters))
+
+        app.logger.info("Starting literature generation...")
+        literature_agent = LiteratureBuilderAgent()
+        literature_document = loop.run_until_complete(
+            literature_agent.process(research_results, progress=progress))
+
+        app.logger.info(f"Literature generation completed. Generated {len(literature_document.sections)} sections")
+
+        result = _serialize_literature_result(topic, literature_document, literature_agent)
+        app.logger.info("Literature generation result prepared successfully")
+        return result
+
+    except Exception as e:
+        app.logger.error(f"Error in literature generation: {str(e)}")
+        raise e
+
+    finally:
+        loop.close()
+
+
 @app.route('/generate-literature', methods=['POST'])
 def generate_literature():
-    """Generate structured literature from research results."""
+    """Blocking literature generation. Kept for scripts and backwards
+    compatibility. The browser uses /generate-literature/start instead."""
     try:
         data = request.get_json()
         topic = data.get('topic', '').strip()
         filters = data.get('filters', {})
-        
+
         if not topic:
             return jsonify({'error': 'Topic is required'}), 400
-        
+
         app.logger.info(f"Literature generation request for topic: {topic}")
-        
-        # Run research and literature generation in a separate thread
+
         future = executor.submit(run_literature_generation, topic, filters)
         results = future.result(timeout=300)  # 5 minute timeout
-        
+
         app.logger.info(f"Literature generated successfully for topic: {topic}")
-        
+
         return jsonify(results)
-        
+
     except concurrent.futures.TimeoutError:
         app.logger.error(f"Literature generation timed out for topic: {topic}")
         return jsonify({'error': 'Literature generation timed out. Please try a more specific topic.'}), 500
@@ -853,66 +1100,117 @@ def generate_literature():
         return jsonify({'error': f'Literature generation failed: {str(e)}'}), 500
 
 
-def run_literature_generation(topic: str, filters: dict):
-    """Run literature generation in a separate thread."""
+# ── Job-based literature generation: start -> stream progress -> fetch result ──
+
+def _run_literature_job(job, filters: dict):
+    """Worker body for one literature job. Continues the same 16-stage stream
+    the main research job uses (stages 1-8), adding stages 9-16."""
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    
+
+    def progress(stage, name, state, **detail):
+        job.check_cancelled()
+        job.emit('stage', stage=stage, name=name, state=state, detail=detail)
+
     try:
-        # Get research system and run research
-        app.logger.info(f"Starting research for topic: {topic}")
+        job.status = 'running'
+        job.emit('start', topic=job.topic, stages=[
+            {'stage': n, 'name': label} for n, label in LITERATURE_STAGES
+        ])
+
         system = get_system()
-        research_results = loop.run_until_complete(system.research(topic))
-        
-        app.logger.info(f"Research completed. Found {len(research_results.papers)} papers, {len(research_results.claims)} claims")
-        
-        # Generate literature
-        app.logger.info("Starting literature generation...")
+        research_results = loop.run_until_complete(system.research(job.topic, progress=progress))
+        research_results = apply_literature_filter(research_results, _build_literature_filter(filters))
+
         literature_agent = LiteratureBuilderAgent()
-        literature_document = loop.run_until_complete(literature_agent.process(research_results))
-        
-        app.logger.info(f"Literature generation completed. Generated {len(literature_document.sections)} sections")
-        
-        # Get statistics
-        stats = literature_agent.get_literature_stats(literature_document)
-        
-        # Convert to JSON-serializable format
-        result = {
-            'topic': topic,
-            'outline': {
-                'title': literature_document.outline.title,
-                'sections': literature_document.outline.sections,
-                'total_papers': literature_document.outline.total_papers,
-                'total_claims': literature_document.outline.total_claims,
-                'date_range': literature_document.outline.date_range,
-                'estimated_word_count': getattr(literature_document.outline, 'estimated_word_count', 0)
-            },
-            'sections': [
-                {
-                    'section_type': section.section_type,
-                    'title': section.title,
-                    'content': section.content,
-                    'citations': section.citations,
-                    'claim_ids': section.claim_ids,
-                    'word_count': section.word_count
-                }
-                for section in literature_document.sections
-            ],
-            'bibliography': literature_document.bibliography,
-            'metadata': literature_document.metadata,
-            'stats': stats,
-            'generated_at': literature_document.generated_at.isoformat()
-        }
-        
-        app.logger.info(f"Literature generation result prepared successfully")
-        return result
-        
+        literature_document = loop.run_until_complete(
+            literature_agent.process(research_results, progress=progress))
+
+        payload = _serialize_literature_result(job.topic, literature_document, literature_agent)
+        job.finish('done', result=payload)
+        print(f"Literature job {job.id} completed")
+
+    except ResearchCancelled:
+        job.finish('cancelled', error='Cancelled by user')
+        print(f"Literature job {job.id} cancelled")
     except Exception as e:
-        app.logger.error(f"Error in literature generation: {str(e)}")
-        raise e
-        
+        import traceback
+        traceback.print_exc()
+        job.finish('error', error=str(e))
+        print(f"Literature job {job.id} failed: {e}")
     finally:
         loop.close()
+
+
+@app.route('/generate-literature/start', methods=['POST'])
+def generate_literature_start():
+    """Queue a literature generation run and return its job id immediately."""
+    data = request.get_json(silent=True) or {}
+    topic = _safe_text(data.get('topic', ''), max_len=500)
+
+    if not topic:
+        return jsonify({'error': 'Topic is required'}), 400
+
+    job = JOBS.create(topic)
+    threading.Thread(target=_run_literature_job, args=(job, data.get('filters', {})), daemon=True).start()
+
+    return jsonify({
+        'job_id': job.id,
+        'topic': job.topic,
+        'stages': [{'stage': n, 'name': label} for n, label in LITERATURE_STAGES],
+    }), 202
+
+
+@app.route('/generate-literature/events/<job_id>')
+@limiter.exempt
+def generate_literature_events(job_id):
+    return _job_sse_response(job_id)
+
+
+@app.route('/generate-literature/result/<job_id>')
+def generate_literature_result(job_id):
+    job = JOBS.get(job_id)
+    if job is None:
+        return jsonify({'error': 'Unknown job'}), 404
+
+    if job.status == 'done':
+        return jsonify(job.result)
+    if job.status in ('error', 'cancelled'):
+        return jsonify({'error': job.error or job.status, 'status': job.status}), 409
+    return jsonify(job.summary()), 202
+
+
+@app.route('/generate-literature/cancel/<job_id>', methods=['POST'])
+def generate_literature_cancel(job_id):
+    return _job_cancel_response(job_id)
+
+
+@app.route('/export-literature/<job_id>/<fmt>')
+def export_literature(job_id, fmt):
+    """Server-side export of a finished literature job: csv, tex, or prisma_svg."""
+    job = JOBS.get(job_id)
+    if job is None or job.status != 'done' or not job.result:
+        return jsonify({'error': 'Result not ready'}), 404
+
+    doc = job.result
+    ts = datetime.now().strftime('%Y%m%d_%H%M%S')
+
+    if fmt == 'csv':
+        from src.models.data_models import EvidenceRow
+        rows = [EvidenceRow(**row) for row in doc.get('evidence_table', [])]
+        return Response(evidence_table_to_csv(rows), mimetype='text/csv', headers={
+            'Content-Disposition': f'attachment; filename=evidence_table_{ts}.csv'
+        })
+    if fmt == 'tex':
+        tex = document_to_latex(doc)
+        return Response(tex, mimetype='text/x-tex', headers={
+            'Content-Disposition': f'attachment; filename=literature_{ts}.tex'
+        })
+    if fmt == 'prisma_svg':
+        svg = doc.get('prisma_svg') or ''
+        return Response(svg, mimetype='image/svg+xml')
+
+    return jsonify({'error': 'Unknown export format'}), 400
 
 
 @app.route('/generate-custom-citations', methods=['POST'])
@@ -1562,6 +1860,36 @@ def _list_benchmark_topics():
     return topics
 
 
+@app.route('/access')
+def access_router_page():
+    """Paywall access router."""
+    return render_template('access_router.html')
+
+
+@app.route('/resolve-access', methods=['POST'])
+def resolve_access_route():
+    """Find a legal route to the full text of one paper."""
+    try:
+        data = request.get_json(silent=True) or {}
+        query = _safe_text(data.get('query', ''), max_len=500)
+
+        if not query:
+            return jsonify({'error': 'Enter a DOI or paper title'}), 400
+
+        institution = data.get('institution') or {}
+        institution = {
+            'name': _safe_text(institution.get('name', ''), max_len=200),
+            'resolver_url': _validate_url(institution.get('resolver_url', '')),
+            'ezproxy_prefix': _validate_url(institution.get('ezproxy_prefix', '')),
+        }
+
+        return jsonify(resolve_access(query, institution=institution))
+
+    except Exception as e:
+        app.logger.error(f'Access router error: {e}')
+        return jsonify({'error': f'Access lookup failed: {e}'}), 500
+
+
 @app.route('/benchmark')
 def benchmark_page():
     return render_template('benchmark.html', topics=_list_benchmark_topics())
@@ -1644,4 +1972,4 @@ if __name__ == '__main__':
     print("🧪 Test endpoint: http://localhost:5000/test")
     print("📖 Citations page: http://localhost:5000/citations")
     
-    app.run(debug=True, host='0.0.0.0', port=5000, threaded=True)
+    app.run(debug=True, host='0.0.0.0', port=5050, threaded=True)

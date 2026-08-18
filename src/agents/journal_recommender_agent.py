@@ -1,89 +1,18 @@
-"""Journal fit recommender using OpenAlex + CrossRef + Claude/any LLM."""
+"""Journal fit recommender using OpenAlex + DOAJ + Scimago, with LLM fit ranking.
+
+Quartiles come from `journal_metadata`, which resolves them against real data
+and labels their provenance. The LLM is used only to judge *fit* between an
+abstract and a journal's scope — never to recall a quartile, which it cannot do
+reliably.
+"""
 from __future__ import annotations
 import re
 import json
-import os
 import time
 import requests
 from collections import Counter
 from src.agents.llm_client import chat as llm_chat, get_provider
-
-# ── Verified Scimago lookup (ISSN → quartile) ───────────────────────────────
-_VERIFIED_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'scimago_verified.json')
-try:
-    with open(_VERIFIED_PATH) as _f:
-        _raw = json.load(_f)
-    _SCIMAGO_DB: dict[str, dict] = {k: v for k, v in _raw.items() if not k.startswith('_')}
-except Exception:
-    _SCIMAGO_DB = {}
-
-
-def _lookup_verified(issn: str, issn_list: list[str] | None = None) -> dict | None:
-    """Return verified Scimago record or None."""
-    for i in ([issn] + (issn_list or [])):
-        rec = _SCIMAGO_DB.get((i or "").strip())
-        if rec:
-            return rec
-    return None
-
-
-# ── AI-powered Scimago quartile lookup ─────────────────────────────────────
-
-def _ai_quartile_lookup(journals: list[dict]) -> dict[str, dict]:
-    """
-    Ask the active LLM for the Scimago SJR quartile of each journal.
-    LLMs are trained on academic literature that includes Scimago data.
-
-    Returns dict: issn → {"q": "Q1"|"Q2"|"Q3"|"Q4"|"unknown", "field": str}
-    """
-    if not get_provider():
-        return {}
-
-    # Build numbered list for the prompt
-    lines = []
-    index_to_issn: dict[str, str] = {}
-    for i, j in enumerate(journals, 1):
-        name = j.get("display_name", "Unknown")
-        issn = j.get("issn_l", "")
-        lines.append(f"[{i}] {name}  (ISSN: {issn})")
-        index_to_issn[str(i)] = issn
-
-    prompt = f"""You are an academic publishing expert with deep knowledge of Scimago Journal Rankings (SJR).
-
-For each journal below, state its Scimago SJR quartile (Q1, Q2, Q3, or Q4) in its PRIMARY subject category, based on the most recent available data (2022–2024). Use "unknown" only if you genuinely have no information about the journal.
-
-JOURNALS:
-{chr(10).join(lines)}
-
-Return ONLY a valid JSON object mapping the index number to an object with "q" and "field":
-{{
-  "1": {{"q": "Q1", "field": "Mathematics"}},
-  "2": {{"q": "Q2", "field": "Mathematics"}},
-  "3": {{"q": "unknown", "field": ""}}
-}}
-
-Rules:
-- q must be exactly Q1, Q2, Q3, Q4, or unknown
-- field is the Scimago subject area (e.g. Mathematics, Computer Science, Medicine)
-- Do NOT explain, just return the JSON"""
-
-    try:
-        raw = llm_chat(prompt, max_tokens=1500).strip()
-        match = re.search(r'\{.*\}', raw, re.DOTALL)
-        if not match:
-            return {}
-        parsed = json.loads(match.group())
-        result: dict[str, dict] = {}
-        for idx, val in parsed.items():
-            issn = index_to_issn.get(str(idx), "")
-            if issn and isinstance(val, dict):
-                q = val.get("q", "unknown")
-                if q in ("Q1", "Q2", "Q3", "Q4"):
-                    result[issn] = {"q": q, "field": val.get("field", "")}
-        return result
-    except Exception as e:
-        print(f"[AI quartile lookup] error: {e}")
-        return {}
+from src.agents.journal_metadata import data_status, resolve_journal
 
 
 # Broad field keywords → canonical field name for OpenAlex search
@@ -120,31 +49,6 @@ def _detect_broad_field(abstract: str) -> list[str]:
         if any(kw in text for kw in kws):
             return fields
     return []
-
-
-def _assign_relative_quartiles(journals: list[dict]) -> None:
-    """
-    Assign Q1/Q2/Q3/Q4 in-place based on relative IF rank within the result set.
-    This mirrors how Scimago computes quartiles: percentile within a subject category.
-    Journals with verified ISSN data keep their verified quartile.
-    """
-    unverified = [j for j in journals if not j.get('_verified')]
-    if not unverified:
-        return
-    ranked = sorted(unverified, key=lambda j: j.get('impact_factor') or 0, reverse=True)
-    n = len(ranked)
-    for i, j in enumerate(ranked):
-        pct = i / n  # 0 = highest IF
-        if pct < 0.25:
-            q = "Q1"
-        elif pct < 0.50:
-            q = "Q2"
-        elif pct < 0.75:
-            q = "Q3"
-        else:
-            q = "Q4"
-        j['quartile'] = q
-        j['quartile_source'] = "Estimated (relative ranking)"
 
 
 _PURE_FIELDS = {"mathematics", "physics", "chemistry", "biology",
@@ -349,57 +253,38 @@ Return ONLY a JSON array:
                 "error": "No journals found. OpenAlex may be unavailable.",
             }
 
-        # Run fit ranking and AI quartile lookup in parallel (conceptually sequential here)
+        # The LLM ranks fit only. Quartiles come from measured data below.
         rankings = self._rank_with_llm(abstract, journals_raw)
 
-        # AI quartile lookup for all journals in one batch call
-        print("[JournalRecommender] Running AI quartile lookup...")
-        ai_quartiles = _ai_quartile_lookup(journals_raw)
-        print(f"[JournalRecommender] AI returned quartiles for {len(ai_quartiles)} journals")
-
         results = []
+
         def _build_entry(j: dict, fit_score: int, fit_reason: str, submission_tips: str) -> dict:
-            ss = j.get("summary_stats") or {}
-            impact = round(ss.get("2yr_mean_citedness", 0) or 0, 2)
-            h_idx = ss.get("h_index") or 0
-            issn = j.get("issn_l", "")
-            all_issns = j.get("issn") or []
+            facts = resolve_journal(j)
+            issn = facts["issn"] or j.get("issn_l", "")
 
-            # Priority 1: static verified DB (human-curated, highest trust)
-            verified = _lookup_verified(issn, all_issns)
-            # Priority 2: AI lookup (LLM trained on Scimago data)
-            ai_rec = ai_quartiles.get(issn)
-
-            entry = {
-                "name": j.get("display_name", "Unknown"),
+            return {
+                "name": facts["name"] or "Unknown",
                 "issn": issn,
-                "publisher": j.get("host_organization_name", ""),
+                "publisher": facts["publisher"],
                 "homepage": _safe_homepage(j.get("homepage_url", "")),
-                "scimago_url": _scimago_url(issn, j.get("display_name", "")),
-                "h_index": h_idx,
-                "impact_factor": impact,
-                "works_count": j.get("works_count", 0),
-                "is_oa": j.get("is_oa", False),
+                "scimago_url": _scimago_url(issn, facts["name"]),
+                "h_index": facts["h_index"],
+                "impact_factor": facts["citedness"],
+                "works_count": facts["works"],
+                "field": facts["field"],
+                "is_oa": facts["is_oa"],
+                "in_doaj": facts["in_doaj"],
+                "apc_usd": facts["apc_usd"],
+                "quartile": facts["quartile"],
+                "quartile_source": facts["quartile_source"],
+                "quartile_source_label": facts["quartile_source_label"],
+                "quartile_field": facts["quartile_field"],
+                "risk_flags": facts["risk_flags"],
+                "in_reference_index": facts["in_reference_index"],
                 "fit_score": fit_score,
                 "fit_reason": fit_reason,
                 "submission_tips": submission_tips,
-                "_verified": False,
             }
-
-            if verified:
-                entry["quartile"] = verified["q"]
-                entry["quartile_source"] = "Verified (Scimago)"
-                entry["_verified"] = True
-            elif ai_rec:
-                entry["quartile"] = ai_rec["q"]
-                entry["quartile_source"] = f"AI ({get_provider()})"
-                entry["_verified"] = True   # treat AI as "resolved", skip relative ranking
-            else:
-                entry["quartile"] = "?"
-                entry["quartile_source"] = "Estimated (relative ranking)"
-                entry["_verified"] = False
-
-            return entry
 
         if rankings:
             for r in rankings:
@@ -419,13 +304,6 @@ Return ONLY a JSON array:
                     f"Covers {', '.join(topic_names[:2]) or field or 'related topics'}.",
                     "Review the journal's author guidelines and scope before submitting."))
 
-        # Fill quartile for journals the AI didn't know using relative ranking
-        _assign_relative_quartiles(results)
-
-        # Remove internal flag before sending to frontend
-        for r in results:
-            r.pop("_verified", None)
-
         results.sort(key=lambda x: x["fit_score"], reverse=True)
 
         return {
@@ -435,4 +313,5 @@ Return ONLY a JSON array:
             "recommendations": results[:10],
             "top_pick": results[0] if results else None,
             "ai_ranked": rankings is not None,
+            "data_status": data_status(),
         }

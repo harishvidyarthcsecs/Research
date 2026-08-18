@@ -1,0 +1,129 @@
+{
+  "generated_at": "2026-08-02T11:13:45.007340+00:00",
+  "source": "OpenAlex 2yr_mean_citedness percentiles",
+  "sample_size": 8000,
+  "min_field_sample": 40,
+  "note": "Cutoffs come from the most-published journals per field, so they skew higher than Scimago's, which covers every indexed journal. Treat the resulting band as an estimate, never as a Scimago quartile.",
+  "global": {
+    "q1_cutoff": 2.8158,
+    "q2_cutoff": 1.1891,
+    "q3_cutoff": 0.0316,
+    "n": 8000
+  },
+  "fields": {
+    "Physics and Astronomy": {
+      "q1_cutoff": 2.4849,
+      "q2_cutoff": 0.8427,
+      "q3_cutoff": 0.0,
+      "n": 265
+    },
+    "Social Sciences": {
+      "q1_cutoff": 0.7394,
+      "q2_cutoff": 0.0977,
+      "q3_cutoff": 0.0,
+      "n": 931
+    },
+    "Engineering": {
+      "q1_cutoff": 3.74,
+      "q2_cutoff": 1.3999,
+      "q3_cutoff": 0.0,
+      "n": 1246
+    },
+    "Chemistry": {
+      "q1_cutoff": 3.3095,
+      "q2_cutoff": 1.6344,
+      "q3_cutoff": 0.0,
+      "n": 272
+    },
+    "Health Professions": {
+      "q1_cutoff": 2.2468,
+      "q2_cutoff": 1.1408,
+      "q3_cutoff": 0.251,
+      "n": 114
+    },
+    "Medicine": {
+      "q1_cutoff": 2.4961,
+      "q2_cutoff": 1.3298,
+      "q3_cutoff": 0.1222,
+      "n": 2182
+    },
+    "Biochemistry, Genetics and Molecular Biology": {
+      "q1_cutoff": 4.5793,
+      "q2_cutoff": 2.7403,
+      "q3_cutoff": 1.34,
+      "n": 468
+    },
+    "Arts and Humanities": {
+      "q1_cutoff": 0.1996,
+      "q2_cutoff": 0.0396,
+      "q3_cutoff": 0.0,
+      "n": 368
+    },
+    "Earth and Planetary Sciences": {
+      "q1_cutoff": 2.9229,
+      "q2_cutoff": 1.8583,
+      "q3_cutoff": 0.8117,
+      "n": 166
+    },
+    "Psychology": {
+      "q1_cutoff": 2.9803,
+      "q2_cutoff": 2.0108,
+      "q3_cutoff": 1.1133,
+      "n": 162
+    },
+    "Environmental Science": {
+      "q1_cutoff": 3.9733,
+      "q2_cutoff": 2.2078,
+      "q3_cutoff": 0.7909,
+      "n": 358
+    },
+    "Materials Science": {
+      "q1_cutoff": 5.1566,
+      "q2_cutoff": 3.2134,
+      "q3_cutoff": 0.9977,
+      "n": 196
+    },
+    "Computer Science": {
+      "q1_cutoff": 3.7149,
+      "q2_cutoff": 1.0183,
+      "q3_cutoff": 0.0337,
+      "n": 256
+    },
+    "Agricultural and Biological Sciences": {
+      "q1_cutoff": 2.808,
+      "q2_cutoff": 1.3186,
+      "q3_cutoff": 0.1639,
+      "n": 450
+    },
+    "Business, Management and Accounting": {
+      "q1_cutoff": 6.264,
+      "q2_cutoff": 1.826,
+      "q3_cutoff": 0.0937,
+      "n": 93
+    },
+    "Neuroscience": {
+      "q1_cutoff": 3.8935,
+      "q2_cutoff": 2.6698,
+      "q3_cutoff": 1.4178,
+      "n": 109
+    },
+    "Mathematics": {
+      "q1_cutoff": 1.5536,
+      "q2_cutoff": 0.8785,
+      "q3_cutoff": 0.5815,
+      "n": 172
+    },
+    "Dentistry": {
+      "q1_cutoff": 2.6986,
+      "q2_cutoff": 1.2739,
+      "q3_cutoff": 0.153,
+      "n": 55
+    },
+    "Economics, Econometrics and Finance": {
+      "q1_cutoff": 3.852,
+      "q2_cutoff": 1.9761,
+      "q3_cutoff": 0.7556,
+      "n": 96
+    }
+  }
+}
