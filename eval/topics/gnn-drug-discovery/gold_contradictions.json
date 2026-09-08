@@ -1,4 +1,21 @@
 {
   "positives": [],
-  "negatives": []
+  "negatives": [
+    {
+      "paper_id_1": "10_1016_b978-0-443-34059-8_00015-4",
+      "claim_text_1": "Graph neural networks can be applied to drug discovery.",
+      "paper_id_2": "10_1109_metroxraine58569_2023_10405789",
+      "claim_text_2": "Graph Neural Networks can be applied to drug discovery.",
+      "label": "no_contradiction",
+      "notes": "Near-identical general scoping claims, not conflicting"
+    },
+    {
+      "paper_id_1": "10_1021_acs_chemrev_5c00461_s001",
+      "claim_text_1": "Graph Neural Networks are used in modern AI-aided drug discovery.",
+      "paper_id_2": "10_1016_j_drudis_2021_02_011",
+      "claim_text_2": "Graph neural networks can be used for automated de novo drug design.",
+      "label": "no_contradiction",
+      "notes": "Different sub-applications of the same technique, compatible not conflicting"
+    }
+  ]
 }

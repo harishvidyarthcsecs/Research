@@ -2,7 +2,7 @@
 Flask web frontend for the Autonomous Research Agent System.
 """
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv(override=True)  # .env is authoritative, even over a polluted shell env
 
 from flask import (Flask, render_template, request, jsonify, send_file, abort,
                    Response, stream_with_context)
@@ -43,6 +43,12 @@ from src.agents.citation_network_agent import CitationNetworkAgent
 from src.agents.access_router_agent import resolve_access
 from src.blueprints.journals import journals_bp
 from src.db.engine import init_db
+from src.reporting.report_builder import (
+    _generate_custom_citation,
+    _get_paper_url,
+    build_report_dict,
+    render_markdown,
+)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', os.urandom(32).hex())
@@ -130,45 +136,6 @@ def run_research_in_thread(topic):
             loop.close()
     
     return research_task()
-
-
-def _generate_custom_citation(paper):
-    """Generate custom citation format with accurate bibliographic data."""
-    # Generate bibitem key
-    bibitem_key = _generate_bibitem_key(paper)
-    
-    # Format authors
-    formatted_authors = _format_authors_custom(paper.authors)
-    
-    # Format title
-    formatted_title = _format_title_custom(paper.title)
-    
-    # Get accurate volume, issue, and page information
-    volume_info = _extract_volume_info_crossref(paper)
-    
-    # Get paper URL
-    paper_url = _get_paper_url(paper)
-    
-    # Create citation with accurate data
-    citation = f"\\bibitem{{{bibitem_key}}} {formatted_authors}, {formatted_title}, {paper.venue}"
-    
-    # Add volume and issue information ONLY if we have real data
-    if volume_info['volume']:
-        citation += f" \\textbf{{{volume_info['volume']}}}"
-        if volume_info['issue']:
-            citation += f"({volume_info['issue']})"
-    
-    # Add year
-    citation += f" ({paper.year})"
-    
-    # Add pages ONLY if we have real data
-    if volume_info['pages']:
-        citation += f" {volume_info['pages']}"
-    
-    if paper_url:
-        citation += f". {paper_url}"
-    
-    return citation
 
 
 def _extract_volume_info_crossref(paper):
@@ -367,21 +334,6 @@ def _format_title_custom(title):
     return title_formatted
 
 
-def _get_paper_url(paper):
-    """Get the best URL for the paper."""
-    if paper.doi:
-        if paper.doi.startswith('http'):
-            return paper.doi
-        else:
-            return f"https://doi.org/{paper.doi}"
-    elif paper.url:
-        return paper.url
-    elif paper.arxiv_id:
-        return f"https://arxiv.org/abs/{paper.arxiv_id}"
-    else:
-        return ""
-
-
 @app.route('/')
 def index():
     """Main page."""
@@ -395,106 +347,32 @@ def _serialize_results(results):
     both return an identical contract.
     """
     try:
-        response_data = {
-            'topic': results.topic_map.main_topic,
-            'generated_at': results.generated_at.isoformat(),
-            'summary': {
-                'papers_analyzed': results.total_papers_analyzed,
-                'claims_extracted': results.total_claims_extracted,
-                'contradictions_found': len(results.contradictions),
-                'research_gaps_identified': len(results.research_gaps)
-            },
-            'usage': results.usage,
-            'run_metadata': results.run_metadata,
-            'topic_map': {
-                'main_topic': results.topic_map.main_topic,
-                'subtopics': results.topic_map.subtopics,
-                'methods': results.topic_map.methods,
-                'keywords': results.topic_map.keywords,
-                'datasets': results.topic_map.datasets
-            },
-            'papers': [
-                {
-                    'title': paper.title,
-                    'authors': paper.authors,
-                    'year': paper.year,
-                    'venue': paper.venue,
-                    'relevance_score': paper.relevance_score,
-                    'abstract': paper.abstract[:300] + '...' if len(paper.abstract) > 300 else paper.abstract,
-                    'doi': paper.doi,
-                    'arxiv_id': paper.arxiv_id,
-                    'url': paper.url
-                }
-                for paper in results.papers
-            ],
-            'claims': [
-                {
-                    'statement': claim.statement,
-                    'confidence': claim.confidence,
-                    'metrics': claim.metrics,
-                    'datasets': claim.datasets,
-                    'conditions': claim.conditions
-                }
-                for claim in results.claims
-            ],
-            'contradictions': [
-                {
-                    'explanation': contradiction.explanation,
-                    'type': contradiction.contradiction_type,
-                    'severity': contradiction.severity,
-                    'likert_score': contradiction.likert_score,
-                    'verdict': contradiction.verdict,
-                    'evidence_claim1': contradiction.evidence_claim1,
-                    'evidence_claim2': contradiction.evidence_claim2,
-                    'paper1_id': contradiction.paper1_id,
-                    'paper2_id': contradiction.paper2_id,
-                    'detection_method': contradiction.detection_method
-                }
-                for contradiction in results.contradictions
-            ],
-            'research_gaps': [
-                {
-                    'description': gap.description,
-                    'type': gap.gap_type,
-                    'priority': gap.priority,
-                    'potential_questions': gap.potential_questions,
-                    'evidence': gap.evidence,
-                    'rank': gap.rank,
-                    'detection_method': gap.detection_method
-                }
-                for gap in results.research_gaps
-            ],
-            'citations': [
-                {
-                    'paper_id': citation.paper_id,
-                    'bibtex': citation.bibtex,
-                    'apa': citation.apa,
-                    'ieee': citation.ieee,
-                    'mla': citation.mla if hasattr(citation, 'mla') else None,
-                    'custom_format': _generate_custom_citation(paper),
-                    'paper_url': _get_paper_url(paper),
-                    'journal_name': paper.venue,
-                    'year': paper.year
-                }
-                for citation, paper in zip(results.citations, results.papers)
-            ]
-        }
+        return build_report_dict(results)
     except AttributeError as e:
         raise ValueError(f"Malformed research results: {e}") from e
-
-    return response_data
 
 
 def _save_results_file(response_data):
     """Persist a completed run to output/ and attach its download URL."""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"research_{timestamp}.json"
-    filepath = Path("output") / filename
+    report_filename = f"research_{timestamp}.md"
+    output_dir = Path("output")
+    try:
+        output_dir.mkdir(parents=True, exist_ok=True)
+        with open(output_dir / filename, 'w', encoding='utf-8') as f:
+            json.dump(response_data, f, indent=2, default=str)
+        response_data['download_url'] = f'/download/{filename}'
+    except OSError as e:
+        app.logger.error(f'Could not save research JSON report: {e}')
 
-    with open(filepath, 'w') as f:
-        json.dump(response_data, f, indent=2, default=str)
-
-    response_data['download_url'] = f'/download/{filename}'
+    try:
+        output_dir.mkdir(parents=True, exist_ok=True)
+        with open(output_dir / report_filename, 'w', encoding='utf-8') as f:
+            f.write(render_markdown(response_data))
+        response_data['report_url'] = f'/download/{report_filename}'
+    except OSError as e:
+        app.logger.error(f'Could not save research Markdown report: {e}')
     return response_data
 
 
@@ -648,17 +526,41 @@ def research_result(job_id):
     return jsonify(job.summary()), 202
 
 
+@app.route('/report/<job_id>.md')
+def research_report(job_id):
+    """Download a finished in-memory job as a Markdown report."""
+    job = JOBS.get(job_id)
+    if job is None:
+        return jsonify({'error': 'Unknown job'}), 404
+    if job.status == 'done':
+        markdown = render_markdown(job.result)
+        return Response(
+            markdown,
+            mimetype='text/markdown',
+            headers={'Content-Disposition': f'attachment; filename="research_{job_id}.md"'},
+        )
+    if job.status in ('error', 'cancelled'):
+        return jsonify({'error': job.error or job.status, 'status': job.status}), 409
+    return jsonify(job.summary()), 202
+
+
 @app.route('/research/cancel/<job_id>', methods=['POST'])
 def research_cancel(job_id):
     return _job_cancel_response(job_id)
 
 
-@app.route('/download/<filename>')
+@app.route('/download/<path:filename>')
 def download_file(filename):
     """Download research results file."""
     try:
-        filepath = Path("output") / filename
-        if filepath.exists():
+        name = secure_filename(filename)
+        if not name or name != filename:
+            return jsonify({'error': 'Invalid filename'}), 400
+        output_dir = Path("output").resolve()
+        filepath = (output_dir / name).resolve()
+        if output_dir not in filepath.parents:
+            return jsonify({'error': 'Invalid filename'}), 400
+        if filepath.is_file():
             return send_file(filepath, as_attachment=True)
         else:
             return jsonify({'error': 'File not found'}), 404
@@ -1103,8 +1005,8 @@ def generate_literature():
 # ── Job-based literature generation: start -> stream progress -> fetch result ──
 
 def _run_literature_job(job, filters: dict):
-    """Worker body for one literature job. Continues the same 16-stage stream
-    the main research job uses (stages 1-8), adding stages 9-16."""
+    """Worker body for one literature job. Continues the same 17-stage stream
+    the main research job uses (stages 1-9), adding stages 10-17."""
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
@@ -1482,6 +1384,11 @@ def export_pdf():
         story.append(Paragraph(f'Generated: {generated_at}', meta_style))
         story.append(HRFlowable(width='100%', thickness=1, color=colors.HexColor('#30363d'), spaceAfter=12))
 
+        executive_summary = data.get('executive_summary', '')
+        if executive_summary:
+            story.append(Paragraph('Executive Summary', h2_style))
+            story.append(Paragraph(executive_summary, body_style))
+
         summary = data.get('summary', {})
         if summary:
             story.append(Paragraph('Summary', h2_style))
@@ -1523,6 +1430,21 @@ def export_pdf():
             story.append(Paragraph(f'Research Gaps ({len(gaps)})', h2_style))
             for g in gaps[:10]:
                 story.append(Paragraph(f'• {g.get("description", "")}', body_style))
+
+        recommendations = data.get('recommendations', [])
+        if recommendations:
+            story.append(Paragraph(f'Recommendations ({len(recommendations)})', h2_style))
+            for recommendation in recommendations:
+                priority = float(recommendation.get('priority') or 0)
+                story.append(Paragraph(
+                    f'{recommendation.get("rank", "-")}. {recommendation.get("title", "")} '
+                    f'({priority:.0%} priority)',
+                    ParagraphStyle('RecommendationTitle', parent=body_style, fontName='Helvetica-Bold'),
+                ))
+                if recommendation.get('rationale'):
+                    story.append(Paragraph(recommendation['rationale'], body_style))
+                if recommendation.get('action'):
+                    story.append(Paragraph(f'Action: {recommendation["action"]}', body_style))
 
         citations = data.get('citations', [])
         if citations:
@@ -1587,6 +1509,11 @@ def export_docx():
 
         doc.add_paragraph()
 
+        executive_summary = data.get('executive_summary', '')
+        if executive_summary:
+            doc.add_heading('Executive Summary', level=1)
+            doc.add_paragraph(executive_summary)
+
         summary = data.get('summary', {})
         if summary:
             doc.add_heading('Summary', level=1)
@@ -1633,6 +1560,23 @@ def export_docx():
             for g in gaps[:10]:
                 p = doc.add_paragraph(g.get('description', ''), style='List Bullet')
                 p.runs[0].font.size = Pt(10)
+
+        recommendations = data.get('recommendations', [])
+        if recommendations:
+            doc.add_heading(f'Recommendations ({len(recommendations)})', level=1)
+            for recommendation in recommendations:
+                priority = float(recommendation.get('priority') or 0)
+                paragraph = doc.add_paragraph(style='List Number')
+                title_run = paragraph.add_run(
+                    f'{recommendation.get("title", "")} ({priority:.0%} priority)'
+                )
+                title_run.bold = True
+                if recommendation.get('rationale'):
+                    doc.add_paragraph(recommendation['rationale'])
+                if recommendation.get('action'):
+                    action = doc.add_paragraph()
+                    action.add_run('Action: ').bold = True
+                    action.add_run(recommendation['action'])
 
         citations = data.get('citations', [])
         if citations:
@@ -1968,8 +1912,8 @@ if __name__ == '__main__':
     Path("output").mkdir(exist_ok=True)
     
     print("🌐 Starting Research System Web Interface (Fixed Version)")
-    print("📍 Open your browser to: http://localhost:5000")
-    print("🧪 Test endpoint: http://localhost:5000/test")
-    print("📖 Citations page: http://localhost:5000/citations")
+    print("📍 Open your browser to: http://localhost:5050")
+    print("🧪 Test endpoint: http://localhost:5050/test")
+    print("📖 Citations page: http://localhost:5050/citations")
     
     app.run(debug=True, host='0.0.0.0', port=5050, threaded=True)

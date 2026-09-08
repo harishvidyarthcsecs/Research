@@ -1,0 +1,169 @@
+{
+  "claims": [
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "The integration of artificial intelligence (AI) in drug discovery has profoundly transformed the pharmaceutical landscape by significantly accelerating the identification of potential drug candidates.",
+      "confidence": 0.77
+    },
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "Graph Neural Networks (GNNs) have proven to be particularly effective in modeling molecular structures, optimizing drug\u2011target interactions, and enhancing prediction accuracy.",
+      "confidence": 0.8
+    },
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "GNNs offer advantages over traditional molecular representations in drug discovery.",
+      "confidence": 0.75
+    },
+    {
+      "paper_id": "10_1016_b978-0-443-34059-8_00015-4",
+      "statement": "Graph neural networks can be applied to drug discovery.",
+      "confidence": 0.8
+    },
+    {
+      "paper_id": "10_1021_acs_chemrev_5c00461_s001",
+      "statement": "Graph Neural Networks are used in modern AI-aided drug discovery.",
+      "confidence": 0.6
+    },
+    {
+      "paper_id": "10_1109_metroxraine58569_2023_10405789",
+      "statement": "Graph Neural Networks can be applied to drug discovery.",
+      "confidence": 0.6
+    },
+    {
+      "paper_id": "10_1109_metroxraine58569_2023_10405789",
+      "statement": "An integrated decision support pipeline based on Graph Neural Networks has been developed for drug discovery.",
+      "confidence": 0.6
+    },
+    {
+      "paper_id": "10_1016_j_drudis_2021_02_011",
+      "statement": "Graph neural networks can be used for automated de novo drug design.",
+      "confidence": 0.85
+    }
+  ],
+  "contradictions": [],
+  "gaps": [
+    {
+      "description": "Standard benchmark datasets (e.g., MoleculeNet, ChEMBL, PDBbind) are never used, preventing reproducible comparison.",
+      "gap_type": "dataset",
+      "rank": 1,
+      "priority": 0.942,
+      "evidence": [
+        "Datasets used in claims: none detected",
+        "Expected datasets never used: ChEMBL, MoleculeNet, PDBbind"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "The literature lacks any empirical studies on molecular property prediction (e.g., solubility, toxicity, bioactivity) using GNNs.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 2,
+      "priority": 0.91,
+      "evidence": [
+        "Molecular property prediction claims=0",
+        "Total claims: 8 from 10 papers"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "There is an absence of systematic methodological comparisons or ablation studies across GNN variants (MPNN, GCN, GAT, Graph Transformers).",
+      "gap_type": "methodological",
+      "rank": 3,
+      "priority": 0.892,
+      "evidence": [
+        "Claims per method: all =0",
+        "Total claims: 8 from 10 papers"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "No work has been reported on protein\u2013ligand interaction modeling and binding affinity prediction with GNNs.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 4,
+      "priority": 0.864,
+      "evidence": [
+        "Protein\u2013ligand interaction modeling claims=0",
+        "Datasets used in claims: none detected"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "De\u202fnovo molecular generation and optimization using graph\u2011based generative models have not been explored.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 5,
+      "priority": 0.848,
+      "evidence": [
+        "De novo molecular generation claims=0",
+        "Claims per method: Variational Autoencoders / GANs for graphs=0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Contrastive self\u2011supervised learning on molecular graphs has not been investigated.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 6,
+      "priority": 0.822,
+      "evidence": [
+        "Contrastive self\u2011supervised learning claims=0",
+        "Claims per method: all =0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Drug repurposing and virtual screening leveraging graph representations have not been explored.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 7,
+      "priority": 0.816,
+      "evidence": [
+        "Drug repurposing claims=0",
+        "Virtual screening claims=0",
+        "Datasets used in claims: none detected"
+      ],
+      "detection_method": "llm"
+    }
+  ],
+  "usage": {
+    "calls": 15,
+    "prompt_tokens": 4583,
+    "completion_tokens": 7771,
+    "estimated_cost_usd": 0.006516,
+    "parse_failures": 0,
+    "by_purpose": {
+      "topic_expansion": {
+        "calls": 1,
+        "prompt_tokens": 198,
+        "completion_tokens": 541,
+        "estimated_cost_usd": 0.000435,
+        "parse_failures": 0
+      },
+      "claim_extraction": {
+        "calls": 10,
+        "prompt_tokens": 1921,
+        "completion_tokens": 2721,
+        "estimated_cost_usd": 0.002329,
+        "parse_failures": 0
+      },
+      "contradiction_judge": {
+        "calls": 3,
+        "prompt_tokens": 1722,
+        "completion_tokens": 2582,
+        "estimated_cost_usd": 0.002195,
+        "parse_failures": 0
+      },
+      "gap_detection": {
+        "calls": 1,
+        "prompt_tokens": 742,
+        "completion_tokens": 1927,
+        "estimated_cost_usd": 0.001557,
+        "parse_failures": 0
+      }
+    }
+  },
+  "run_metadata": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.0,
+    "duration_s": 67.96,
+    "frozen_corpus": true
+  }
+}

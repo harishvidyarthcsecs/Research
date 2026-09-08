@@ -1,51 +1,609 @@
 {
-  "topic": "Use of Graph Neural Networks in Drug Discovery",
-  "generated_at": "2026-01-27T19:14:48.571557",
+  "topic": "Graph neural networks in drug discovery",
+  "generated_at": "2026-09-08T11:38:39.163564",
   "summary": {
-    "papers_analyzed": 3,
-    "claims_extracted": 1,
+    "papers_analyzed": 10,
+    "claims_extracted": 0,
     "contradictions_found": 0,
-    "research_gaps_identified": 37
+    "research_gaps_identified": 2
+  },
+  "usage": {
+    "calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "parse_failures": 0,
+    "by_purpose": {}
+  },
+  "run_metadata": {
+    "provider": null,
+    "model": "",
+    "temperature": 0.0,
+    "duration_s": 15.39,
+    "frozen_corpus": false
+  },
+  "topic_map": {
+    "main_topic": "Graph neural networks in drug discovery",
+    "subtopics": [
+      "Message Passing Neural Networks",
+      "Virtual Screening",
+      "Spectral Graph Networks",
+      "ADMET Prediction",
+      "Graph Transformer Networks",
+      "Molecular Generation",
+      "Drug-Target Interaction",
+      "Graph Attention Networks",
+      "Molecular Property Prediction",
+      "Graph Convolutional Networks"
+    ],
+    "methods": [
+      "Neural Networks",
+      "Network Analysis",
+      "Deep Learning",
+      "Graph Theory"
+    ],
+    "keywords": [
+      "drug",
+      "lead optimization",
+      "node classification",
+      "discovery",
+      "drug screening",
+      "molecular design",
+      "graph convolution",
+      "link prediction",
+      "networks",
+      "graph",
+      "graph pooling",
+      "target identification",
+      "graph attention",
+      "clinical trials",
+      "pharmacokinetics",
+      "neural",
+      "message passing"
+    ],
+    "datasets": [
+      "PubChem",
+      "CiteSeer",
+      "ZINC",
+      "QM9",
+      "ChEMBL",
+      "Reddit",
+      "PubMed",
+      "OGB",
+      "DrugBank",
+      "Cora"
+    ]
   },
   "papers": [
     {
-      "title": "Semi-Supervised Classification with Graph Convolutional Networks",
+      "title": "Molecular Graph Neural Networks in Drug Discovery: A Narrative Review",
       "authors": [
-        "Thomas N. Kipf",
-        "Max Welling"
+        "George Papadopoulos",
+        "Eleni Georgiou"
       ],
-      "year": 2017,
-      "venue": "ICLR",
-      "relevance_score": 0.95
+      "year": 2025,
+      "venue": "Pharmacophore",
+      "relevance_score": 0.8999999999999999,
+      "abstract": "",
+      "doi": "10.51847/8w12ouixi5",
+      "arxiv_id": null,
+      "url": "https://doi.org/10.51847/8w12ouixi5"
     },
     {
-      "title": "Graph Attention Networks",
-      "authors": [
-        "Petar Veli\u010dkovi\u0107",
-        "Guillem Cucurull",
-        "Arantxa Casanova"
-      ],
-      "year": 2018,
-      "venue": "ICLR",
-      "relevance_score": 0.92
+      "title": "AI-Enhanced Drug Discovery Using Graph Neural Networks",
+      "authors": [],
+      "year": 2025,
+      "venue": "IITM Journal of Information Technology",
+      "relevance_score": 0.8500000000000001,
+      "abstract": "<jats:p>The integration of artificial intelligence (AI) in drug discovery has profoundly transformed the pharmaceutical landscape by significantly accelerating the identification of potential drug candidates. Among the various AI techniques, Graph Neural Networks (GNNs) have proven to be particularl...",
+      "doi": "10.48165/iitmjit.2025.11.1.11",
+      "arxiv_id": null,
+      "url": "https://doi.org/10.48165/iitmjit.2025.11.1.11"
     },
     {
-      "title": "Molecular Graph Enhanced Transformer for Drug Design",
+      "title": "Graph neural networks for drug discovery: protocols and applications",
       "authors": [
-        "Kexin Huang",
-        "Tianfan Fu",
-        "Wenhao Gao"
+        "Yu Sun",
+        "Xiyue Zhao",
+        "Baocan Pang",
+        "Wenxuan Yang",
+        "Zixuan shao",
+        "Yonghui Lv",
+        "Qifeng Bai"
+      ],
+      "year": 2026,
+      "venue": "Revolutionizing Drug Development",
+      "relevance_score": 0.62,
+      "abstract": "",
+      "doi": "10.1016/b978-0-443-34059-8.00015-4",
+      "arxiv_id": null,
+      "url": "https://doi.org/10.1016/b978-0-443-34059-8.00015-4"
+    },
+    {
+      "title": "Graph Neural Networks in Modern AI-Aided Drug Discovery",
+      "authors": [],
+      "year": 2023,
+      "venue": "",
+      "relevance_score": 0.56,
+      "abstract": "",
+      "doi": "10.1021/acs.chemrev.5c00461.s001",
+      "arxiv_id": null,
+      "url": "https://doi.org/10.1021/acs.chemrev.5c00461.s001"
+    },
+    {
+      "title": "Graph Neural Networks for Drug Discovery: An Integrated Decision Support Pipeline",
+      "authors": [
+        "Pietro Bongini"
+      ],
+      "year": 2023,
+      "venue": "2023 IEEE International Conference on Metrology for eXtended Reality, Artificial Intelligence and Neural Engineering (MetroXRAINE)",
+      "relevance_score": 0.56,
+      "abstract": "",
+      "doi": "10.1109/metroxraine58569.2023.10405789",
+      "arxiv_id": null,
+      "url": "https://doi.org/10.1109/metroxraine58569.2023.10405789"
+    },
+    {
+      "title": "Molecular generative Graph Neural Networks for Drug Discovery",
+      "authors": [
+        "Pietro Bongini",
+        "Monica Bianchini",
+        "Franco Scarselli"
       ],
       "year": 2021,
-      "venue": "Nature Machine Intelligence",
-      "relevance_score": 0.88
+      "venue": "Neurocomputing",
+      "relevance_score": 0.52,
+      "abstract": "",
+      "doi": "10.1016/j.neucom.2021.04.039",
+      "arxiv_id": null,
+      "url": "https://doi.org/10.1016/j.neucom.2021.04.039"
+    },
+    {
+      "title": "Graph neural networks for automated de novo drug design",
+      "authors": [
+        "Jiacheng Xiong",
+        "Zhaoping Xiong",
+        "Kaixian Chen",
+        "Hualiang Jiang",
+        "Mingyue Zheng"
+      ],
+      "year": 2021,
+      "venue": "Drug Discovery Today",
+      "relevance_score": 0.42000000000000004,
+      "abstract": "",
+      "doi": "10.1016/j.drudis.2021.02.011",
+      "arxiv_id": null,
+      "url": "https://doi.org/10.1016/j.drudis.2021.02.011"
+    },
+    {
+      "title": "Homogeneous Graph Neural Networks",
+      "authors": [
+        "Deyu Bo"
+      ],
+      "year": 2023,
+      "venue": "Synthesis Lectures on Data Mining and Knowledge Discovery",
+      "relevance_score": 0.36000000000000004,
+      "abstract": "",
+      "doi": "10.1007/978-3-031-16174-2_3",
+      "arxiv_id": null,
+      "url": "https://doi.org/10.1007/978-3-031-16174-2_3"
+    },
+    {
+      "title": "A compact review of molecular property prediction with graph neural networks",
+      "authors": [
+        "Oliver Wieder",
+        "Stefan Kohlbacher",
+        "M\u00e9laine Kuenemann",
+        "Arthur Garon",
+        "Pierre Ducrot",
+        "Thomas Seidel",
+        "Thierry Langer"
+      ],
+      "year": 2020,
+      "venue": "Drug Discovery Today: Technologies",
+      "relevance_score": 0.30000000000000004,
+      "abstract": "",
+      "doi": "10.1016/j.ddtec.2020.11.009",
+      "arxiv_id": null,
+      "url": "https://doi.org/10.1016/j.ddtec.2020.11.009"
+    },
+    {
+      "title": "",
+      "authors": [],
+      "year": 2023,
+      "venue": "",
+      "relevance_score": 0.06000000000000001,
+      "abstract": "",
+      "doi": "10.3030/800578",
+      "arxiv_id": null,
+      "url": "https://doi.org/10.3030/800578"
     }
   ],
-  "top_claims": [
+  "claims": [],
+  "contradictions": [],
+  "research_gaps": [
     {
-      "statement": "We present graph attention networks (GATs), novel neural network architectures",
-      "metrics": {},
-      "confidence": 0.6
+      "description": "Limited research on Message Passing Neural Networks",
+      "type": "unexplored_subtopic",
+      "priority": 1.0,
+      "potential_questions": [
+        "How does Message Passing Neural Networks compare to other approaches?",
+        "What are the limitations of current Message Passing Neural Networks methods?",
+        "Can Message Passing Neural Networks be applied to new domains?"
+      ],
+      "evidence": [
+        "Only 0 of 0 claims mention this subtopic",
+        "Low-evidence: derived from only 0 extracted claims"
+      ],
+      "rank": 1,
+      "detection_method": "rules"
+    },
+    {
+      "description": "Limited research on Virtual Screening",
+      "type": "unexplored_subtopic",
+      "priority": 1.0,
+      "potential_questions": [
+        "How does Virtual Screening compare to other approaches?",
+        "What are the limitations of current Virtual Screening methods?",
+        "Can Virtual Screening be applied to new domains?"
+      ],
+      "evidence": [
+        "Only 0 of 0 claims mention this subtopic",
+        "Low-evidence: derived from only 0 extracted claims"
+      ],
+      "rank": 2,
+      "detection_method": "rules"
+    }
+  ],
+  "citations": [
+    {
+      "paper_id": "10_51847_8w12ouixi5",
+      "bibtex": "@article{10_51847_8w12ouixi5,\n  title={Molecular Graph Neural Networks in Drug Discovery: A Narrative Review},\n  author={George Papadopoulos and Eleni Georgiou},\n  journal={Pharmacophore},\n  year={2025},\n  doi={10.51847/8w12ouixi5},\n  url={https://doi.org/10.51847/8w12ouixi5}\n}",
+      "apa": "Papadopoulos, G. & Georgiou, E. (2025). Molecular Graph Neural Networks in Drug Discovery: A Narrative Review. Pharmacophore.",
+      "ieee": "George Papadopoulos, Eleni Georgiou, \"Molecular Graph Neural Networks in Drug Discovery: A Narrative Review,\" Pharmacophore, 2025.",
+      "mla": "Papadopoulos, G., and Eleni Georgiou. \"Molecular Graph Neural Networks in Drug Discovery: A Narrative Review.\" Pharmacophore, 2025.",
+      "custom_format": "\\bibitem{PaGe25} G. Papadopoulos, E. Georgiou, Molecular graph neural networks in drug discovery: a narrative review, Pharmacophore \\textbf{16}(6) (2025) 34-44. https://doi.org/10.51847/8w12ouixi5",
+      "paper_url": "https://doi.org/10.51847/8w12ouixi5",
+      "journal_name": "Pharmacophore",
+      "year": 2025
+    },
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "bibtex": "@article{10_48165_iitmjit_2025_11_1_11,\n  title={AI-Enhanced Drug Discovery Using Graph Neural Networks},\n  author={},\n  journal={IITM Journal of Information Technology},\n  year={2025},\n  doi={10.48165/iitmjit.2025.11.1.11},\n  url={https://doi.org/10.48165/iitmjit.2025.11.1.11}\n}",
+      "apa": "Unknown Author (2025). AI-Enhanced Drug Discovery Using Graph Neural Networks. IITM Journal of Information Technology.",
+      "ieee": "Unknown Author, \"AI-Enhanced Drug Discovery Using Graph Neural Networks,\" IITM Journal of Information Technology, 2025.",
+      "mla": "Unknown Author. \"AI-Enhanced Drug Discovery Using Graph Neural Networks.\" IITM Journal of Information Technology, 2025.",
+      "custom_format": "\\bibitem{Unknown25} Unknown Author, Ai-enhanced drug discovery using graph neural networks, IITM Journal of Information Technology \\textbf{2025} (2025). https://doi.org/10.48165/iitmjit.2025.11.1.11",
+      "paper_url": "https://doi.org/10.48165/iitmjit.2025.11.1.11",
+      "journal_name": "IITM Journal of Information Technology",
+      "year": 2025
+    },
+    {
+      "paper_id": "10_1016_b978_0_443_34059_8_00015_4",
+      "bibtex": "@article{10_1016_b978_0_443_34059_8_00015_4,\n  title={Graph neural networks for drug discovery: protocols and applications},\n  author={Yu Sun and Xiyue Zhao and Baocan Pang and Wenxuan Yang and Zixuan shao and Yonghui Lv and Qifeng Bai},\n  journal={Revolutionizing Drug Development},\n  year={2026},\n  doi={10.1016/b978-0-443-34059-8.00015-4},\n  url={https://doi.org/10.1016/b978-0-443-34059-8.00015-4}\n}",
+      "apa": "Sun, Y., Zhao, X., Pang, B., Yang, W., shao, Z., Lv, Y., & Bai, Q. (2026). Graph neural networks for drug discovery: protocols and applications. Revolutionizing Drug Development.",
+      "ieee": "Yu Sun et al., \"Graph neural networks for drug discovery: protocols and applications,\" Revolutionizing Drug Development, 2026.",
+      "mla": "Sun, Y., et al.. \"Graph neural networks for drug discovery: protocols and applications.\" Revolutionizing Drug Development, 2026.",
+      "custom_format": "\\bibitem{SuZhPa26} Y. Sun, X. Zhao, B. Pang, W. Yang, Z. shao, Y. Lv, Q. Bai, Graph neural networks for drug discovery: protocols and applications, Revolutionizing Drug Development (2026) 61-79. https://doi.org/10.1016/b978-0-443-34059-8.00015-4",
+      "paper_url": "https://doi.org/10.1016/b978-0-443-34059-8.00015-4",
+      "journal_name": "Revolutionizing Drug Development",
+      "year": 2026
+    },
+    {
+      "paper_id": "10_1021_acs_chemrev_5c00461_s001",
+      "bibtex": "@article{10_1021_acs_chemrev_5c00461_s001,\n  title={Graph Neural Networks in Modern AI-Aided Drug Discovery},\n  author={},\n  journal={},\n  year={2023},\n  doi={10.1021/acs.chemrev.5c00461.s001},\n  url={https://doi.org/10.1021/acs.chemrev.5c00461.s001}\n}",
+      "apa": "Unknown Author (2023). Graph Neural Networks in Modern AI-Aided Drug Discovery. .",
+      "ieee": "Unknown Author, \"Graph Neural Networks in Modern AI-Aided Drug Discovery,\" , 2023.",
+      "mla": "Unknown Author. \"Graph Neural Networks in Modern AI-Aided Drug Discovery.\" , 2023.",
+      "custom_format": "\\bibitem{Unknown23} Unknown Author, Graph neural networks in modern ai-aided drug discovery,  (2023). https://doi.org/10.1021/acs.chemrev.5c00461.s001",
+      "paper_url": "https://doi.org/10.1021/acs.chemrev.5c00461.s001",
+      "journal_name": "",
+      "year": 2023
+    },
+    {
+      "paper_id": "10_1109_metroxraine58569_2023_10405789",
+      "bibtex": "@inproceedings{10_1109_metroxraine58569_2023_10405789,\n  title={Graph Neural Networks for Drug Discovery: An Integrated Decision Support Pipeline},\n  author={Pietro Bongini},\n  booktitle={2023 IEEE International Conference on Metrology for eXtended Reality, Artificial Intelligence and Neural Engineering (MetroXRAINE)},\n  year={2023},\n  doi={10.1109/metroxraine58569.2023.10405789},\n  url={https://doi.org/10.1109/metroxraine58569.2023.10405789}\n}",
+      "apa": "Bongini, P. (2023). Graph Neural Networks for Drug Discovery: An Integrated Decision Support Pipeline. In 2023 IEEE International Conference on Metrology for eXtended Reality, Artificial Intelligence and Neural Engineering (MetroXRAINE).",
+      "ieee": "Pietro Bongini, \"Graph Neural Networks for Drug Discovery: An Integrated Decision Support Pipeline,\" in 2023 IEEE International Conference on Metrology for eXtended Reality, Artificial Intelligence and Neural Engineering (MetroXRAINE), 2023.",
+      "mla": "Bongini, P.. \"Graph Neural Networks for Drug Discovery: An Integrated Decision Support Pipeline.\" 2023 IEEE International Conference on Metrology for eXtended Reality, Artificial Intelligence and Neural Engineering (MetroXRAINE), 2023.",
+      "custom_format": "\\bibitem{Bo23} P. Bongini, Graph neural networks for drug discovery: an integrated decision support pipeline, 2023 IEEE International Conference on Metrology for eXtended Reality, Artificial Intelligence and Neural Engineering (MetroXRAINE) (2023) 218-223. https://doi.org/10.1109/metroxraine58569.2023.10405789",
+      "paper_url": "https://doi.org/10.1109/metroxraine58569.2023.10405789",
+      "journal_name": "2023 IEEE International Conference on Metrology for eXtended Reality, Artificial Intelligence and Neural Engineering (MetroXRAINE)",
+      "year": 2023
+    },
+    {
+      "paper_id": "10_1016_j_neucom_2021_04_039",
+      "bibtex": "@article{10_1016_j_neucom_2021_04_039,\n  title={Molecular generative Graph Neural Networks for Drug Discovery},\n  author={Pietro Bongini and Monica Bianchini and Franco Scarselli},\n  journal={Neurocomputing},\n  year={2021},\n  doi={10.1016/j.neucom.2021.04.039},\n  url={https://doi.org/10.1016/j.neucom.2021.04.039}\n}",
+      "apa": "Bongini, P., Bianchini, M., & Scarselli, F. (2021). Molecular generative Graph Neural Networks for Drug Discovery. Neurocomputing.",
+      "ieee": "Pietro Bongini, Monica Bianchini, Franco Scarselli, \"Molecular generative Graph Neural Networks for Drug Discovery,\" Neurocomputing, 2021.",
+      "mla": "Bongini, P., et al.. \"Molecular generative Graph Neural Networks for Drug Discovery.\" Neurocomputing, 2021.",
+      "custom_format": "\\bibitem{BoBiSc21} P. Bongini, M. Bianchini, F. Scarselli, Molecular generative graph neural networks for drug discovery, Neurocomputing \\textbf{450} (2021) 242-252. https://doi.org/10.1016/j.neucom.2021.04.039",
+      "paper_url": "https://doi.org/10.1016/j.neucom.2021.04.039",
+      "journal_name": "Neurocomputing",
+      "year": 2021
+    },
+    {
+      "paper_id": "10_1016_j_drudis_2021_02_011",
+      "bibtex": "@article{10_1016_j_drudis_2021_02_011,\n  title={Graph neural networks for automated de novo drug design},\n  author={Jiacheng Xiong and Zhaoping Xiong and Kaixian Chen and Hualiang Jiang and Mingyue Zheng},\n  journal={Drug Discovery Today},\n  year={2021},\n  doi={10.1016/j.drudis.2021.02.011},\n  url={https://doi.org/10.1016/j.drudis.2021.02.011}\n}",
+      "apa": "Xiong, J., Xiong, Z., Chen, K., Jiang, H., & Zheng, M. (2021). Graph neural networks for automated de novo drug design. Drug Discovery Today.",
+      "ieee": "Jiacheng Xiong et al., \"Graph neural networks for automated de novo drug design,\" Drug Discovery Today, 2021.",
+      "mla": "Xiong, J., et al.. \"Graph neural networks for automated de novo drug design.\" Drug Discovery Today, 2021.",
+      "custom_format": "\\bibitem{XiXiCh21} J. Xiong, Z. Xiong, K. Chen, H. Jiang, M. Zheng, Graph neural networks for automated de novo drug design, Drug Discovery Today \\textbf{26}(6) (2021) 1382-1393. https://doi.org/10.1016/j.drudis.2021.02.011",
+      "paper_url": "https://doi.org/10.1016/j.drudis.2021.02.011",
+      "journal_name": "Drug Discovery Today",
+      "year": 2021
+    },
+    {
+      "paper_id": "10_1007_978_3_031_16174_2_3",
+      "bibtex": "@article{10_1007_978_3_031_16174_2_3,\n  title={Homogeneous Graph Neural Networks},\n  author={Deyu Bo},\n  journal={Synthesis Lectures on Data Mining and Knowledge Discovery},\n  year={2023},\n  doi={10.1007/978-3-031-16174-2_3},\n  url={https://doi.org/10.1007/978-3-031-16174-2_3}\n}",
+      "apa": "Bo, D. (2023). Homogeneous Graph Neural Networks. Synthesis Lectures on Data Mining and Knowledge Discovery.",
+      "ieee": "Deyu Bo, \"Homogeneous Graph Neural Networks,\" Synthesis Lectures on Data Mining and Knowledge Discovery, 2023.",
+      "mla": "Bo, D.. \"Homogeneous Graph Neural Networks.\" Synthesis Lectures on Data Mining and Knowledge Discovery, 2023.",
+      "custom_format": "\\bibitem{Bo23} D. Bo, Homogeneous graph neural networks, Synthesis Lectures on Data Mining and Knowledge Discovery (2023) 27-59. https://doi.org/10.1007/978-3-031-16174-2_3",
+      "paper_url": "https://doi.org/10.1007/978-3-031-16174-2_3",
+      "journal_name": "Synthesis Lectures on Data Mining and Knowledge Discovery",
+      "year": 2023
+    },
+    {
+      "paper_id": "10_1016_j_ddtec_2020_11_009",
+      "bibtex": "@article{10_1016_j_ddtec_2020_11_009,\n  title={A compact review of molecular property prediction with graph neural networks},\n  author={Oliver Wieder and Stefan Kohlbacher and M\u00e9laine Kuenemann and Arthur Garon and Pierre Ducrot and Thomas Seidel and Thierry Langer},\n  journal={Drug Discovery Today: Technologies},\n  year={2020},\n  doi={10.1016/j.ddtec.2020.11.009},\n  url={https://doi.org/10.1016/j.ddtec.2020.11.009}\n}",
+      "apa": "Wieder, O., Kohlbacher, S., Kuenemann, M., Garon, A., Ducrot, P., Seidel, T., & Langer, T. (2020). A compact review of molecular property prediction with graph neural networks. Drug Discovery Today: Technologies.",
+      "ieee": "Oliver Wieder et al., \"A compact review of molecular property prediction with graph neural networks,\" Drug Discovery Today: Technologies, 2020.",
+      "mla": "Wieder, O., et al.. \"A compact review of molecular property prediction with graph neural networks.\" Drug Discovery Today: Technologies, 2020.",
+      "custom_format": "\\bibitem{WiKoKu20} O. Wieder, S. Kohlbacher, M. Kuenemann, A. Garon, P. Ducrot, T. Seidel, T. Langer, A compact review of molecular property prediction with graph neural networks, Drug Discovery Today: Technologies \\textbf{37} (2020) 1-12. https://doi.org/10.1016/j.ddtec.2020.11.009",
+      "paper_url": "https://doi.org/10.1016/j.ddtec.2020.11.009",
+      "journal_name": "Drug Discovery Today: Technologies",
+      "year": 2020
+    },
+    {
+      "paper_id": "10_3030_800578",
+      "bibtex": "@article{10_3030_800578,\n  title={},\n  author={},\n  journal={},\n  year={2023},\n  doi={10.3030/800578},\n  url={https://doi.org/10.3030/800578}\n}",
+      "apa": "Unknown Author (2023). . .",
+      "ieee": "Unknown Author, \",\" , 2023.",
+      "mla": "Unknown Author. \".\" , 2023.",
+      "custom_format": "\\bibitem{Unknown23} Unknown Author, ,  (2023). https://doi.org/10.3030/800578",
+      "paper_url": "https://doi.org/10.3030/800578",
+      "journal_name": "",
+      "year": 2023
+    }
+  ],
+  "run_mode": {
+    "mode": "rules",
+    "reason": "No LLM provider was configured; deterministic rules were used."
+  },
+  "executive_summary": "The analysis of 10 papers produced 0 claims, 0 contradictions, and 2 research gaps for Graph neural networks in drug discovery. Prioritize the highest-ranked actions below and validate them against the linked evidence.",
+  "recommendations": [
+    {
+      "id": "rec_reading_paper_1788847705.791429",
+      "category": "reading",
+      "title": "Read: Molecular Graph Neural Networks in Drug Discovery: A Narrative Review",
+      "rationale": "This is a high-relevance source for Graph neural networks in drug discovery (2025, Pharmacophore).",
+      "action": "Review its methods, evidence, and limitations before planning new work.",
+      "supporting_evidence": [
+        "Corpus relevance score: 0.90"
+      ],
+      "linked_gap_ids": [],
+      "linked_paper_ids": [
+        "paper_1788847705.791429"
+      ],
+      "priority": 0.9,
+      "rank": 1,
+      "detection_method": "rules"
+    },
+    {
+      "id": "rec_reading_paper_1788847705.791395",
+      "category": "reading",
+      "title": "Read: AI-Enhanced Drug Discovery Using Graph Neural Networks",
+      "rationale": "This is a high-relevance source for Graph neural networks in drug discovery (2025, IITM Journal of Information Technology).",
+      "action": "Review its methods, evidence, and limitations before planning new work.",
+      "supporting_evidence": [
+        "Corpus relevance score: 0.85"
+      ],
+      "linked_gap_ids": [],
+      "linked_paper_ids": [
+        "paper_1788847705.791395"
+      ],
+      "priority": 0.87,
+      "rank": 2,
+      "detection_method": "rules"
+    },
+    {
+      "id": "rec_gap_gap_1788847719.152145",
+      "category": "next_step",
+      "title": "Address gap: Limited research on Message Passing Neural Networks",
+      "rationale": "Only 0 of 0 claims mention this subtopic",
+      "action": "Design a focused study around: How does Message Passing Neural Networks compare to other approaches?",
+      "supporting_evidence": [
+        "Only 0 of 0 claims mention this subtopic",
+        "Low-evidence: derived from only 0 extracted claims"
+      ],
+      "linked_gap_ids": [
+        "gap_1788847719.152145"
+      ],
+      "linked_paper_ids": [],
+      "priority": 0.86,
+      "rank": 3,
+      "detection_method": "rules"
+    },
+    {
+      "id": "rec_gap_gap_1788847719.152223",
+      "category": "next_step",
+      "title": "Address gap: Limited research on Virtual Screening",
+      "rationale": "Only 0 of 0 claims mention this subtopic",
+      "action": "Design a focused study around: How does Virtual Screening compare to other approaches?",
+      "supporting_evidence": [
+        "Only 0 of 0 claims mention this subtopic",
+        "Low-evidence: derived from only 0 extracted claims"
+      ],
+      "linked_gap_ids": [
+        "gap_1788847719.152223"
+      ],
+      "linked_paper_ids": [],
+      "priority": 0.86,
+      "rank": 4,
+      "detection_method": "rules"
+    },
+    {
+      "id": "rec_reading_paper_1788847705.791479",
+      "category": "reading",
+      "title": "Read: Graph neural networks for drug discovery: protocols and applications",
+      "rationale": "This is a high-relevance source for Graph neural networks in drug discovery (2026, Revolutionizing Drug Development).",
+      "action": "Review its methods, evidence, and limitations before planning new work.",
+      "supporting_evidence": [
+        "Corpus relevance score: 0.62"
+      ],
+      "linked_gap_ids": [],
+      "linked_paper_ids": [
+        "paper_1788847705.791479"
+      ],
+      "priority": 0.732,
+      "rank": 5,
+      "detection_method": "rules"
+    }
+  ],
+  "reading_list": [
+    {
+      "rank": 1,
+      "paper_id": "paper_1788847705.791429",
+      "title": "Molecular Graph Neural Networks in Drug Discovery: A Narrative Review",
+      "authors": [
+        "George Papadopoulos",
+        "Eleni Georgiou"
+      ],
+      "year": 2025,
+      "venue": "Pharmacophore",
+      "relevance_score": 0.8999999999999999,
+      "url": "https://doi.org/10.51847/8w12ouixi5",
+      "why": "Ranked #1 by corpus relevance (90%)."
+    },
+    {
+      "rank": 2,
+      "paper_id": "paper_1788847705.791395",
+      "title": "AI-Enhanced Drug Discovery Using Graph Neural Networks",
+      "authors": [],
+      "year": 2025,
+      "venue": "IITM Journal of Information Technology",
+      "relevance_score": 0.8500000000000001,
+      "url": "https://doi.org/10.48165/iitmjit.2025.11.1.11",
+      "why": "Ranked #2 by corpus relevance (85%)."
+    },
+    {
+      "rank": 3,
+      "paper_id": "paper_1788847705.791479",
+      "title": "Graph neural networks for drug discovery: protocols and applications",
+      "authors": [
+        "Yu Sun",
+        "Xiyue Zhao",
+        "Baocan Pang",
+        "Wenxuan Yang",
+        "Zixuan shao",
+        "Yonghui Lv",
+        "Qifeng Bai"
+      ],
+      "year": 2026,
+      "venue": "Revolutionizing Drug Development",
+      "relevance_score": 0.62,
+      "url": "https://doi.org/10.1016/b978-0-443-34059-8.00015-4",
+      "why": "Ranked #3 by corpus relevance (62%)."
+    },
+    {
+      "rank": 4,
+      "paper_id": "paper_1788847705.791319",
+      "title": "Graph Neural Networks in Modern AI-Aided Drug Discovery",
+      "authors": [],
+      "year": 2023,
+      "venue": "",
+      "relevance_score": 0.56,
+      "url": "https://doi.org/10.1021/acs.chemrev.5c00461.s001",
+      "why": "Ranked #4 by corpus relevance (56%)."
+    },
+    {
+      "rank": 5,
+      "paper_id": "paper_1788847705.791466",
+      "title": "Graph Neural Networks for Drug Discovery: An Integrated Decision Support Pipeline",
+      "authors": [
+        "Pietro Bongini"
+      ],
+      "year": 2023,
+      "venue": "2023 IEEE International Conference on Metrology for eXtended Reality, Artificial Intelligence and Neural Engineering (MetroXRAINE)",
+      "relevance_score": 0.56,
+      "url": "https://doi.org/10.1109/metroxraine58569.2023.10405789",
+      "why": "Ranked #5 by corpus relevance (56%)."
+    },
+    {
+      "rank": 6,
+      "paper_id": "paper_1788847705.791443",
+      "title": "Molecular generative Graph Neural Networks for Drug Discovery",
+      "authors": [
+        "Pietro Bongini",
+        "Monica Bianchini",
+        "Franco Scarselli"
+      ],
+      "year": 2021,
+      "venue": "Neurocomputing",
+      "relevance_score": 0.52,
+      "url": "https://doi.org/10.1016/j.neucom.2021.04.039",
+      "why": "Ranked #6 by corpus relevance (52%)."
+    },
+    {
+      "rank": 7,
+      "paper_id": "paper_1788847705.791455",
+      "title": "Graph neural networks for automated de novo drug design",
+      "authors": [
+        "Jiacheng Xiong",
+        "Zhaoping Xiong",
+        "Kaixian Chen",
+        "Hualiang Jiang",
+        "Mingyue Zheng"
+      ],
+      "year": 2021,
+      "venue": "Drug Discovery Today",
+      "relevance_score": 0.42000000000000004,
+      "url": "https://doi.org/10.1016/j.drudis.2021.02.011",
+      "why": "Ranked #7 by corpus relevance (42%)."
+    },
+    {
+      "rank": 8,
+      "paper_id": "paper_1788847705.791489",
+      "title": "Homogeneous Graph Neural Networks",
+      "authors": [
+        "Deyu Bo"
+      ],
+      "year": 2023,
+      "venue": "Synthesis Lectures on Data Mining and Knowledge Discovery",
+      "relevance_score": 0.36000000000000004,
+      "url": "https://doi.org/10.1007/978-3-031-16174-2_3",
+      "why": "Ranked #8 by corpus relevance (36%)."
+    },
+    {
+      "rank": 9,
+      "paper_id": "paper_1788847705.791502",
+      "title": "A compact review of molecular property prediction with graph neural networks",
+      "authors": [
+        "Oliver Wieder",
+        "Stefan Kohlbacher",
+        "M\u00e9laine Kuenemann",
+        "Arthur Garon",
+        "Pierre Ducrot",
+        "Thomas Seidel",
+        "Thierry Langer"
+      ],
+      "year": 2020,
+      "venue": "Drug Discovery Today: Technologies",
+      "relevance_score": 0.30000000000000004,
+      "url": "https://doi.org/10.1016/j.ddtec.2020.11.009",
+      "why": "Ranked #9 by corpus relevance (30%)."
+    },
+    {
+      "rank": 10,
+      "paper_id": "paper_1788847705.791411",
+      "title": "",
+      "authors": [],
+      "year": 2023,
+      "venue": "",
+      "relevance_score": 0.06000000000000001,
+      "url": "https://doi.org/10.3030/800578",
+      "why": "Ranked #10 by corpus relevance (6%)."
     }
   ]
 }

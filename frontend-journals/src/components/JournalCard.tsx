@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import type { JournalSummary } from '../types/journal'
+import type { ApcStatus, JournalSummary } from '../types/journal'
 import { Badge, ProvenanceChip, QuartileBadge } from './Badges'
 
 interface JournalCardProps {
@@ -7,9 +7,12 @@ interface JournalCardProps {
   onSelect: (issn: string) => void
 }
 
-function formatApc(apcUsd: number | null): string {
-  if (apcUsd === null || apcUsd === undefined) return 'No APC data'
-  if (apcUsd === 0) return 'Free (no APC)'
+function formatApc(apcUsd: number | null, status: ApcStatus): string {
+  if (apcUsd === null || apcUsd === undefined) {
+    if (status === 'not_charged') return 'No APC (free to publish)'
+    return 'Not reported'
+  }
+  if (status === 'estimated') return `≈ $${apcUsd.toLocaleString()} USD`
   return `$${apcUsd.toLocaleString()} USD`
 }
 
@@ -28,12 +31,26 @@ export function JournalCard({ journal, onSelect }: JournalCardProps) {
           {journal.waiver_available && <Badge tone="neutral">Waiver available</Badge>}
         </div>
 
-        <h3
-          className="mb-2 line-clamp-2 text-base font-semibold leading-snug text-neutral-900 dark:text-neutral-50"
-          title={journal.title}
-        >
-          {journal.title}
-        </h3>
+        <div className="mb-2 flex items-start gap-2">
+          <h3
+            className="line-clamp-2 flex-1 text-base font-semibold leading-snug text-neutral-900 dark:text-neutral-50"
+            title={journal.title}
+          >
+            {journal.title}
+          </h3>
+          {journal.homepage_url && (
+            <a
+              href={journal.homepage_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Visit ${journal.title} website`}
+              title="Visit journal website"
+              className="shrink-0 text-sm text-accent-600 hover:text-accent-700 dark:text-accent-400"
+            >
+              ↗
+            </a>
+          )}
+        </div>
 
         <dl className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs text-neutral-500 dark:text-neutral-400">
           <div className="col-span-2 truncate">
@@ -54,7 +71,7 @@ export function JournalCard({ journal, onSelect }: JournalCardProps) {
           </div>
           <div className="truncate">
             <dt className="inline font-medium text-neutral-400 dark:text-neutral-500">APC: </dt>
-            <dd className="inline">{formatApc(journal.apc_usd)}</dd>
+            <dd className="inline">{formatApc(journal.apc_usd, journal.apc_status)}</dd>
           </div>
         </dl>
       </div>

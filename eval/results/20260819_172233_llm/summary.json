@@ -1,0 +1,17 @@
+{
+  "mode": "llm",
+  "generated_at": "2026-08-19T17:24:19.085575",
+  "topics": [
+    {
+      "topic": "gnn-drug-discovery",
+      "claim_f1": 0.5,
+      "con_precision": null,
+      "con_recall": null,
+      "con_fp_rate_neg": 0.0,
+      "gap_p_at_3": 0.0,
+      "gap_recall": 0.5,
+      "cost_usd": 0.007929,
+      "parse_failures": 0
+    }
+  ]
+}

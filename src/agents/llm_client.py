@@ -23,7 +23,7 @@ import requests
 DEFAULTS = {
     "xai":       "grok-3-mini",
     "anthropic": "claude-haiku-4-5-20251001",
-    "groq":      "llama-3.3-70b-versatile",
+    "groq":      "openai/gpt-oss-120b",
     "ollama":    os.getenv("OLLAMA_MODEL", "llama3.2"),
     "openrouter": "meta-llama/llama-3.3-70b-instruct:free",
 }
@@ -32,7 +32,7 @@ DEFAULTS = {
 PRICING = {
     "grok-3-mini": (0.30, 0.50),
     "claude-haiku-4-5-20251001": (1.00, 5.00),
-    "llama-3.3-70b-versatile": (0.59, 0.79),
+    "openai/gpt-oss-120b": (0.15, 0.75),
     "meta-llama/llama-3.3-70b-instruct:free": (0.0, 0.0),
 }
 
@@ -261,6 +261,25 @@ def get_provider() -> str | None:
     return None
 
 
+def _call_with_retry(func, prompt: str, max_tokens: int, temperature: float,
+                      max_retries: int = 4) -> Tuple[str, Usage]:
+    """Retry transient rate-limit/server errors with exponential backoff."""
+    import time
+    for attempt in range(max_retries + 1):
+        try:
+            return func(prompt, max_tokens, temperature)
+        except requests.exceptions.HTTPError as e:
+            status = e.response.status_code if e.response is not None else None
+            if status not in (429, 500, 502, 503) or attempt == max_retries:
+                raise
+            retry_after = None
+            if e.response is not None:
+                retry_after = e.response.headers.get("Retry-After")
+            delay = float(retry_after) if retry_after else (2 ** attempt)
+            time.sleep(delay)
+    raise RuntimeError("unreachable")  # pragma: no cover
+
+
 def chat(prompt: str, max_tokens: int = 2000, temperature: float = 0.3,
          tracker: Optional[UsageTracker] = None, purpose: str = "general") -> str:
     """
@@ -280,7 +299,7 @@ def chat(prompt: str, max_tokens: int = 2000, temperature: float = 0.3,
             "  • Run Ollama locally: ollama serve && ollama pull llama3.2\n"
             "  • Set OPENROUTER_API_KEY (free tier at openrouter.ai)"
         )
-    text, usage = func(prompt, max_tokens, temperature)
+    text, usage = _call_with_retry(func, prompt, max_tokens, temperature)
     if tracker is not None:
         tracker.record(
             provider=provider,

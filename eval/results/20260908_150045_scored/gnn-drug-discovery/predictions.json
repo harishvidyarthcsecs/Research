@@ -1,0 +1,183 @@
+{
+  "claims": [
+    {
+      "paper_id": "10_51847_8w12ouixi5",
+      "statement": "Molecular Graph Neural Networks are applied in drug discovery.",
+      "confidence": 0.95
+    },
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "The integration of artificial intelligence (AI) in drug discovery has profoundly transformed the pharmaceutical landscape by significantly accelerating the identification of potential drug candidates.",
+      "confidence": 0.935
+    },
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "Graph Neural Networks (GNNs) have proven to be particularly effective in modeling molecular structures, optimizing drug-target interactions, and enhancing prediction accuracy.",
+      "confidence": 0.9
+    },
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "GNNs offer advantages compared to traditional molecular representations.",
+      "confidence": 0.8
+    },
+    {
+      "paper_id": "10_1016_b978-0-443-34059-8_00015-4",
+      "statement": "Graph neural networks can be used for drug discovery, with established protocols and applications.",
+      "confidence": 0.8
+    },
+    {
+      "paper_id": "10_1109_metroxraine58569_2023_10405789",
+      "statement": "Graph Neural Networks can be used for drug discovery.",
+      "confidence": 0.85
+    },
+    {
+      "paper_id": "10_1109_metroxraine58569_2023_10405789",
+      "statement": "An integrated decision support pipeline based on Graph Neural Networks has been created for drug discovery.",
+      "confidence": 0.8
+    },
+    {
+      "paper_id": "10_1016_j_drudis_2021_02_011",
+      "statement": "Graph neural networks can be used for automated de novo drug design.",
+      "confidence": 0.7
+    }
+  ],
+  "contradictions": [],
+  "gaps": [
+    {
+      "description": "The literature lacks systematic evaluation of GNN models on standard drug\u2011discovery benchmark datasets such as MoleculeNet, ChEMBL, and PDBbind.",
+      "gap_type": "dataset",
+      "rank": 1,
+      "priority": 0.91,
+      "evidence": [
+        "Datasets used in claims: none detected",
+        "Expected datasets never used: ChEMBL (bioactivity data), MoleculeNet benchmark suite, PDBbind"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "No published work addresses molecular property prediction (e.g., solubility, toxicity, binding affinity) with GNNs.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 2,
+      "priority": 0.864,
+      "evidence": [
+        "Claims per subtopic: Molecular property prediction =0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "No studies employ specific GNN architectures (MPNN, GAT, GCN, VGAE, contrastive learning, hybrid GNN\u2011Transformer) for drug\u2011discovery tasks.",
+      "gap_type": "methodological",
+      "rank": 3,
+      "priority": 0.832,
+      "evidence": [
+        "Claims per method: Message Passing Neural Networks (MPNN)=0",
+        "Claims per method: Graph Attention Networks (GAT)=0",
+        "Claims per method: Graph Convolutional Networks (GCN)=0",
+        "Claims per method: Variational Graph Autoencoders for molecular generation=0",
+        "Claims per method: Contrastive learning on molecular graphs=0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Explainability and interpretability of GNN predictions in drug design have not been investigated.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 4,
+      "priority": 0.83,
+      "evidence": [
+        "Claims per subtopic: Explainability and interpretability of GNN predictions in drug design =0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Transfer learning and multi\u2011task learning across heterogeneous drug\u2011discovery datasets are missing.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 5,
+      "priority": 0.822,
+      "evidence": [
+        "Claims per subtopic: Transfer learning and multi-task learning across heterogeneous drug discovery datasets =0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Graph generative models for molecule generation and optimization have not been explored in the corpus.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 6,
+      "priority": 0.82,
+      "evidence": [
+        "Claims per subtopic: Molecule generation and optimization using graph generative models =0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Protein\u2013ligand interaction modeling with GNNs is absent from the surveyed literature.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 7,
+      "priority": 0.82,
+      "evidence": [
+        "Claims per subtopic: Protein\u2013ligand interaction modeling with graph neural networks =0"
+      ],
+      "detection_method": "llm"
+    }
+  ],
+  "usage": {
+    "calls": 16,
+    "prompt_tokens": 5582,
+    "completion_tokens": 10181,
+    "estimated_cost_usd": 0.008473,
+    "parse_failures": 1,
+    "by_purpose": {
+      "topic_expansion": {
+        "calls": 1,
+        "prompt_tokens": 198,
+        "completion_tokens": 529,
+        "estimated_cost_usd": 0.000426,
+        "parse_failures": 0
+      },
+      "claim_extraction": {
+        "calls": 10,
+        "prompt_tokens": 1921,
+        "completion_tokens": 3066,
+        "estimated_cost_usd": 0.002588,
+        "parse_failures": 0
+      },
+      "contradiction_judge": {
+        "calls": 3,
+        "prompt_tokens": 1625,
+        "completion_tokens": 2615,
+        "estimated_cost_usd": 0.002205,
+        "parse_failures": 0
+      },
+      "gap_detection": {
+        "calls": 1,
+        "prompt_tokens": 723,
+        "completion_tokens": 1971,
+        "estimated_cost_usd": 0.001587,
+        "parse_failures": 0
+      },
+      "recommendations": {
+        "calls": 1,
+        "prompt_tokens": 1115,
+        "completion_tokens": 2000,
+        "estimated_cost_usd": 0.001667,
+        "parse_failures": 1
+      }
+    }
+  },
+  "run_metadata": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.0,
+    "duration_s": 52.56,
+    "frozen_corpus": true
+  },
+  "narrative": {
+    "grounding_mode": "scored",
+    "build_failed": false,
+    "error": null,
+    "total_sentences": 0,
+    "unsupported_sentences": 0,
+    "evidence_rows": 10,
+    "evidence_rows_no_verbatim": 10,
+    "sentences": []
+  }
+}

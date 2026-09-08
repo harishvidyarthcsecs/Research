@@ -1,0 +1,94 @@
+{
+  "claims": {
+    "tp": 2,
+    "fp": 6,
+    "fn": 1,
+    "precision": 0.25,
+    "recall": 0.6666666666666666,
+    "f1": 0.36363636363636365,
+    "matches": [
+      {
+        "pred_index": 1,
+        "gold_index": 1,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 0,
+        "gold_index": 0,
+        "similarity": 1.0
+      }
+    ],
+    "missed_gold_indices": [
+      2
+    ]
+  },
+  "contradictions": {
+    "pair_level": {
+      "tp": 0,
+      "fp_on_negatives": 0,
+      "fn": 0,
+      "precision_on_labeled": null,
+      "recall": null,
+      "false_positive_rate_on_negatives": 0.0
+    },
+    "claim_level_strict": {
+      "tp": 0,
+      "recall": null
+    },
+    "unlabeled_prediction_volume": 0,
+    "missed_gold": [],
+    "false_positives_on_negatives": [],
+    "unlabeled_predictions": []
+  },
+  "gaps": {
+    "recall": 0.0,
+    "per_prediction": [
+      {
+        "description": "Standard benchmark datasets for drug\u2011discovery GNN research (e.g., MoleculeNet, ChEMBL, PDBbind) are never used in the existing claims.",
+        "gap_type": "dataset",
+        "matched_gold_index": null
+      },
+      {
+        "description": "The literature contains virtually no empirical studies on molecular property prediction (e.g., solubility, toxicity, bioactivity) using graph neural networks.",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      },
+      {
+        "description": "There is a lack of methodological comparisons and baseline reporting across major GNN variants (MPNN, GCN, GAT) for drug\u2011discovery tasks.",
+        "gap_type": "methodological",
+        "matched_gold_index": null
+      },
+      {
+        "description": "There is a complete absence of work on protein\u2013ligand interaction modeling and binding affinity prediction with GNNs.",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      },
+      {
+        "description": "No studies have applied graph\u2011based generative models (e.g., GraphVAE, MolGAN) for de novo molecular generation and optimization in drug discovery.",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Evaluations are limited to generic claims; there is no real\u2011world, prospective, or longitudinal validation of GNN\u2011based drug\u2011discovery pipelines.",
+        "gap_type": "evaluation",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Transfer learning and fine\u2011tuning of pretrained GNN encoders for drug\u2011discovery applications remain unstudied.",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      }
+    ],
+    "missed_gold_indices": [
+      0,
+      1
+    ],
+    "precision_at_3": 0.0,
+    "precision_at_5": 0.0
+  },
+  "cost": {
+    "estimated_cost_usd": 0.006686,
+    "llm_calls": 15,
+    "parse_failures": 0
+  }
+}

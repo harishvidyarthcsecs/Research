@@ -1,0 +1,7 @@
+{
+  "cost": {
+    "estimated_cost_usd": 0.00272,
+    "llm_calls": 4,
+    "parse_failures": 1
+  }
+}

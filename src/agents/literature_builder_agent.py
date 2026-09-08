@@ -20,12 +20,19 @@ import asyncio
 import json
 import logging
 import os
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Dict, Any, Optional, Tuple, Callable
 from collections import defaultdict
 import re
 from datetime import datetime
 
 from . import llm_client
+from .paper_ids import paper_id_for
+from . import narrative_verifier
+from .narrative_verifier import UnsupportedSentenceError
+from .evidence_extraction_agent import EvidenceExtractionAgent
+from .custom_citation_formatter import CustomCitationFormatter
+from .synthesis_matrix_builder import SynthesisMatrixBuilder
+from .research_gap_detection_agent import ResearchGapDetectionAgent
 
 # Import requests with fallback
 try:
@@ -37,7 +44,8 @@ except ImportError:
 try:
     from ..models.data_models import (
         Claim, PaperMetadata, ResearchResults, TopicMap, ClaimCluster,
-        LiteratureSection, LiteratureOutline, LiteratureDocument, LiteratureFilter
+        LiteratureSection, LiteratureOutline, LiteratureDocument, LiteratureFilter,
+        EvidenceRow, MatrixCell, SynthesisMatrix, PrismaCounts
     )
 except ImportError:
     # Fallback to absolute imports for testing
@@ -46,17 +54,71 @@ except ImportError:
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
     from models.data_models import (
         Claim, PaperMetadata, ResearchResults, TopicMap, ClaimCluster,
-        LiteratureSection, LiteratureOutline, LiteratureDocument, LiteratureFilter
+        LiteratureSection, LiteratureOutline, LiteratureDocument, LiteratureFilter,
+        EvidenceRow, MatrixCell, SynthesisMatrix, PrismaCounts
     )
 
 logger = logging.getLogger(__name__)
 
+
+def apply_literature_filter(research_results: ResearchResults, filt: LiteratureFilter) -> ResearchResults:
+    """Apply a LiteratureFilter to a ResearchResults before the evidence/narrative
+    pipeline runs. Previously LiteratureFilter was defined but never consumed —
+    the UI's filter form posted data that was silently discarded."""
+    q_rankings = set(filt.q_rankings)
+
+    def _q_rank(paper: PaperMetadata) -> str:
+        venue_lower = (paper.venue or "").lower()
+        rankings = {
+            'Q1': ['nature', 'science', 'cell', 'lancet', 'nejm', 'jama', 'pnas'],
+            'Q2': ['ieee', 'acm', 'springer', 'elsevier', 'wiley'],
+            'Q3': ['arxiv', 'preprint', 'workshop', 'conference'],
+        }
+        for rank, venues in rankings.items():
+            if any(v in venue_lower for v in venues):
+                return rank
+        return 'Q3'
+
+    def _is_sa(paper: PaperMetadata) -> bool:
+        sa_keywords = ['systematic review', 'meta-analysis', 'literature review',
+                       'survey', 'comprehensive review', 'systematic analysis']
+        text = f"{paper.title} {paper.abstract}".lower()
+        return any(kw in text for kw in sa_keywords)
+
+    filtered_papers = []
+    for p in research_results.papers:
+        if _q_rank(p) not in q_rankings:
+            continue
+        if not filt.include_sa_papers and _is_sa(p):
+            continue
+        if filt.min_year is not None and p.year and p.year < filt.min_year:
+            continue
+        if filt.max_year is not None and p.year and p.year > filt.max_year:
+            continue
+        filtered_papers.append(p)
+
+    surviving_ids = {paper_id_for(p) for p in filtered_papers}
+    filtered_claims = [
+        c for c in research_results.claims
+        if c.paper_id in surviving_ids and c.confidence >= filt.min_confidence
+    ]
+
+    return research_results.model_copy(update={
+        "papers": filtered_papers,
+        "claims": filtered_claims,
+    })
+
 class LiteratureBuilderAgent:
     """Agent responsible for building structured academic literature from claims."""
     
-    def __init__(self, mode: Optional[str] = None):
+    def __init__(self, mode: Optional[str] = None, memory_store=None,
+                 grounding_mode: Optional[str] = None):
         self.logger = logging.getLogger(f"{__name__}.{self.__class__.__name__}")
         self.mode = mode  # None = auto: "llm" if a provider is available
+        # "reject" (default) = build-time citation gate: an unverifiable sentence
+        # or evidence row is discarded / raises. "scored" = keep it with a
+        # grounding score. A/B'd in eval/run_eval.py --mode scored.
+        self.grounding_mode = grounding_mode or os.getenv("GROUNDING_MODE") or "reject"
         self.tracker: Optional[llm_client.UsageTracker] = None
         self.q_rankings = {
             'Q1': ['nature', 'science', 'cell', 'lancet', 'nejm', 'jama', 'pnas'],
@@ -67,6 +129,11 @@ class LiteratureBuilderAgent:
             'systematic review', 'meta-analysis', 'literature review',
             'survey', 'comprehensive review', 'systematic analysis'
         ]
+        self.evidence_agent = EvidenceExtractionAgent(
+            memory_store, mode=mode, grounding_mode=self.grounding_mode)
+        self.citation_formatter = CustomCitationFormatter(memory_store)
+        self.matrix_builder = SynthesisMatrixBuilder()
+        self.gap_agent = ResearchGapDetectionAgent(memory_store, mode=mode)
 
     def _resolve_mode(self) -> str:
         mode = self.mode or os.getenv("LITERATURE_MODE")
@@ -74,49 +141,100 @@ class LiteratureBuilderAgent:
             return mode
         return "llm" if llm_client.get_provider() is not None else "rules"
 
-    async def process(self, research_results: ResearchResults) -> LiteratureDocument:
+    async def process(
+        self, research_results: ResearchResults,
+        progress: Optional[Callable[..., None]] = None,
+    ) -> LiteratureDocument:
         """
         Main processing function to build literature from research results.
-        
+
         Args:
             research_results: Complete research results with claims and papers
-            
+            progress: optional callback(stage:int, name:str, state:str, **detail) for
+                      SSE progress reporting; stages 10-17 continue the main research
+                      pipeline's stages 1-9.
+
         Returns:
-            LiteratureDocument: Structured academic literature
+            LiteratureDocument: Structured academic literature, now carrying an
+            evidence table, a methods x datasets synthesis matrix, and PRISMA counts
+            alongside the existing outline/sections/bibliography.
         """
+        def report(stage: int, name: str, state: str, **detail):
+            if progress:
+                progress(stage, name, state, **detail)
+
         mode = self._resolve_mode()
         self.logger.info(f"Starting literature building process (mode={mode})")
 
         try:
-            # Step 1: Classify papers by Q-ranking and SA status
+            report(10, "Classify Papers", "running")
             classified_papers = self._classify_papers(research_results.papers)
+            report(10, "Classify Papers", "done")
 
-            # Step 2: Cluster claims by themes and methods
+            report(11, "Evidence Extraction", "running")
+            evidence_rows = await self.evidence_agent.process(
+                research_results.papers, research_results.claims, research_results.topic_map
+            )
+            report(11, "Evidence Extraction", "done", rows=len(evidence_rows))
+
+            report(12, "Bibliography", "running")
+            citation_records = await self.citation_formatter.process(research_results.papers)
+            key_by_paper = {c["paper_id"]: c["bibitem_key"] for c in citation_records}
+            for row in evidence_rows:
+                row.bibitem_key = key_by_paper.get(row.paper_id, "")
+            bibliography = [
+                c["bibitem_citation"] for c in
+                sorted(citation_records, key=lambda c: (c["formatted_authors"], c["year"] or 0))
+            ]
+            report(12, "Bibliography", "done")
+
+            report(13, "Cluster Claims", "running")
             claim_clusters = await self._cluster_claims(
                 research_results.claims,
                 research_results.papers,
                 research_results.contradictions,
                 classified_papers
             )
+            report(13, "Cluster Claims", "done")
 
-            # Step 3: Generate literature outline
+            report(14, "Synthesis Matrix", "running")
+            matrix = self.matrix_builder.build_grid(evidence_rows)
+            blank_pairs = [(c.method, c.dataset) for c in matrix.cells if c.status == "blank"]
+            gaps_by_cell = await self.gap_agent.detect_matrix_gaps(blank_pairs, research_results.topic_map)
+            for cell in matrix.cells:
+                gap = gaps_by_cell.get((cell.method, cell.dataset))
+                if gap:
+                    cell.gap_id = gap.id
+            report(14, "Synthesis Matrix", "done", cells=len(matrix.cells), gaps=len(gaps_by_cell))
+
+            report(15, "Outline", "running")
             outline = self._generate_outline(
                 claim_clusters,
                 research_results.topic_map,
                 research_results.papers
             )
+            report(15, "Outline", "done")
 
-            # Step 4: Build literature sections
-            sections = await self._build_sections(claim_clusters, outline, mode)
-            
-            # Step 5: Generate bibliography
-            bibliography = self._generate_bibliography(research_results.papers)
-            
-            # Step 6: Create final document
+            report(16, "Narrative Generation", "running")
+            rows_by_paper: Dict[str, List[EvidenceRow]] = defaultdict(list)
+            for r in evidence_rows:
+                rows_by_paper[r.paper_id].append(r)
+            rows_by_key = {r.bibitem_key: r for r in evidence_rows if r.bibitem_key}
+            sections = await self._build_sections(claim_clusters, outline, mode, rows_by_paper, rows_by_key, matrix)
+            report(16, "Narrative Generation", "done")
+
+            report(17, "PRISMA Counts", "running")
+            prisma = self._build_prisma_counts(research_results, evidence_rows)
+            report(17, "PRISMA Counts", "done")
+
+            # Step: Create final document
             document = LiteratureDocument(
                 outline=outline,
                 sections=sections,
                 bibliography=bibliography,
+                evidence_table=evidence_rows,
+                synthesis_matrix=matrix,
+                prisma=prisma,
                 metadata={
                     'total_papers': len(research_results.papers),
                     'total_claims': len(research_results.claims),
@@ -124,14 +242,15 @@ class LiteratureBuilderAgent:
                     'q2_papers': len([p for p in classified_papers if classified_papers[p]['q_rank'] == 'Q2']),
                     'q3_papers': len([p for p in classified_papers if classified_papers[p]['q_rank'] == 'Q3']),
                     'sa_papers': len([p for p in classified_papers if classified_papers[p]['is_sa']]),
+                    'evidence_rows': len(evidence_rows),
                     'topic': research_results.topic_map.main_topic
                 },
                 generated_at=datetime.now()
             )
-            
+
             self.logger.info(f"Literature building completed: {len(sections)} sections generated")
             return document
-            
+
         except Exception as e:
             self.logger.error(f"Error in literature building: {str(e)}")
             raise e
@@ -175,8 +294,13 @@ class LiteratureBuilderAgent:
     ) -> List[ClaimCluster]:
         """Cluster claims by themes, methods, and research objectives."""
         
-        # Create paper lookup
-        paper_lookup = {getattr(p, 'id', f"paper_{hash(p.title)}"): p for p in papers}
+        # Create paper lookup keyed by the canonical paper_id (matches Claim.paper_id).
+        # NOTE: paper.id (the Pydantic default_factory field) is a random per-instance
+        # timestamp, never set to match claim.paper_id at construction time anywhere in
+        # the discovery agents — keying this lookup by paper.id silently produced an
+        # all-None cluster.papers on every real run. paper_id_for() is the same DOI/
+        # title-based function claim extraction uses to set claim.paper_id.
+        paper_lookup = {paper_id_for(p): p for p in papers}
         
         # Group claims by similarity
         clusters = []
@@ -189,7 +313,7 @@ class LiteratureBuilderAgent:
             
             # Find similar claims
             similar_claims = [claim]
-            similar_papers = [paper_lookup.get(getattr(claim, 'paper_id', claim.paper_id))]
+            similar_papers = [paper_lookup.get(claim.paper_id)]
             
             for j, other_claim in enumerate(claims[i+1:], i+1):
                 other_claim_id = getattr(other_claim, 'id', other_claim.id)
@@ -199,7 +323,7 @@ class LiteratureBuilderAgent:
                 # Check similarity based on keywords, methods, datasets
                 if self._are_claims_similar(claim, other_claim):
                     similar_claims.append(other_claim)
-                    similar_papers.append(paper_lookup.get(getattr(other_claim, 'paper_id', other_claim.paper_id)))
+                    similar_papers.append(paper_lookup.get(other_claim.paper_id))
                     processed_claims.add(other_claim_id)
             
             processed_claims.add(claim_id)
@@ -400,6 +524,12 @@ class LiteratureBuilderAgent:
                 'clusters': [c.cluster_id for c in clusters]
             },
             {
+                'type': 'evidence_synthesis',
+                'title': 'Evidence Synthesis',
+                'description': 'Agreement, conflict, and gaps across methods and datasets',
+                'clusters': []
+            },
+            {
                 'type': 'comparative_analysis',
                 'title': 'Comparative Analysis',
                 'description': 'Analysis of agreements and contradictions',
@@ -425,9 +555,15 @@ class LiteratureBuilderAgent:
         self,
         clusters: List[ClaimCluster],
         outline: LiteratureOutline,
-        mode: str = "rules"
+        mode: str = "rules",
+        rows_by_paper: Optional[Dict[str, List[EvidenceRow]]] = None,
+        rows_by_key: Optional[Dict[str, EvidenceRow]] = None,
+        matrix: Optional[SynthesisMatrix] = None,
     ) -> List[LiteratureSection]:
         """Build the actual literature sections."""
+
+        rows_by_paper = rows_by_paper or {}
+        rows_by_key = rows_by_key or {}
 
         sections = []
         cluster_lookup = {c.cluster_id: c for c in clusters}
@@ -438,16 +574,19 @@ class LiteratureBuilderAgent:
             if section_type == 'introduction':
                 section = await self._build_introduction_section(clusters, outline)
             elif section_type == 'related_work':
-                section = await self._build_related_work_section(clusters, section_info, mode)
+                section = await self._build_related_work_section(
+                    clusters, section_info, mode, rows_by_paper, rows_by_key)
+            elif section_type == 'evidence_synthesis':
+                section = self._build_evidence_synthesis_section(matrix)
             elif section_type == 'comparative_analysis':
                 section = await self._build_comparative_section(clusters, section_info)
             elif section_type == 'trends':
                 section = await self._build_trends_section(clusters, section_info)
             else:
                 continue
-            
+
             sections.append(section)
-        
+
         return sections
     
     async def _build_introduction_section(
@@ -493,11 +632,14 @@ and identifying trends in the evolution of research approaches over time.
         self,
         clusters: List[ClaimCluster],
         section_info: Dict[str, Any],
-        mode: str = "rules"
+        mode: str = "rules",
+        rows_by_paper: Optional[Dict[str, List[EvidenceRow]]] = None,
+        rows_by_key: Optional[Dict[str, EvidenceRow]] = None,
     ) -> LiteratureSection:
         """Build the related work section."""
 
-        subsections = []
+        rows_by_paper = rows_by_paper or {}
+        rows_by_key = rows_by_key or {}
 
         # Group clusters by method or theme
         method_groups = defaultdict(list)
@@ -508,47 +650,61 @@ and identifying trends in the evolution of research approaches over time.
         content_parts = []
         all_citations = []
         all_claim_ids = []
+        all_sentences = []
 
         for method, method_clusters in method_groups.items():
-            subsection_content = await self._build_method_subsection(method, method_clusters, mode)
+            subsection_content = await self._build_method_subsection(
+                method, method_clusters, mode, rows_by_paper, rows_by_key)
             content_parts.append(subsection_content['content'])
             all_citations.extend(subsection_content['citations'])
             all_claim_ids.extend(subsection_content['claim_ids'])
-        
+            all_sentences.extend(subsection_content['sentences'])
+
         content = "\n\n".join(content_parts)
-        
+
         return LiteratureSection(
             section_type='related_work',
             title='Related Work',
             content=content,
             citations=list(set(all_citations)),
-            claim_ids=all_claim_ids
+            claim_ids=all_claim_ids,
+            sentences=all_sentences,
         )
-    
+
     async def _build_method_subsection(
         self,
         method: str,
         clusters: List[ClaimCluster],
-        mode: str = "rules"
+        mode: str = "rules",
+        rows_by_paper: Optional[Dict[str, List[EvidenceRow]]] = None,
+        rows_by_key: Optional[Dict[str, EvidenceRow]] = None,
     ) -> Dict[str, Any]:
         """Build a subsection for a specific method or theme."""
+
+        rows_by_paper = rows_by_paper or {}
+        rows_by_key = rows_by_key or {}
 
         paragraphs = []
         citations = []
         claim_ids = []
+        sentences = []
 
         for cluster in clusters:
-            paragraph, para_citations, para_claim_ids = await self._build_cluster_paragraph(cluster, mode)
+            paragraph, para_citations, para_claim_ids, para_sentences = \
+                await self._build_cluster_paragraph_from_table(
+                    cluster, mode, rows_by_paper, rows_by_key)
             paragraphs.append(paragraph)
             citations.extend(para_citations)
             claim_ids.extend(para_claim_ids)
-        
+            sentences.extend(para_sentences)
+
         content = f"### {method.title()}\n\n" + "\n\n".join(paragraphs)
-        
+
         return {
             'content': content,
             'citations': citations,
-            'claim_ids': claim_ids
+            'claim_ids': claim_ids,
+            'sentences': sentences,
         }
     
     async def _build_cluster_paragraph(
@@ -704,6 +860,162 @@ and identifying trends in the evolution of research approaches over time.
         
         return full_paragraph, citations, claim_ids
     
+    async def _build_cluster_paragraph_from_table(
+        self,
+        cluster: ClaimCluster,
+        mode: str,
+        rows_by_paper: Dict[str, List[EvidenceRow]],
+        rows_by_key: Dict[str, EvidenceRow],
+    ) -> Tuple[str, List[str], List[str], List[Any]]:
+        """Build a cluster's paragraph FROM the evidence table instead of raw
+        abstracts. Falls back to the legacy abstract-based paragraph (the
+        original _build_cluster_paragraph) when the cluster's papers produced
+        zero evidence rows, keeping runs resilient to partial extraction failure.
+
+        Every generated sentence is verified against rows_by_key before being
+        accepted: an unsupported sentence (citing a key with no matching row,
+        or no \\cite{} at all) is a build error, not a silently dropped one.
+        """
+        cluster_rows: List[EvidenceRow] = []
+        seen_ids = set()
+        for paper in cluster.papers:
+            pid = paper_id_for(paper)
+            for row in rows_by_paper.get(pid, []):
+                if row.id not in seen_ids:
+                    cluster_rows.append(row)
+                    seen_ids.add(row.id)
+
+        claim_ids = [getattr(claim, 'id', claim.id) for claim in cluster.claims]
+
+        if not cluster_rows:
+            # No evidence rows for this cluster's papers — fall back to the
+            # legacy abstract-based paragraph builder.
+            text, citations, legacy_claim_ids = await self._build_cluster_paragraph(cluster, mode)
+            return text, citations, legacy_claim_ids, []
+
+        usable_rows = [r for r in cluster_rows if r.bibitem_key]
+        scored = getattr(self, "grounding_mode", "reject") == "scored"
+
+        if mode == "llm" and usable_rows:
+            raw = self._llm_synthesize_from_rows(cluster, usable_rows)
+            if scored:
+                # Keep every sentence, flag the unverifiable ones. No raise, no retry.
+                sentences = narrative_verifier.verify_paragraph_scored(raw, rows_by_key)
+                text = raw
+            else:
+                try:
+                    sentences = narrative_verifier.verify_paragraph(raw, rows_by_key)
+                    text = raw
+                except UnsupportedSentenceError:
+                    raw = self._llm_synthesize_from_rows(cluster, usable_rows, correction=True)
+                    # One retry only — a second failure propagates as a genuine build error.
+                    sentences = narrative_verifier.verify_paragraph(raw, rows_by_key)
+                    text = raw
+        else:
+            text = " ".join(
+                f"{r.population or 'The study'} applied {r.method or 'the method'} on "
+                f"{r.dataset or 'the dataset'}, reporting {r.result or 'a result'} "
+                f"\\cite{{{r.bibitem_key}}}."
+                for r in usable_rows
+            )
+            if not usable_rows:
+                sentences = []
+            elif scored:
+                sentences = narrative_verifier.verify_paragraph_scored(text, rows_by_key)
+            else:
+                sentences = narrative_verifier.verify_paragraph(text, rows_by_key)
+
+        citations = [r.bibitem_key for r in usable_rows]
+        return text, citations, claim_ids, sentences
+
+    def _llm_synthesize_from_rows(
+        self,
+        cluster: ClaimCluster,
+        rows: List[EvidenceRow],
+        correction: bool = False,
+    ) -> str:
+        """Ask the LLM to write one paragraph FROM the evidence table rows
+        (not raw abstracts) — this is the literal 'generated from the table'
+        requirement. Each row line is compact and carries its own \\cite{} key
+        so the LLM cannot cite a paper it wasn't given a row for."""
+        row_lines = "\n".join(
+            f"[{r.bibitem_key}] population={r.population or 'n/a'}; method={r.method or 'n/a'}; "
+            f"dataset={r.dataset or 'n/a'}; metric={r.metric or 'n/a'}; result={r.result or 'n/a'}; "
+            f"limitation={r.limitation or 'n/a'}"
+            for r in rows
+        )
+        correction_note = (
+            "\nYour previous answer stated something not present in the rows below — "
+            "restate using only facts from these rows.\n" if correction else ""
+        )
+        prompt = (
+            "Write ONE flowing academic literature-review paragraph (120-220 words) "
+            f"synthesizing the evidence-table rows below on the theme of "
+            f"'{cluster.theme}' ({cluster.research_objective}). "
+            "Use ONLY the fields given in each row — do not invent results, numbers, "
+            "or facts not present in the rows. Write in third person academic tone. "
+            "Cite each source inline with LaTeX \\cite{key} using the bracketed key "
+            "shown before each row, placed right after the sentence that draws on it. "
+            f"Every sentence must end with at least one \\cite{{}} key.{correction_note}"
+            "Return ONLY the paragraph text, no heading, no markdown, no preamble.\n\n"
+            f"Evidence rows:\n{row_lines}"
+        )
+        raw = llm_client.chat(
+            prompt,
+            max_tokens=512,
+            temperature=0.2,
+            tracker=self.tracker,
+            purpose="literature_synthesis_from_table",
+        ).strip()
+        raw = re.sub(r"^```\w*\s*", "", raw)
+        raw = re.sub(r"\s*```$", "", raw)
+        return raw
+
+    def _build_evidence_synthesis_section(self, matrix: Optional[SynthesisMatrix]) -> LiteratureSection:
+        """One bullet per non-blank matrix cell (using cell.summary, which
+        already carries \\cite{} keys), plus one bullet per blank cell naming
+        its matched gap's description."""
+        if matrix is None or not matrix.cells:
+            content = "No methods x datasets evidence was available to synthesize."
+            return LiteratureSection(
+                section_type='evidence_synthesis', title='Evidence Synthesis', content=content,
+            )
+
+        lines = []
+        for cell in matrix.cells:
+            if cell.status == "blank":
+                if cell.gap_id:
+                    lines.append(f"- **Gap** ({cell.method} x {cell.dataset}): no study covers this combination.")
+            else:
+                lines.append(f"- **{cell.method} x {cell.dataset}**: {cell.summary}")
+
+        content = "\n".join(lines) if lines else "No synthesis-matrix findings to report."
+        citations = [key for cell in matrix.cells for key in narrative_verifier.extract_cite_keys(cell.summary)]
+
+        return LiteratureSection(
+            section_type='evidence_synthesis',
+            title='Evidence Synthesis',
+            content=content,
+            citations=list(set(citations)),
+        )
+
+    def _build_prisma_counts(
+        self, research_results: ResearchResults, evidence_rows: List[EvidenceRow],
+    ) -> PrismaCounts:
+        total_papers = len(research_results.papers)
+        excluded_no_abstract = len([p for p in research_results.papers if not p.abstract or len(p.abstract.strip()) < 20])
+        excluded_extraction_failed = len([r for r in evidence_rows if r.confidence == 0.0])
+        included = total_papers - excluded_extraction_failed
+        duplicates_removed = research_results.run_metadata.get("papers_before_dedup", total_papers) - total_papers
+        return PrismaCounts(
+            identified=research_results.run_metadata.get("papers_before_dedup", total_papers),
+            duplicates_removed=max(duplicates_removed, 0),
+            screened=total_papers,
+            excluded_no_abstract=excluded_no_abstract,
+            excluded_extraction_failed=excluded_extraction_failed,
+            included=max(included, 0),
+        )
+
     def _llm_synthesize_paragraph(
         self,
         cluster: ClaimCluster,
@@ -747,32 +1059,6 @@ and identifying trends in the evolution of research approaches over time.
             self.logger.warning(f"LLM literature synthesis failed: {e}; falling back to rules")
             return None
 
-    def _generate_bibitem_key(self, paper):
-        """Generate bibitem key from authors and year (e.g., KaPa23)."""
-        if not paper.authors:
-            return f"Un{paper.year % 100:02d}"
-        
-        # Get first 2-3 authors for key generation
-        authors_for_key = paper.authors[:3] if len(paper.authors) >= 3 else paper.authors[:2]
-        
-        # Extract first two letters of last names
-        key_parts = []
-        for author in authors_for_key:
-            # Handle different author name formats
-            name_parts = author.strip().split()
-            if name_parts:
-                last_name = name_parts[-1]  # Last part is surname
-                if len(last_name) >= 2:
-                    key_parts.append(last_name[:2].title())
-                elif len(last_name) == 1:
-                    key_parts.append(last_name.upper())
-        
-        # Add year (last 2 digits)
-        year_suffix = paper.year % 100 if paper.year else 0
-        
-        key = "".join(key_parts) + f"{year_suffix:02d}"
-        return key
-    
     def _process_abstract_for_literature(self, abstract, bibitem_key):
         """Process abstract to create literature content with LaTeX citations."""
         
@@ -1022,158 +1308,33 @@ Recent developments (around {sorted_years[-1] if sorted_years else 'N/A'}) have 
             claim_ids=[]
         )
     
-    def _generate_bibliography(self, papers: List[PaperMetadata]) -> List[str]:
-        """Generate bibliography entries with correct custom format and accurate data."""
-        
-        bibliography = []
-        
-        for paper in sorted(papers, key=lambda p: (p.authors[0] if p.authors else 'Unknown', p.year)):
-            # Generate bibitem key
-            bibitem_key = self._generate_bibitem_key(paper)
-            
-            # Format authors with initials first
-            formatted_authors = self._format_authors_custom(paper.authors)
-            
-            # Format title (first letter capital, proper nouns capitalized)
-            formatted_title = self._format_title_custom(paper.title)
-            
-            # Get venue information
-            venue = paper.venue or 'Unknown Venue'
-            year = paper.year or 'Unknown Year'
-            
-            # Extract volume, issue, pages from DOI or other sources if available
-            volume_info = self._extract_volume_info(paper)
-            
-            # Build custom citation format: \bibitem{KaPa23} F.M. Last, Title, Journal \textbf{vol}(issue) (year) pages. DOI
-            entry = f"\\bibitem{{{bibitem_key}}} {formatted_authors}, {formatted_title}, {venue}"
-            
-            # Add volume and issue information ONLY if we have real data
-            if volume_info['volume']:
-                entry += f" \\textbf{{{volume_info['volume']}}}"
-                if volume_info['issue']:
-                    entry += f"({volume_info['issue']})"
-            
-            # Add year
-            entry += f" ({year})"
-            
-            # Add pages ONLY if we have real data
-            if volume_info['pages']:
-                entry += f" {volume_info['pages']}"
-            
-            # Add DOI
-            if paper.doi:
-                if paper.doi.startswith('http'):
-                    entry += f". {paper.doi}"
-                else:
-                    entry += f". https://doi.org/{paper.doi}"
-            elif paper.url:
-                entry += f". {paper.url}"
-            
-            bibliography.append(entry)
-        
-        return bibliography
-    
-    def _format_authors_custom(self, authors):
-        """Format authors with initials first, then last name (F.M. Last format)."""
-        if not authors:
-            return "Unknown Author"
-        
-        formatted_authors = []
-        
-        for author in authors:
-            author = author.strip()
-            parts = author.split()
-            
-            if len(parts) < 2:
-                formatted_authors.append(author)
-                continue
-            
-            # Check if author is already in correct format (e.g., "Y. Saad", "M.H. Schultz")
-            if len(parts) == 2 and len(parts[0]) <= 4 and '.' in parts[0]:
-                # Already in format like "Y. Saad" or "M.H. Schultz"
-                formatted_authors.append(author)
-                continue
-                
-            # Last part is last name
-            last_name = parts[-1]
-            
-            # Everything else is first/middle names
-            first_middle = parts[:-1]
-            
-            # Create initials
-            initials = []
-            for name in first_middle:
-                if name and name[0].isalpha():
-                    # Handle names that might already have periods
-                    if name.endswith('.'):
-                        initials.append(name)
-                    else:
-                        initials.append(f"{name[0].upper()}.")
-            
-            # Format as "F.M. Last" (initials first, then last name)
-            if initials:
-                formatted_authors.append(f"{''.join(initials)} {last_name}")
-            else:
-                formatted_authors.append(last_name)
-        
-        return ", ".join(formatted_authors)
-    
-    def _format_title_custom(self, title):
-        """Format title with only first letter capital, except proper nouns."""
-        if not title:
-            return "Unknown Title"
-        
-        # Clean title
-        title = title.strip()
-        if title.endswith('.'):
-            title = title[:-1]
-        
-        # Convert to lowercase first
-        title_lower = title.lower()
-        
-        # Capitalize first letter
-        if title_lower:
-            title_formatted = title_lower[0].upper() + title_lower[1:]
-        else:
-            title_formatted = title_lower
-        
-        # Capitalize proper nouns
-        proper_nouns = ["wiener", "euler", "hamilton", "fibonacci", "pascal", "newton", "gauss",
-                       "fourier", "laplace", "bayes", "markov", "poisson", "bernoulli",
-                       "covid", "sars", "hiv", "aids", "dna", "rna", "pcr", "crispr"]
-        
-        for proper_noun in proper_nouns:
-            import re
-            pattern = r'\b' + re.escape(proper_noun.lower()) + r'\b'
-            replacement = proper_noun.capitalize()
-            title_formatted = re.sub(pattern, replacement, title_formatted, flags=re.IGNORECASE)
-        
-        return title_formatted
-    
-    def _extract_volume_info(self, paper):
-        """Extract volume, issue, and page information from paper metadata or DOI."""
-        volume_info = {
+    def _generate_bibitem_key(self, paper: PaperMetadata) -> str:
+        """Delegates to CustomCitationFormatter — kept as a thin wrapper so
+        existing direct callers (tests) keep working after the bibliography
+        logic was consolidated onto that formatter instead of being duplicated
+        here."""
+        return self.citation_formatter._generate_bibitem_key(paper)
+
+    def _extract_volume_info(self, paper: PaperMetadata) -> Dict[str, Optional[str]]:
+        """Extract volume, issue, and page information from paper metadata or DOI.
+
+        NOTE: kept as its own dict-returning implementation rather than delegating
+        to CustomCitationFormatter — that formatter's same-named private method
+        returns a formatted LaTeX string fragment (or None), not this dict shape,
+        despite constructing an identical-looking dict internally. Blind delegation
+        here would silently break every caller expecting .get('volume'/'issue'/'pages').
+        """
+        volume_info: Dict[str, Optional[str]] = {
             'volume': None,
             'issue': None,
             'pages': None,
-            'article_number': None
+            'article_number': None,
         }
-        
-    def _extract_volume_info(self, paper):
-        """Extract volume, issue, and page information from paper metadata or DOI."""
-        volume_info = {
-            'volume': None,
-            'issue': None,
-            'pages': None,
-            'article_number': None
-        }
-        
-        # Try to extract from DOI using CrossRef API
+
         if paper.doi and requests:
             try:
                 import time
-                
-                # Clean DOI - handle various DOI formats
+
                 doi = paper.doi.strip()
                 if doi.startswith('https://doi.org/'):
                     doi = doi.replace('https://doi.org/', '')
@@ -1181,108 +1342,61 @@ Recent developments (around {sorted_years[-1] if sorted_years else 'N/A'}) have 
                     doi = doi.replace('http://dx.doi.org/', '')
                 elif doi.startswith('doi:'):
                     doi = doi.replace('doi:', '')
-                
-                # Query CrossRef API for accurate bibliographic data
+
                 crossref_url = f"https://api.crossref.org/works/{doi}"
                 headers = {
                     'User-Agent': 'Research System/1.0 (mailto:research@example.com)',
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
                 }
-                
-                self.logger.info(f"Fetching bibliographic data for DOI: {doi}")
-                response = requests.get(crossref_url, headers=headers, timeout=10)  # Reduced timeout
-                
+
+                response = requests.get(crossref_url, headers=headers, timeout=10)
+
                 if response.status_code == 200:
                     data = response.json()
                     work = data.get('message', {})
-                    
-                    # Extract volume
+
                     if 'volume' in work and work['volume']:
                         volume_info['volume'] = str(work['volume']).strip()
-                    
-                    # Extract issue
                     if 'issue' in work and work['issue']:
                         volume_info['issue'] = str(work['issue']).strip()
-                    
-                    # Extract pages - handle different formats
                     if 'page' in work and work['page']:
                         pages = str(work['page']).strip()
-                        # Handle different page formats: "123-145", "123--145", "e123456", etc.
                         if pages:
                             volume_info['pages'] = pages
                     elif 'article-number' in work and work['article-number']:
                         article_num = str(work['article-number']).strip()
                         volume_info['article_number'] = article_num
-                        volume_info['pages'] = article_num  # Use article number as pages
-                    
-                    # Log successful extraction
-                    self.logger.info(f"Successfully extracted: vol={volume_info['volume']}, issue={volume_info['issue']}, pages={volume_info['pages']}")
-                    
-                    # Small delay to be respectful to CrossRef API
+                        volume_info['pages'] = article_num
+
                     time.sleep(0.1)
-                    
                 elif response.status_code == 404:
-                    self.logger.info(f"DOI {doi} not found in CrossRef (404) - this is normal for test/fake DOIs")
+                    self.logger.info(f"DOI {doi} not found in CrossRef (404)")
                 else:
                     self.logger.warning(f"CrossRef API returned status {response.status_code} for DOI {doi}")
-                    
+
             except requests.exceptions.Timeout:
-                self.logger.warning(f"Timeout while fetching bibliographic data for DOI {paper.doi} - continuing without volume info")
+                self.logger.warning(f"Timeout while fetching bibliographic data for DOI {paper.doi}")
             except requests.exceptions.RequestException as e:
-                self.logger.warning(f"Request error while fetching bibliographic data for DOI {paper.doi}: {str(e)}")
+                self.logger.warning(f"Request error while fetching bibliographic data for DOI {paper.doi}: {e}")
             except Exception as e:
-                self.logger.warning(f"Unexpected error while fetching bibliographic data for DOI {paper.doi}: {str(e)}")
+                self.logger.warning(f"Unexpected error while fetching bibliographic data for DOI {paper.doi}: {e}")
         elif paper.doi and not requests:
             self.logger.warning("Requests library not available, skipping CrossRef API call")
-        
-        # Only use fallback values if we couldn't get any real data
-        # This ensures we don't override real data with fake data
+
         if not any([volume_info['volume'], volume_info['issue'], volume_info['pages']]):
-            # Try to extract from venue name if it contains volume/issue info
             if paper.venue:
                 venue_lower = paper.venue.lower()
-                import re
-                
-                # Look for patterns like "vol. 25, no. 3" or "25(3)" in venue
                 vol_match = re.search(r'vol(?:ume)?\.?\s*(\d+)', venue_lower)
                 if vol_match:
                     volume_info['volume'] = vol_match.group(1)
-                
                 issue_match = re.search(r'(?:no|issue)\.?\s*(\d+)', venue_lower)
                 if issue_match:
                     volume_info['issue'] = issue_match.group(1)
-                
-                # Look for pattern like "25(3)" 
                 vol_issue_match = re.search(r'(\d+)\((\d+)\)', venue_lower)
                 if vol_issue_match:
                     volume_info['volume'] = vol_issue_match.group(1)
                     volume_info['issue'] = vol_issue_match.group(2)
-        
-        return volume_info
-        
-        # Only use fallback values if we couldn't get any real data
-        # This ensures we don't override real data with fake data
-        if not any([volume_info['volume'], volume_info['issue'], volume_info['pages']]):
-            # Try to extract from venue name if it contains volume/issue info
-            if paper.venue:
-                venue_lower = paper.venue.lower()
-                import re
-                
-                # Look for patterns like "vol. 25, no. 3" or "25(3)" in venue
-                vol_match = re.search(r'vol(?:ume)?\.?\s*(\d+)', venue_lower)
-                if vol_match:
-                    volume_info['volume'] = vol_match.group(1)
-                
-                issue_match = re.search(r'(?:no|issue)\.?\s*(\d+)', venue_lower)
-                if issue_match:
-                    volume_info['issue'] = issue_match.group(1)
-                
-                # Look for pattern like "25(3)" 
-                vol_issue_match = re.search(r'(\d+)\((\d+)\)', venue_lower)
-                if vol_issue_match:
-                    volume_info['volume'] = vol_issue_match.group(1)
-                    volume_info['issue'] = vol_issue_match.group(2)
-        
+
         return volume_info
 
     def get_literature_stats(self, document: LiteratureDocument) -> Dict[str, Any]:

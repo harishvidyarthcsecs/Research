@@ -1,0 +1,81 @@
+{
+  "claims": [
+    {
+      "paper_id": "10_51847_8w12ouixi5",
+      "statement": "This article provides a narrative review of molecular graph neural networks in drug discovery.",
+      "confidence": 0.99
+    },
+    {
+      "paper_id": "10_1109_metroxraine58569_2023_10405789",
+      "statement": "Graph Neural Networks can be applied to drug discovery.",
+      "confidence": 0.6
+    },
+    {
+      "paper_id": "10_1109_metroxraine58569_2023_10405789",
+      "statement": "An integrated decision support pipeline based on Graph Neural Networks has been developed for drug discovery.",
+      "confidence": 0.6
+    }
+  ],
+  "contradictions": [],
+  "gaps": [
+    {
+      "description": "Limited research on Molecular property prediction using GNNs (e.g., solubility, toxicity, bioactivity)",
+      "gap_type": "unexplored_subtopic",
+      "rank": 1,
+      "priority": 1.0,
+      "evidence": [
+        "Only 0 of 3 claims mention this subtopic",
+        "Low-evidence: derived from only 3 extracted claims"
+      ],
+      "detection_method": "rules"
+    },
+    {
+      "description": "Limited research on Protein\u2013ligand interaction modeling and binding affinity prediction",
+      "gap_type": "unexplored_subtopic",
+      "rank": 2,
+      "priority": 1.0,
+      "evidence": [
+        "Only 0 of 3 claims mention this subtopic",
+        "Low-evidence: derived from only 3 extracted claims"
+      ],
+      "detection_method": "rules"
+    }
+  ],
+  "usage": {
+    "calls": 4,
+    "prompt_tokens": 1200,
+    "completion_tokens": 3386,
+    "estimated_cost_usd": 0.00272,
+    "parse_failures": 1,
+    "by_purpose": {
+      "topic_expansion": {
+        "calls": 1,
+        "prompt_tokens": 198,
+        "completion_tokens": 543,
+        "estimated_cost_usd": 0.000437,
+        "parse_failures": 0
+      },
+      "claim_extraction": {
+        "calls": 2,
+        "prompt_tokens": 364,
+        "completion_tokens": 795,
+        "estimated_cost_usd": 0.000651,
+        "parse_failures": 0
+      },
+      "gap_detection": {
+        "calls": 1,
+        "prompt_tokens": 638,
+        "completion_tokens": 2048,
+        "estimated_cost_usd": 0.001632,
+        "parse_failures": 1
+      }
+    }
+  },
+  "run_metadata": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.0,
+    "duration_s": 9.79,
+    "frozen_corpus": true
+  }
+}

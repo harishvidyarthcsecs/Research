@@ -1,0 +1,97 @@
+{
+  "claims": {
+    "tp": 1,
+    "fp": 9,
+    "fn": 2,
+    "precision": 0.1,
+    "recall": 0.3333333333333333,
+    "f1": 0.15384615384615385,
+    "matches": [
+      {
+        "pred_index": 1,
+        "gold_index": 1,
+        "similarity": 0.767
+      }
+    ],
+    "missed_gold_indices": [
+      0,
+      2
+    ]
+  },
+  "contradictions": {
+    "pair_level": {
+      "tp": 0,
+      "fp_on_negatives": 0,
+      "fn": 0,
+      "precision_on_labeled": null,
+      "recall": null,
+      "false_positive_rate_on_negatives": 0.0
+    },
+    "claim_level_strict": {
+      "tp": 0,
+      "recall": null
+    },
+    "unlabeled_prediction_volume": 2,
+    "missed_gold": [],
+    "false_positives_on_negatives": [],
+    "unlabeled_predictions": [
+      {
+        "paper1_id": "10_1021_acs_chemrev_5c00461_s001",
+        "paper2_id": "10_1007_978-3-031-16174-2_7",
+        "claim_text_1": "Scalability to millions of compounds remains a major bottleneck for GNNs in drug discovery.",
+        "claim_text_2": "Distilled (compressed) GNNs can be deployed on edge devices with negligible loss, effectively solving scalability issues.",
+        "explanation": "Paper\u202f4 asserts that scalability is still an unresolved problem, whereas Paper\u202f8 claims that model compression via distillation removes the scalability barrier, creating a direct conflict about the current state of GNN scalability.",
+        "detection_method": "baseline"
+      },
+      {
+        "paper1_id": "10_1016_j_ddtec_2020_11_009",
+        "paper2_id": "10_1016_b978-0-443-34059-8_00015-4",
+        "claim_text_1": "GNN performance is highly sensitive to hyper\u2011parameter settings, making reproducibility difficult.",
+        "claim_text_2": "Standardized protocols and benchmark suites have largely eliminated reproducibility concerns for GNN\u2011based drug discovery pipelines.",
+        "explanation": "Paper\u202f9 emphasizes hyper\u2011parameter sensitivity as a reproducibility obstacle, while Paper\u202f3 reports that standardized protocols have solved reproducibility problems, leading to contradictory views on how reproducible current GNN workflows are.",
+        "detection_method": "baseline"
+      }
+    ]
+  },
+  "gaps": {
+    "recall": 0.0,
+    "per_prediction": [
+      {
+        "description": "Development of intrinsically interpretable GNN architectures or post\u2011hoc explanation methods tailored to medicinal chemistry decisions.",
+        "gap_type": "methodological",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Creation of large, high\u2011quality, publicly available datasets covering under\u2011explored therapeutic areas and rare targets to reduce data scarcity.",
+        "gap_type": "dataset",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Systematic integration of multi\u2011omics (genomics, proteomics, transcriptomics) data with molecular GNNs for holistic target identification and mechanism\u2011of\u2011action studies.",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Establishment of prospective, industry\u2011scale evaluation protocols that benchmark GNN pipelines on real\u2011world hit\u2011finding campaigns rather than retrospective benchmarks.",
+        "gap_type": "evaluation",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Empirical studies reconciling the contradictory claims on scalability and reproducibility (e.g., benchmarking distilled vs. full\u2011size GNNs across massive libraries and assessing protocol\u2011driven reproducibility).",
+        "gap_type": "contradiction_driven",
+        "matched_gold_index": null
+      }
+    ],
+    "missed_gold_indices": [
+      0,
+      1
+    ],
+    "precision_at_3": 0.0,
+    "precision_at_5": 0.0
+  },
+  "cost": {
+    "estimated_cost_usd": 0.001586,
+    "llm_calls": 1,
+    "parse_failures": 0
+  }
+}

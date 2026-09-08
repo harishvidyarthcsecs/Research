@@ -10,11 +10,16 @@ Medicine | CHF 3,150 | CHF 2,500 | 0"): neither carries an ISSN, only
 the journal's display name. Same title-normalized matching as IEEE, and
 same honesty rule - unmatched titles are skipped, never guessed.
 
-Frontiers' journal directory (~200+ titles) is JS-rendered and wasn't
-enumerable from static HTML at implementation time, so bulk per-journal
-ingestion isn't automated here - `fetch_journal_apc(slug)` is exposed
-for on-demand lookup (same "no bulk file, look up per journal" pattern
-as Taylor & Francis / SAGE) and `run()` takes an explicit slug list.
+Frontiers' journal directory itself is JS-rendered and has no separate
+sitemap entry (checked live, 2026-08-18: sitemap.xml's index has no
+journals-specific sitemap) - but every Frontiers journal in our DB
+already follows "FRONTIERS IN X" naming, and X lowercased/hyphenated is
+the real per-journal fee-page slug. Verified live against 3 real
+journals (bioengineering-and-biotechnology, cellular-and-infection-
+microbiology, marine-science - all HTTP 200), so `run()` derives slugs
+from the ~219 Frontiers journals already in the `journals` table instead
+of a small hardcoded list. `fetch_journal_apc(slug)` is still exposed
+standalone for on-demand lookup of any journal not yet in our DB.
 """
 from __future__ import annotations
 
@@ -33,10 +38,12 @@ JOURNAL_FEES_URL = "https://www.frontiersin.org/journals/{slug}/for-authors/publ
 PUBLISHER = "frontiers"
 _STOPWORDS = {"frontiers", "in", "of", "the", "and"}
 
-# A starter set; extend as more Frontiers journals are looked up. Not
-# exhaustive - Frontiers' full directory needs its JS-rendered API
-# resolved separately, documented as a follow-up rather than guessed here.
-DEFAULT_SLUGS = ["medicine", "psychology", "psychiatry", "public-health", "neuroscience"]
+
+def _derive_slug(title: str) -> str:
+    """'FRONTIERS IN BIOENGINEERING AND BIOTECHNOLOGY' -> 'bioengineering-and-biotechnology'."""
+    name = re.sub(r"^frontiers\s+in\s+", "", title.strip(), flags=re.I)
+    name = re.sub(r"[^a-z0-9\s-]", "", name.lower())
+    return re.sub(r"\s+", "-", name.strip())
 
 
 def fetch_category_price_table() -> list:
@@ -84,16 +91,22 @@ def fetch_journal_apc(slug: str):
 
 
 def run(slugs=None):
-    slugs = slugs or DEFAULT_SLUGS
     snapshot_date = datetime.datetime.utcnow()
 
     with etl_run(f"{PUBLISHER}_apc") as counters:
         with session_scope() as session:
-            title_index = {
-                _normalize_title(t): jid
-                for jid, t in session.query(Journal.id, Journal.title).all()
-            }
-            for slug in slugs:
+            frontiers_journals = (
+                session.query(Journal.id, Journal.title)
+                .filter(Journal.publisher.ilike("%frontiers%"))
+                .all()
+            )
+            slug_to_journal_id = (
+                {slug: None for slug in slugs} if slugs
+                else {_derive_slug(t): jid for jid, t in frontiers_journals}
+            )
+            title_index = {_normalize_title(t): jid for jid, t in frontiers_journals}
+
+            for slug, known_journal_id in slug_to_journal_id.items():
                 counters.fetched += 1
                 try:
                     result = fetch_journal_apc(slug)
@@ -103,7 +116,7 @@ def run(slugs=None):
                 if result is None:
                     counters.failed += 1
                     continue
-                journal_id = title_index.get(_normalize_title(result["title"]))
+                journal_id = known_journal_id or title_index.get(_normalize_title(result["title"]))
                 if journal_id is None:
                     counters.failed += 1
                     continue
@@ -113,6 +126,8 @@ def run(slugs=None):
                     source_url=JOURNAL_FEES_URL.format(slug=slug), snapshot_date=snapshot_date,
                 )
                 counters.upserted += 1
+                if counters.upserted % 25 == 0:
+                    session.commit()
 
 
 if __name__ == "__main__":

@@ -73,6 +73,91 @@
     padding: 16px; margin-top: 16px;
 }
 .export-bar { display: flex; gap: 10px; flex-wrap: wrap; }
+.matrix-table, .evidence-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.matrix-table th, .matrix-table td, .evidence-table th, .evidence-table td {
+    border: 1px solid var(--border-muted); padding: 8px 10px; text-align: left; vertical-align: top;
+}
+.matrix-table th, .evidence-table th { color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.4px; }
+.evidence-table td[contenteditable="true"] { cursor: text; }
+.evidence-table td[contenteditable="true"]:focus { outline: 2px solid var(--accent-blue); outline-offset: -2px; }
+.cell-agreement { background: rgba(63,185,80,0.12); }
+.cell-conflict { background: rgba(247,129,102,0.12); }
+.cell-single { background: rgba(88,166,255,0.08); }
+.cell-blank { background: rgba(139,148,158,0.08); color: var(--text-muted); }
+.gap-badge {
+    display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 6px;
+    border-radius: 4px; background: rgba(227,179,65,0.2); color: var(--accent-orange);
+    border: 1px solid rgba(227,179,65,0.3); cursor: help;
+}
+#prismaDiagram { overflow-x: auto; }
+#prismaDiagram svg { max-width: 100%; height: auto; }
+
+.progress-panel {
+    display: none; margin-top: 16px; padding: 16px;
+    background: rgba(88,166,255,0.05); border: 1px solid rgba(88,166,255,0.18);
+    border-radius: 10px;
+}
+.progress-panel.active { display: block; }
+.progress-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap; margin-bottom: 14px;
+}
+.progress-title { font-size: 13.5px; font-weight: 600; color: var(--accent-blue); }
+.progress-topic {
+    font-size: 12px; color: var(--text-muted); margin-top: 2px;
+    max-width: 460px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.progress-meta { display: flex; align-items: center; gap: 14px; }
+.progress-metric { text-align: right; }
+.progress-metric-value { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.progress-metric-label { font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; }
+.btn-cancel-run {
+    background: transparent; color: var(--accent-red);
+    border: 1px solid rgba(247,129,102,0.4); border-radius: 7px;
+    padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer;
+    transition: background 0.16s, border-color 0.16s;
+}
+.btn-cancel-run:hover:not(:disabled) { background: rgba(247,129,102,0.1); border-color: var(--accent-red); }
+.btn-cancel-run:disabled { opacity: 0.45; cursor: not-allowed; }
+.stage-list { display: flex; flex-direction: column; gap: 2px; }
+.stage-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 10px; border-radius: 7px;
+    font-size: 12.5px; color: var(--text-muted);
+    transition: background 0.2s, color 0.2s;
+}
+.stage-row.is-running { background: rgba(88,166,255,0.08); color: var(--text-primary); }
+.stage-row.is-done { color: var(--text-secondary); }
+.stage-row.is-failed { color: var(--accent-red); }
+.stage-dot {
+    width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0;
+    border: 1.5px solid var(--border-color);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: var(--bg-primary);
+}
+.stage-row.is-running .stage-dot {
+    border-color: var(--accent-blue);
+    border-top-color: transparent;
+    animation: stageSpin 0.7s linear infinite;
+}
+.stage-row.is-done .stage-dot { background: var(--accent-green); border-color: var(--accent-green); }
+.stage-row.is-failed .stage-dot { background: var(--accent-red); border-color: var(--accent-red); }
+.stage-name { flex: 1; }
+.stage-detail { font-size: 11.5px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+@keyframes stageSpin { to { transform: rotate(360deg); } }
+.skeleton-wrap { display: none; margin-top: 14px; }
+.skeleton-wrap.active { display: block; }
+.skeleton {
+    height: 12px; border-radius: 6px; margin-bottom: 8px;
+    background: linear-gradient(90deg, var(--bg-card-hover) 25%, var(--border-color) 37%, var(--bg-card-hover) 63%);
+    background-size: 400% 100%;
+    animation: shimmer 1.4s ease infinite;
+}
+@keyframes shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+@media (prefers-reduced-motion: reduce) {
+    .stage-row.is-running .stage-dot { animation: none; border-top-color: var(--accent-blue); }
+    .skeleton { animation: none; }
+}
 {% endblock %}
 
 {% block content %}
@@ -132,13 +217,32 @@
         </button>
     </form>
 
-    <div id="loadingSpinner">
-        <div class="d-flex align-items-center gap-3">
-            <div class="spinner-ring" style="border-top-color:var(--accent-green);"></div>
+    <div class="progress-panel" id="progressPanel" aria-live="polite">
+        <div class="progress-head">
             <div>
-                <div style="font-size:13.5px;font-weight:600;color:var(--accent-green);">Generating Literature...</div>
-                <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Analyzing claims and building structured literature</div>
+                <div class="progress-title" id="progressTitle">Generating literature...</div>
+                <div class="progress-topic" id="progressTopic"></div>
             </div>
+            <div class="progress-meta">
+                <div class="progress-metric">
+                    <div class="progress-metric-value" id="rowsCount">—</div>
+                    <div class="progress-metric-label">Evidence rows</div>
+                </div>
+                <div class="progress-metric">
+                    <div class="progress-metric-value" id="elapsedTime">0:00</div>
+                    <div class="progress-metric-label">Elapsed</div>
+                </div>
+                <button type="button" class="btn-cancel-run" id="cancelRunBtn">
+                    <i class="fas fa-stop"></i> Cancel
+                </button>
+            </div>
+        </div>
+        <div class="stage-list" id="stageList"></div>
+        <div class="skeleton-wrap" id="skeletonWrap">
+            <div class="skeleton" style="width:70%;"></div>
+            <div class="skeleton" style="width:92%;"></div>
+            <div class="skeleton" style="width:84%;"></div>
+            <div class="skeleton" style="width:60%;"></div>
         </div>
     </div>
 </div>
@@ -153,6 +257,25 @@
     <div class="section-heading"><i class="fas fa-book"></i> Generated Literature</div>
     <div id="sectionsContainer" class="mb-4"></div>
 
+    <div class="glass-card mb-4">
+        <div class="card-label">Evidence Table <span style="font-weight:400;color:var(--text-muted);font-size:11px;">(editable — edits apply to exports in this session only)</span></div>
+        <div style="overflow-x:auto;">
+            <table class="evidence-table" id="evidenceTable"></table>
+        </div>
+    </div>
+
+    <div class="glass-card mb-4">
+        <div class="card-label">Synthesis Matrix <span style="font-weight:400;color:var(--text-muted);font-size:11px;">methods &times; datasets</span></div>
+        <div style="overflow-x:auto;">
+            <table class="matrix-table" id="matrixTable"></table>
+        </div>
+    </div>
+
+    <div class="glass-card mb-4">
+        <div class="card-label">PRISMA Flow Diagram</div>
+        <div id="prismaDiagram"></div>
+    </div>
+
     <div class="glass-card">
         <div class="card-label">Bibliography</div>
         <div id="bibliographySection"></div>
@@ -162,8 +285,10 @@
         <div class="card-label">Download</div>
         <div class="export-bar">
             <button class="btn-export" onclick="downloadLiterature('markdown')"><i class="fas fa-file-alt"></i> Markdown</button>
-            <button class="btn-export" style="background:rgba(88,166,255,0.1);color:var(--accent-blue);border-color:rgba(88,166,255,0.25);" onclick="downloadLiterature('latex')"><i class="fas fa-file-code"></i> LaTeX</button>
+            <button class="btn-export" style="background:rgba(88,166,255,0.1);color:var(--accent-blue);border-color:rgba(88,166,255,0.25);" onclick="downloadLiteratureServer('tex')"><i class="fas fa-file-code"></i> LaTeX</button>
             <button class="btn-export" style="background:rgba(227,179,65,0.1);color:var(--accent-orange);border-color:rgba(227,179,65,0.25);" onclick="downloadLiterature('json')"><i class="fas fa-file-download"></i> JSON</button>
+            <button class="btn-export" style="background:rgba(63,185,80,0.1);color:var(--accent-green);border-color:rgba(63,185,80,0.25);" onclick="downloadLiteratureServer('csv')"><i class="fas fa-table"></i> Evidence CSV</button>
+            <button class="btn-export" style="background:rgba(139,148,158,0.1);color:var(--text-secondary);border-color:rgba(139,148,158,0.25);" onclick="downloadLiteratureServer('prisma_svg')"><i class="fas fa-project-diagram"></i> PRISMA SVG</button>
         </div>
     </div>
 </div>
@@ -172,6 +297,78 @@
 {% block extra_js %}
 <script>
 let currentLiterature = null;
+let currentJobId = null;
+let activeJobId = null;
+let eventSource = null;
+let elapsedTimer = null;
+const editedEvidenceRows = {};
+
+function renderStages(stages) {
+    document.getElementById('stageList').innerHTML = stages.map(s => `
+        <div class="stage-row" id="lit-stage-${s.stage}">
+            <div class="stage-dot"></div>
+            <div class="stage-name">${s.name}</div>
+            <div class="stage-detail" id="lit-stage-detail-${s.stage}"></div>
+        </div>
+    `).join('');
+}
+
+function formatDetail(detail) {
+    if (!detail) return '';
+    const parts = [];
+    if (detail.rows !== undefined) parts.push(`${detail.rows} rows`);
+    if (detail.cells !== undefined) parts.push(`${detail.cells} cells`);
+    if (detail.gaps !== undefined) parts.push(`${detail.gaps} gaps`);
+    return parts.join(' · ');
+}
+
+function updateStage(ev) {
+    const row = document.getElementById('lit-stage-' + ev.stage);
+    if (!row) return;
+    row.classList.remove('is-running', 'is-done', 'is-failed');
+    row.classList.add(ev.state === 'done' ? 'is-done' : 'is-running');
+    if (ev.state === 'done') row.querySelector('.stage-dot').innerHTML = '<i class="fas fa-check"></i>';
+    const detail = ev.detail || {};
+    const detailEl = document.getElementById('lit-stage-detail-' + ev.stage);
+    if (detailEl) detailEl.textContent = formatDetail(detail);
+    if (detail.rows !== undefined) document.getElementById('rowsCount').textContent = detail.rows;
+}
+
+function startElapsedTimer() {
+    const started = Date.now();
+    clearInterval(elapsedTimer);
+    elapsedTimer = setInterval(() => {
+        const s = Math.floor((Date.now() - started) / 1000);
+        document.getElementById('elapsedTime').textContent =
+            `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+    }, 1000);
+}
+
+function endRun() {
+    clearInterval(elapsedTimer);
+    if (eventSource) { eventSource.close(); eventSource = null; }
+    document.getElementById('skeletonWrap').classList.remove('active');
+    document.getElementById('cancelRunBtn').disabled = true;
+    activeJobId = null;
+}
+
+document.getElementById('cancelRunBtn').addEventListener('click', async function () {
+    if (!activeJobId) return;
+    this.disabled = true;
+    document.getElementById('progressTitle').textContent = 'Cancelling...';
+    try { await fetch(`/generate-literature/cancel/${activeJobId}`, { method: 'POST' }); }
+    catch (err) { console.error('Cancel failed', err); }
+});
+
+async function loadJobResult(jobId) {
+    const res = await fetch(`/generate-literature/result/${jobId}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Could not load results');
+    currentLiterature = data;
+    currentJobId = jobId;
+    Object.keys(editedEvidenceRows).forEach(k => delete editedEvidenceRows[k]);
+    displayLiterature(data);
+}
 
 document.getElementById('literatureForm').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -187,19 +384,56 @@ document.getElementById('literatureForm').addEventListener('submit', async funct
     if (document.getElementById('includeQ2').checked) filters.q_rankings.push('Q2');
     if (document.getElementById('includeQ3').checked) filters.q_rankings.push('Q3');
 
-    document.getElementById('loadingSpinner').style.display = 'block';
     document.getElementById('results').style.display = 'none';
+    const panel = document.getElementById('progressPanel');
+    panel.classList.add('active');
+    document.getElementById('progressTitle').textContent = 'Generating literature...';
+    document.getElementById('progressTopic').textContent = topic;
+    document.getElementById('rowsCount').textContent = '—';
+    document.getElementById('elapsedTime').textContent = '0:00';
+    document.getElementById('cancelRunBtn').disabled = false;
+    document.getElementById('skeletonWrap').classList.add('active');
+    document.getElementById('stageList').innerHTML = '';
 
     try {
-        const res = await fetch('/generate-literature', {
-            method: 'POST', headers: {'Content-Type': 'application/json'},
+        const res = await fetch('/generate-literature/start', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ topic, filters })
         });
-        const data = await res.json();
-        if (res.ok) { currentLiterature = data; displayLiterature(data); }
-        else alert('Error: ' + data.error);
-    } catch(e) { alert('Error: ' + e.message); }
-    finally { document.getElementById('loadingSpinner').style.display = 'none'; }
+        const job = await res.json();
+        if (!res.ok) throw new Error(job.error || 'Could not start literature generation');
+
+        activeJobId = job.job_id;
+        renderStages(job.stages || []);
+        startElapsedTimer();
+
+        eventSource = new EventSource(`/generate-literature/events/${job.job_id}`);
+        eventSource.addEventListener('start', ev => {
+            const data = JSON.parse(ev.data);
+            if (data.stages) renderStages(data.stages);
+        });
+        eventSource.addEventListener('stage', ev => updateStage(JSON.parse(ev.data)));
+        eventSource.addEventListener('end', async ev => {
+            const data = JSON.parse(ev.data);
+            const jobId = activeJobId;
+            endRun();
+            if (data.status === 'done') {
+                document.getElementById('progressTitle').textContent = 'Literature complete';
+                try {
+                    await loadJobResult(jobId);
+                    panel.classList.remove('active');
+                } catch (err) { alert('Error: ' + err.message); }
+            } else if (data.status === 'cancelled') {
+                panel.classList.remove('active');
+            } else {
+                document.getElementById('progressTitle').textContent = 'Literature generation failed';
+                alert('Error: ' + (data.error || 'Literature generation failed'));
+            }
+        });
+    } catch(e) {
+        alert('Error: ' + e.message);
+        panel.classList.remove('active');
+    }
 });
 
 function displayLiterature(data) {
@@ -236,7 +470,51 @@ function displayLiterature(data) {
     document.getElementById('bibliographySection').innerHTML = data.bibliography.map((e,i)=>
         `<div class="bibliography-entry"><small>[${i+1}]</small> ${e}</div>`).join('');
 
+    renderEvidenceTable(data.evidence_table || []);
+    renderMatrix(data.synthesis_matrix);
+    document.getElementById('prismaDiagram').innerHTML = data.prisma_svg || '<p style="color:var(--text-muted);">No PRISMA data available.</p>';
+
     document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+}
+
+const EVIDENCE_FIELDS = ['population', 'method', 'dataset', 'metric', 'result', 'limitation'];
+
+function renderEvidenceTable(rows) {
+    const table = document.getElementById('evidenceTable');
+    if (!rows.length) { table.innerHTML = '<tr><td>No evidence rows extracted.</td></tr>'; return; }
+    const head = `<tr><th>Paper</th>${EVIDENCE_FIELDS.map(f=>`<th>${f}</th>`).join('')}<th>Source</th></tr>`;
+    const body = rows.map(r => `
+        <tr data-row-id="${r.id}">
+            <td>${r.bibitem_key || r.paper_id}</td>
+            ${EVIDENCE_FIELDS.map(f => `<td contenteditable="true" data-field="${f}" oninput="onEvidenceEdit('${r.id}','${f}',this.textContent)">${r[f] || ''}</td>`).join('')}
+            <td>${r.extraction_source}</td>
+        </tr>`).join('');
+    table.innerHTML = head + body;
+}
+
+function onEvidenceEdit(rowId, field, value) {
+    editedEvidenceRows[rowId] = editedEvidenceRows[rowId] || {};
+    editedEvidenceRows[rowId][field] = value;
+}
+
+function renderMatrix(matrix) {
+    const table = document.getElementById('matrixTable');
+    if (!matrix || !matrix.methods.length || !matrix.datasets.length) {
+        table.innerHTML = '<tr><td>No methods/datasets to synthesize.</td></tr>';
+        return;
+    }
+    const cellByKey = {};
+    matrix.cells.forEach(c => { cellByKey[c.method + '|' + c.dataset] = c; });
+    const head = `<tr><th></th>${matrix.datasets.map(d=>`<th>${d}</th>`).join('')}</tr>`;
+    const body = matrix.methods.map(m => `
+        <tr><th>${m}</th>${matrix.datasets.map(d => {
+            const cell = cellByKey[m + '|' + d];
+            if (!cell) return '<td class="cell-blank">—</td>';
+            const cls = 'cell-' + cell.status;
+            const gapBadge = cell.status === 'blank' && cell.gap_id ? '<span class="gap-badge" title="Identified gap">Gap</span>' : '';
+            return `<td class="${cls}">${cell.summary || ''} ${gapBadge}</td>`;
+        }).join('')}</tr>`).join('');
+    table.innerHTML = head + body;
 }
 
 function downloadLiterature(format) {
@@ -249,19 +527,20 @@ function downloadLiterature(format) {
         content += `## Bibliography\n\n`;
         currentLiterature.bibliography.forEach((e,i) => { content += `${i+1}. ${e}\n`; });
         filename = `literature_${ts}.md`; mime = 'text/markdown';
-    } else if (format === 'latex') {
-        content = `\\documentclass{article}\n\\usepackage{cite}\n\\begin{document}\n`;
-        currentLiterature.sections.forEach(s => { content += `\\section{${s.title}}\n${s.content}\n\n`; });
-        content += `\\begin{thebibliography}{99}\n`;
-        currentLiterature.bibliography.forEach(e => { content += `${e}\n`; });
-        content += `\\end{thebibliography}\n\\end{document}`;
-        filename = `literature_${ts}.tex`; mime = 'text/x-tex';
     } else {
         content = JSON.stringify(currentLiterature, null, 2);
         filename = `literature_${ts}.json`; mime = 'application/json';
     }
     const a = Object.assign(document.createElement('a'), {href: URL.createObjectURL(new Blob([content],{type:mime})), download: filename});
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+function downloadLiteratureServer(fmt) {
+    if (!currentJobId) { alert('Generate literature first.'); return; }
+    if (Object.keys(editedEvidenceRows).length && fmt !== 'prisma_svg') {
+        alert('Note: in-page edits to the evidence table are not sent to server exports yet — this download uses the originally generated table.');
+    }
+    window.location = `/export-literature/${currentJobId}/${fmt}`;
 }
 </script>
 {% endblock %}

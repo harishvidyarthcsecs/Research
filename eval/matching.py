@@ -199,3 +199,41 @@ def match_gaps(predicted: List[Dict[str, Any]],
         hits = sum(1 for p in top if p["matched_gold_index"] is not None)
         result[f"precision_at_{k}"] = hits / len(top) if top else None
     return result
+
+
+# --------------------------------------------------------------------- #
+# Narrative sentences (evidence-grounded synthesis output)             #
+# --------------------------------------------------------------------- #
+
+def match_narrative(sentences: List[Dict[str, Any]],
+                    gold: List[Dict[str, Any]],
+                    threshold: float = GAP_SIM_THRESHOLD) -> Dict[str, Any]:
+    """Score generated narrative sentences against a gold list of sentences that
+    SHOULD survive citation verification (each gold entry: {"text": "..."}).
+
+    A predicted sentence is a hit iff it was marked verified by the grounding
+    check AND fuzzy-matches an unclaimed gold sentence. Precision is over the
+    verified predictions; recall is over the gold sentences. Under reject
+    grounding every emitted sentence is verified, so precision measures how many
+    survived sentences were actually corpus-supported; under scored grounding
+    unverified sentences are also emitted and count as non-hits.
+    """
+    gold_texts = [g.get("text", "") for g in gold if g.get("text")]
+    verified = [s for s in sentences if s.get("verified")]
+    matched_gold: set = set()
+    hits = 0
+    for s in verified:
+        for gi, gt in enumerate(gold_texts):
+            if gi in matched_gold:
+                continue
+            if fuzzy_ratio(s.get("text", ""), gt) >= threshold:
+                matched_gold.add(gi)
+                hits += 1
+                break
+    return {
+        "emitted_sentences": len(sentences),
+        "verified_sentences": len(verified),
+        "gold_supported": len(gold_texts),
+        "precision": hits / len(verified) if verified else None,
+        "recall": len(matched_gold) / len(gold_texts) if gold_texts else None,
+    }

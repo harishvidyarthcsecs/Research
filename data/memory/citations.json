@@ -1,65 +1,72 @@
 [
   {
-    "paper_id": "10_18421_tem152_24",
-    "bibtex": "@article{10_18421_tem152_24,\n  title={Evaluating Transformer-Based Foundation Models for Time-Series Forecasting Across Multiple Horizons},\n  author={Miranda Harizaj and Alfons Harizaj and Olgerta Idrizi},\n  journal={TEM Journal},\n  year={2026},\n  doi={10.18421/tem152-24},\n  url={https://doi.org/10.18421/tem152-24}\n}",
-    "apa": "Harizaj, M., Harizaj, A., & Idrizi, O. (2026). Evaluating Transformer-Based Foundation Models for Time-Series Forecasting Across Multiple Horizons. TEM Journal.",
-    "ieee": "Miranda Harizaj, Alfons Harizaj, Olgerta Idrizi, \"Evaluating Transformer-Based Foundation Models for Time-Series Forecasting Across Multiple Horizons,\" TEM Journal, 2026.",
-    "mla": "Harizaj, M., et al.. \"Evaluating Transformer-Based Foundation Models for Time-Series Forecasting Across Multiple Horizons.\" TEM Journal, 2026."
+    "paper_id": "10_5220_0014253100004070",
+    "bibtex": "@inproceedings{10_5220_0014253100004070,\n  title={Hybrid Drug-Drug Interaction Prediction: Combining Knowledge Graph Embeddings and Symbolic Learning},\n  author={Duru Han and Romy Vos and Annette Teije},\n  booktitle={Proceedings of the 19th International Joint Conference on Biomedical Engineering Systems and Technologies},\n  year={2026},\n  doi={10.5220/0014253100004070},\n  url={https://doi.org/10.5220/0014253100004070}\n}",
+    "apa": "Han, D., Vos, R., & Teije, A. (2026). Hybrid Drug-Drug Interaction Prediction: Combining Knowledge Graph Embeddings and Symbolic Learning. In Proceedings of the 19th International Joint Conference on Biomedical Engineering Systems and Technologies.",
+    "ieee": "Duru Han, Romy Vos, Annette Teije, \"Hybrid Drug-Drug Interaction Prediction: Combining Knowledge Graph Embeddings and Symbolic Learning,\" in Proceedings of the 19th International Joint Conference on Biomedical Engineering Systems and Technologies, 2026.",
+    "mla": "Han, D., et al.. \"Hybrid Drug-Drug Interaction Prediction: Combining Knowledge Graph Embeddings and Symbolic Learning.\" Proceedings of the 19th International Joint Conference on Biomedical Engineering Systems and Technologies, 2026."
   },
   {
-    "paper_id": "10_54254_2755_2721_96_20241351",
-    "bibtex": "@article{10_54254_2755_2721_96_20241351,\n  title={Reviews on Transformer-based Models for Financial Time Series Forecasting},\n  author={Heyi Lin},\n  journal={Applied and Computational Engineering},\n  year={2024},\n  doi={10.54254/2755-2721/96/20241351},\n  url={https://doi.org/10.54254/2755-2721/96/20241351}\n}",
-    "apa": "Lin, H. (2024). Reviews on Transformer-based Models for Financial Time Series Forecasting. Applied and Computational Engineering.",
-    "ieee": "Heyi Lin, \"Reviews on Transformer-based Models for Financial Time Series Forecasting,\" Applied and Computational Engineering, 2024.",
-    "mla": "Lin, H.. \"Reviews on Transformer-based Models for Financial Time Series Forecasting.\" Applied and Computational Engineering, 2024."
+    "paper_id": "10_1109_icsc64641_2025_00008",
+    "bibtex": "@inproceedings{10_1109_icsc64641_2025_00008,\n  title={A Survey on Knowledge Graph Structure and Knowledge Graph Embeddings},\n  author={Jeffrey Sardina and John D. Kelleher and Declan O'Sullivan},\n  booktitle={2025 19th International Conference on Semantic Computing (ICSC)},\n  year={2025},\n  doi={10.1109/icsc64641.2025.00008},\n  url={https://doi.org/10.1109/icsc64641.2025.00008}\n}",
+    "apa": "Sardina, J., Kelleher, J. D., & O'Sullivan, D. (2025). A Survey on Knowledge Graph Structure and Knowledge Graph Embeddings. In 2025 19th International Conference on Semantic Computing (ICSC).",
+    "ieee": "Jeffrey Sardina, John D. Kelleher, Declan O'Sullivan, \"A Survey on Knowledge Graph Structure and Knowledge Graph Embeddings,\" in 2025 19th International Conference on Semantic Computing (ICSC), 2025.",
+    "mla": "Sardina, J., et al.. \"A Survey on Knowledge Graph Structure and Knowledge Graph Embeddings.\" 2025 19th International Conference on Semantic Computing (ICSC), 2025."
   },
   {
-    "paper_id": "10_20944_preprints202502_0009_v1",
-    "bibtex": "@article{10_20944_preprints202502_0009_v1,\n  title={Transformer-Based Models for Probabilistic Time Series Forecasting with Explanatory Variables},\n  author={Ricardo Caetano and Jos\u00e9 Manuel Oliveira and Patr\u00edcia Ramos},\n  journal={},\n  year={2023},\n  doi={10.20944/preprints202502.0009.v1},\n  url={https://doi.org/10.20944/preprints202502.0009.v1}\n}",
-    "apa": "Caetano, R., Oliveira, J. M., & Ramos, P. (2023). Transformer-Based Models for Probabilistic Time Series Forecasting with Explanatory Variables. .",
-    "ieee": "Ricardo Caetano, Jos\u00e9 Manuel Oliveira, Patr\u00edcia Ramos, \"Transformer-Based Models for Probabilistic Time Series Forecasting with Explanatory Variables,\" , 2023.",
-    "mla": "Caetano, R., et al.. \"Transformer-Based Models for Probabilistic Time Series Forecasting with Explanatory Variables.\" , 2023."
+    "paper_id": "10_1016_b978_0_443_30040_0_00008_4",
+    "bibtex": "@article{10_1016_b978_0_443_30040_0_00008_4,\n  title={Integrated machine learning architectures for a knowledge graph embeddings (KGEs) approach},\n  author={Mamta Punjabi and Ratnalata Gupta and Arti Patle},\n  journal={Knowledge Graph-Based Methods for Automated Driving},\n  year={2025},\n  doi={10.1016/b978-0-443-30040-0.00008-4},\n  url={https://doi.org/10.1016/b978-0-443-30040-0.00008-4}\n}",
+    "apa": "Punjabi, M., Gupta, R., & Patle, A. (2025). Integrated machine learning architectures for a knowledge graph embeddings (KGEs) approach. Knowledge Graph-Based Methods for Automated Driving.",
+    "ieee": "Mamta Punjabi, Ratnalata Gupta, Arti Patle, \"Integrated machine learning architectures for a knowledge graph embeddings (KGEs) approach,\" Knowledge Graph-Based Methods for Automated Driving, 2025.",
+    "mla": "Punjabi, M., et al.. \"Integrated machine learning architectures for a knowledge graph embeddings (KGEs) approach.\" Knowledge Graph-Based Methods for Automated Driving, 2025."
   },
   {
-    "paper_id": "10_22541_au_174980723_33605220_v1",
-    "bibtex": "@article{10_22541_au_174980723_33605220_v1,\n  title={Fusing Convolutional and Transformer Models with Cross-Attention for Multi-Variate Wind Speed Time Series Forecasting},\n  author={Houren Jin and Weihao Qiu and Yuxian Zhao and Yunxuan Dong},\n  journal={},\n  year={2023},\n  doi={10.22541/au.174980723.33605220/v1},\n  url={https://doi.org/10.22541/au.174980723.33605220/v1}\n}",
-    "apa": "Jin, H., Qiu, W., Zhao, Y., & Dong, Y. (2023). Fusing Convolutional and Transformer Models with Cross-Attention for Multi-Variate Wind Speed Time Series Forecasting. .",
-    "ieee": "Houren Jin et al., \"Fusing Convolutional and Transformer Models with Cross-Attention for Multi-Variate Wind Speed Time Series Forecasting,\" , 2023.",
-    "mla": "Jin, H., et al.. \"Fusing Convolutional and Transformer Models with Cross-Attention for Multi-Variate Wind Speed Time Series Forecasting.\" , 2023."
+    "paper_id": "10_5220_0013028500003838",
+    "bibtex": "@inproceedings{10_5220_0013028500003838,\n  title={Multidimensional Knowledge Graph Embeddings for International Trade Flow Analysis},\n  author={Durgesh Nandini and Simon Bl\u00f6thner and Mirco Schoenfeld and Mario Larch},\n  booktitle={Proceedings of the 16th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management},\n  year={2024},\n  doi={10.5220/0013028500003838},\n  url={https://doi.org/10.5220/0013028500003838}\n}",
+    "apa": "Nandini, D., Bl\u00f6thner, S., Schoenfeld, M., & Larch, M. (2024). Multidimensional Knowledge Graph Embeddings for International Trade Flow Analysis. In Proceedings of the 16th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management.",
+    "ieee": "Durgesh Nandini et al., \"Multidimensional Knowledge Graph Embeddings for International Trade Flow Analysis,\" in Proceedings of the 16th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management, 2024.",
+    "mla": "Nandini, D., et al.. \"Multidimensional Knowledge Graph Embeddings for International Trade Flow Analysis.\" Proceedings of the 16th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management, 2024."
   },
   {
-    "paper_id": "10_21275_sr231125192357",
-    "bibtex": "@article{10_21275_sr231125192357,\n  title={Time Series Forecasting of Air Pollutant PM2.5 Using Transformer Architecture},\n  author={K. Azhahudurai and V. Veeramanikandan},\n  journal={International Journal of Science and Research (IJSR)},\n  year={2023},\n  doi={10.21275/sr231125192357},\n  url={https://doi.org/10.21275/sr231125192357}\n}",
-    "apa": "Azhahudurai, K. & Veeramanikandan, V. (2023). Time Series Forecasting of Air Pollutant PM2.5 Using Transformer Architecture. International Journal of Science and Research (IJSR).",
-    "ieee": "K. Azhahudurai, V. Veeramanikandan, \"Time Series Forecasting of Air Pollutant PM2.5 Using Transformer Architecture,\" International Journal of Science and Research (IJSR), 2023.",
-    "mla": "Azhahudurai, K., and V. Veeramanikandan. \"Time Series Forecasting of Air Pollutant PM2.5 Using Transformer Architecture.\" International Journal of Science and Research (IJSR), 2023."
+    "paper_id": "10_22215_etd_2018_12640",
+    "bibtex": "@article{10_22215_etd_2018_12640,\n  title={Improving Dialog Systems Using Knowledge Graph Embeddings},\n  author={Brian Carignan},\n  journal={},\n  year={2023},\n  doi={10.22215/etd/2018-12640},\n  url={https://doi.org/10.22215/etd/2018-12640}\n}",
+    "apa": "Carignan, B. (2023). Improving Dialog Systems Using Knowledge Graph Embeddings. .",
+    "ieee": "Brian Carignan, \"Improving Dialog Systems Using Knowledge Graph Embeddings,\" , 2023.",
+    "mla": "Carignan, B.. \"Improving Dialog Systems Using Knowledge Graph Embeddings.\" , 2023."
   },
   {
-    "paper_id": "10_2139_ssrn_4375798",
-    "bibtex": "@article{10_2139_ssrn_4375798,\n  title={Time Series Forecasting with Transformer Models and Application to Asset Management},\n  author={Edmond Lezmi and Jiali Xu},\n  journal={SSRN Electronic Journal},\n  year={2023},\n  doi={10.2139/ssrn.4375798},\n  url={https://doi.org/10.2139/ssrn.4375798}\n}",
-    "apa": "Lezmi, E. & Xu, J. (2023). Time Series Forecasting with Transformer Models and Application to Asset Management. SSRN Electronic Journal.",
-    "ieee": "Edmond Lezmi, Jiali Xu, \"Time Series Forecasting with Transformer Models and Application to Asset Management,\" SSRN Electronic Journal, 2023.",
-    "mla": "Lezmi, E., and Jiali Xu. \"Time Series Forecasting with Transformer Models and Application to Asset Management.\" SSRN Electronic Journal, 2023."
+    "paper_id": "10_1007_978_3_031_30387_6_2",
+    "bibtex": "@article{10_1007_978_3_031_30387_6_2,\n  title={From Word Embeddings to Knowledge Graph Embeddings},\n  author={Heiko Paulheim and Petar Ristoski and Jan Portisch},\n  journal={Synthesis Lectures on Data, Semantics, and Knowledge},\n  year={2023},\n  doi={10.1007/978-3-031-30387-6_2},\n  url={https://doi.org/10.1007/978-3-031-30387-6_2}\n}",
+    "apa": "Paulheim, H., Ristoski, P., & Portisch, J. (2023). From Word Embeddings to Knowledge Graph Embeddings. Synthesis Lectures on Data, Semantics, and Knowledge.",
+    "ieee": "Heiko Paulheim, Petar Ristoski, Jan Portisch, \"From Word Embeddings to Knowledge Graph Embeddings,\" Synthesis Lectures on Data, Semantics, and Knowledge, 2023.",
+    "mla": "Paulheim, H., et al.. \"From Word Embeddings to Knowledge Graph Embeddings.\" Synthesis Lectures on Data, Semantics, and Knowledge, 2023."
   },
   {
-    "paper_id": "10_14711_thesis_991013039228703412",
-    "bibtex": "@article{10_14711_thesis_991013039228703412,\n  title={Interpretable trend-seasonality pattern of transformer in time series forecasting},\n  author={Yaowei Huang},\n  journal={},\n  year={2023},\n  doi={10.14711/thesis-991013039228703412},\n  url={https://doi.org/10.14711/thesis-991013039228703412}\n}",
-    "apa": "Huang, Y. (2023). Interpretable trend-seasonality pattern of transformer in time series forecasting. .",
-    "ieee": "Yaowei Huang, \"Interpretable trend-seasonality pattern of transformer in time series forecasting,\" , 2023.",
-    "mla": "Huang, Y.. \"Interpretable trend-seasonality pattern of transformer in time series forecasting.\" , 2023."
+    "paper_id": "10_5220_0010646400003064",
+    "bibtex": "@inproceedings{10_5220_0010646400003064,\n  title={An Evaluation of Hubness Reduction Methods for Entity Alignment with Knowledge Graph Embeddings},\n  author={Daniel Obraczka and Erhard Rahm},\n  booktitle={Proceedings of the 13th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management},\n  year={2021},\n  doi={10.5220/0010646400003064},\n  url={https://doi.org/10.5220/0010646400003064}\n}",
+    "apa": "Obraczka, D. & Rahm, E. (2021). An Evaluation of Hubness Reduction Methods for Entity Alignment with Knowledge Graph Embeddings. In Proceedings of the 13th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management.",
+    "ieee": "Daniel Obraczka, Erhard Rahm, \"An Evaluation of Hubness Reduction Methods for Entity Alignment with Knowledge Graph Embeddings,\" in Proceedings of the 13th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management, 2021.",
+    "mla": "Obraczka, D., and Erhard Rahm. \"An Evaluation of Hubness Reduction Methods for Entity Alignment with Knowledge Graph Embeddings.\" Proceedings of the 13th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management, 2021."
   },
   {
-    "paper_id": "10_1016_b978_0_12_295183_1_50014_5",
-    "bibtex": "@article{10_1016_b978_0_12_295183_1_50014_5,\n  title={BUILDING MULTIPLE TIME SERIES FORECASTING MODELS},\n  author={C.W.J. GRANGER and PAUL NEWBOLD},\n  journal={Forecasting Economic Time Series},\n  year={1986},\n  doi={10.1016/b978-0-12-295183-1.50014-5},\n  url={https://doi.org/10.1016/b978-0-12-295183-1.50014-5}\n}",
-    "apa": "GRANGER, C. & NEWBOLD, P. (1986). BUILDING MULTIPLE TIME SERIES FORECASTING MODELS. Forecasting Economic Time Series.",
-    "ieee": "C.W.J. GRANGER, PAUL NEWBOLD, \"BUILDING MULTIPLE TIME SERIES FORECASTING MODELS,\" Forecasting Economic Time Series, 1986.",
-    "mla": "GRANGER, C., and PAUL NEWBOLD. \"BUILDING MULTIPLE TIME SERIES FORECASTING MODELS.\" Forecasting Economic Time Series, 1986."
+    "paper_id": "10_1145_3148011_3154466",
+    "bibtex": "@inproceedings{10_1145_3148011_3154466,\n  title={Learning Knowledge Graph Embeddings with Type Regularizer},\n  author={Bhushan Kotnis and Vivi Nastase},\n  booktitle={Proceedings of the Knowledge Capture Conference},\n  year={2017},\n  doi={10.1145/3148011.3154466},\n  url={https://doi.org/10.1145/3148011.3154466}\n}",
+    "apa": "Kotnis, B. & Nastase, V. (2017). Learning Knowledge Graph Embeddings with Type Regularizer. In Proceedings of the Knowledge Capture Conference.",
+    "ieee": "Bhushan Kotnis, Vivi Nastase, \"Learning Knowledge Graph Embeddings with Type Regularizer,\" in Proceedings of the Knowledge Capture Conference, 2017.",
+    "mla": "Kotnis, B., and Vivi Nastase. \"Learning Knowledge Graph Embeddings with Type Regularizer.\" Proceedings of the Knowledge Capture Conference, 2017."
   },
   {
-    "paper_id": "10_1017_cbo9781107049994_003",
-    "bibtex": "@article{10_1017_cbo9781107049994_003,\n  title={Univariate time series models},\n  author={},\n  journal={Forecasting, Structural Time Series Models and the Kalman Filter},\n  year={1990},\n  doi={10.1017/cbo9781107049994.003},\n  url={https://doi.org/10.1017/cbo9781107049994.003}\n}",
-    "apa": "Unknown Author (1990). Univariate time series models. Forecasting, Structural Time Series Models and the Kalman Filter.",
-    "ieee": "Unknown Author, \"Univariate time series models,\" Forecasting, Structural Time Series Models and the Kalman Filter, 1990.",
-    "mla": "Unknown Author. \"Univariate time series models.\" Forecasting, Structural Time Series Models and the Kalman Filter, 1990."
+    "paper_id": "10_31979_etd_547g_wpfg",
+    "bibtex": "@article{10_31979_etd_547g_wpfg,\n  title={HyperKGRec},\n  author={Sahil Atul Mhatre},\n  journal={},\n  year={2023},\n  doi={10.31979/etd.547g-wpfg},\n  url={https://doi.org/10.31979/etd.547g-wpfg}\n}",
+    "apa": "Mhatre, S. A. (2023). HyperKGRec. .",
+    "ieee": "Sahil Atul Mhatre, \"HyperKGRec,\" , 2023.",
+    "mla": "Mhatre, S. A.. \"HyperKGRec.\" , 2023."
+  },
+  {
+    "paper_id": "10_1162_qss_a_00183_v1_review2",
+    "bibtex": "@article{10_1162_qss_a_00183_v1_review2,\n  title={Review for \"The Microsoft Academic Knowledge Graph Enhanced: Author Name Disambiguation, Publication Classification, and Embeddings\"},\n  author={},\n  journal={},\n  year={2021},\n  doi={10.1162/qss_a_00183/v1/review2},\n  url={https://doi.org/10.1162/qss_a_00183/v1/review2}\n}",
+    "apa": "Unknown Author (2021). Review for \"The Microsoft Academic Knowledge Graph Enhanced: Author Name Disambiguation, Publication Classification, and Embeddings\". .",
+    "ieee": "Unknown Author, \"Review for \"The Microsoft Academic Knowledge Graph Enhanced: Author Name Disambiguation, Publication Classification, and Embeddings\",\" , 2021.",
+    "mla": "Unknown Author. \"Review for \"The Microsoft Academic Knowledge Graph Enhanced: Author Name Disambiguation, Publication Classification, and Embeddings\".\" , 2021."
   }
 ]

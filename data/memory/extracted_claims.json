@@ -1,20 +1,60 @@
 [
   {
-    "id": "10_22541_au_174980723_33605220_v1_regex_0_1785165082.509775",
-    "statement": "To address these limitations,\nthis research introduces and evaluates a novel hybrid architecture that\ncombines Spatio-Temporal Convolutional Sequence to Sequence models with\nTransformer encoders",
-    "paper_id": "10_22541_au_174980723_33605220_v1",
+    "id": "10_5220_0014253100004070_llm_1788861322.448945_0",
+    "statement": "A hybrid approach that combines knowledge graph embeddings and symbolic learning can be used for drug-drug interaction prediction.",
+    "paper_id": "10_5220_0014253100004070",
     "evidence": [
-      "To address these limitations,\nthis research introduces and evaluates a novel hybrid architecture that\ncombines Spatio-Temporal Convolutional Sequence to Sequence models with\nTransformer encoders"
+      "Hybrid Drug-Drug Interaction Prediction: Combining Knowledge Graph Embeddings and Symbolic Learning."
+    ],
+    "metrics": {},
+    "datasets": [],
+    "conditions": [],
+    "confidence": 0.6,
+    "limitations": [],
+    "metadata": {}
+  },
+  {
+    "id": "10_1016_b978-0-443-30040-0_00008-4_llm_1788861322.439179_0",
+    "statement": "Integrated machine learning architectures can be used for a knowledge graph embeddings (KGEs) approach.",
+    "paper_id": "10_1016_b978-0-443-30040-0_00008-4",
+    "evidence": [
+      "Integrated machine learning architectures for a knowledge graph embeddings (KGEs) approach."
+    ],
+    "metrics": {},
+    "datasets": [],
+    "conditions": [],
+    "confidence": 0.8,
+    "limitations": [],
+    "metadata": {}
+  },
+  {
+    "id": "10_5220_0013028500003838_llm_1788861322.424846_0",
+    "statement": "Multidimensional Knowledge Graph Embeddings can be used for International Trade Flow Analysis.",
+    "paper_id": "10_5220_0013028500003838",
+    "evidence": [
+      "Multidimensional Knowledge Graph Embeddings for International Trade Flow Analysis."
+    ],
+    "metrics": {},
+    "datasets": [],
+    "conditions": [],
+    "confidence": 0.6,
+    "limitations": [],
+    "metadata": {}
+  },
+  {
+    "id": "10_5220_0010646400003064_llm_1788861323.173988_0",
+    "statement": "The authors performed an evaluation of hubness reduction methods for entity alignment using knowledge graph embeddings.",
+    "paper_id": "10_5220_0010646400003064",
+    "evidence": [
+      "An Evaluation of Hubness Reduction Methods for Entity Alignment with Knowledge Graph Embeddings."
     ],
     "metrics": {},
     "datasets": [],
     "conditions": [
-      "Transformer encoders"
+      "using knowledge graph embeddings"
     ],
-    "confidence": 0.6,
-    "limitations": [
-      "To address these limitations,\nthis research introduces and evaluates a novel hybrid architecture that\ncombines Spatio-Temporal Convolutional Sequence to Sequence models with\nTransformer encoders"
-    ],
+    "confidence": 0.95,
+    "limitations": [],
     "metadata": {}
   }
 ]

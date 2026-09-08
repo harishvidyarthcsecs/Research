@@ -15,6 +15,7 @@ except ImportError:
 try:
     from ..models.data_models import PaperMetadata, Citation
     from .base_agent import BaseAgent
+    from .paper_ids import paper_id_for
 except ImportError:
     # Fallback to absolute imports for testing
     import sys
@@ -22,6 +23,7 @@ except ImportError:
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
     from models.data_models import PaperMetadata, Citation
     from agents.base_agent import BaseAgent
+    from agents.paper_ids import paper_id_for
 
 
 class CustomCitationFormatter(BaseAgent):
@@ -489,16 +491,8 @@ class CustomCitationFormatter(BaseAgent):
         return result
     
     def _generate_paper_id(self, paper: PaperMetadata) -> str:
-        """Generate unique paper ID."""
-        if paper.doi:
-            return re.sub(r'[^\w]', '_', paper.doi)
-        elif paper.arxiv_id:
-            return f"arxiv_{paper.arxiv_id.replace('.', '_')}"
-        else:
-            title_words = re.findall(r'\w+', paper.title.lower())[:3]
-            title_part = '_'.join(title_words)
-            author_part = re.sub(r'[^\w]', '', paper.authors[0].split()[-1].lower()) if paper.authors else "unknown"
-            return f"{author_part}_{title_part}_{paper.year}"
+        """Generate unique paper ID (canonical, shared with claim/evidence extraction)."""
+        return paper_id_for(paper)
     
     def filter_citations(self, citations: List[Dict[str, Any]], 
                         journal_filter: str = None, 

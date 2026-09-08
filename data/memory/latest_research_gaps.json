@@ -1,44 +1,49 @@
 [
   {
-    "id": "gap_1785165083.022618",
-    "description": "Limited use of cross-validation in research",
-    "gap_type": "methodological",
+    "id": "gap_1788861331.41067",
+    "description": "No standard benchmark datasets (FB15k, FB15k\u2011237, NELL\u2011995, WN18, WN18RR, YAGO3\u201110) are used in any claim.",
+    "gap_type": "dataset",
     "related_topics": [
-      "cross-validation"
+      "knowledge graph embeddings"
     ],
     "potential_questions": [
-      "How would results change with proper cross-validation?",
-      "What are the best practices for cross-validation in this domain?",
-      "Why is cross-validation not commonly used?"
+      "How do current KG embedding methods rank on the full suite of standard benchmarks?",
+      "What dataset characteristics (size, relation diversity) drive performance differences among embedding families?"
     ],
-    "priority": 0.8,
+    "priority": 0.916,
     "evidence": [
-      "0 of 1 claims mention cross-validation",
-      "Low-evidence: derived from only 1 extracted claims"
+      "Datasets used in claims: none detected",
+      "Expected datasets never used: FB15k, FB15k-237, NELL-995, WN18, WN18RR, YAGO3-10",
+      "Low-evidence: derived from only 4 extracted claims"
     ],
-    "score_components": {},
+    "score_components": {
+      "importance": 0.96,
+      "tractability": 0.85
+    },
     "rank": 1,
-    "detection_method": "rules"
+    "detection_method": "llm"
   },
   {
-    "id": "gap_1785165083.022645",
-    "description": "Limited use of ablation study in research",
-    "gap_type": "methodological",
+    "id": "gap_1788861331.410685",
+    "description": "Evaluation and benchmarking for KG completion and link prediction are absent, limiting comparative insight.",
+    "gap_type": "evaluation",
     "related_topics": [
-      "ablation study"
+      "knowledge graph embeddings"
     ],
     "potential_questions": [
-      "How would results change with proper ablation study?",
-      "What are the best practices for ablation study in this domain?",
-      "Why is ablation study not commonly used?"
+      "What is the effect of using hubness\u2011reduction metrics versus traditional MRR/Hit@K on reported performance?",
+      "Can a unified benchmarking suite that includes both static and temporal tasks be established for KG embeddings?"
     ],
-    "priority": 0.8,
+    "priority": 0.878,
     "evidence": [
-      "0 of 1 claims mention ablation study",
-      "Low-evidence: derived from only 1 extracted claims"
+      "Evaluation and benchmarking for KG completion and link prediction=0",
+      "Low-evidence: derived from only 4 extracted claims"
     ],
-    "score_components": {},
+    "score_components": {
+      "importance": 0.93,
+      "tractability": 0.8
+    },
     "rank": 2,
-    "detection_method": "rules"
+    "detection_method": "llm"
   }
 ]

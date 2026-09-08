@@ -23,6 +23,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
+from typing import Tuple
+
 from ..models.data_models import TopicMap, Claim, ResearchGap, Contradiction, PaperMetadata
 from .base_agent import BaseAgent
 from . import llm_client
@@ -498,6 +500,88 @@ class ResearchGapDetectionAgent(BaseAgent):
     def _rank_gaps(self, gaps: List[ResearchGap]) -> List[ResearchGap]:
         """Rank research gaps by priority."""
         return sorted(gaps, key=lambda g: g.priority, reverse=True)
+
+    # ------------------------------------------------------------------ #
+    # Wave 4: blank synthesis-matrix cell -> ResearchGap adapter          #
+    # ------------------------------------------------------------------ #
+
+    async def detect_matrix_gaps(
+        self, blank_cells: List[Tuple[str, str]], topic_map: TopicMap,
+    ) -> Dict[Tuple[str, str], ResearchGap]:
+        """Turn blank (method, dataset) synthesis-matrix cells into ResearchGap
+        objects, batched into one LLM call (cost control) with a deterministic
+        rules fallback for any pair the LLM omits or when no provider is available."""
+        if not blank_cells:
+            return {}
+
+        mode = self._resolve_mode()
+        if mode == "llm":
+            try:
+                gaps = self._llm_matrix_gaps(blank_cells, topic_map)
+                missing = [pair for pair in blank_cells if pair not in gaps]
+                if missing:
+                    gaps.update(self._rule_based_matrix_gaps(missing, topic_map))
+                return gaps
+            except Exception as e:
+                self.logger.warning(f"LLM matrix-gap detection unavailable ({e}); using rules")
+        return self._rule_based_matrix_gaps(blank_cells, topic_map)
+
+    def _rule_based_matrix_gaps(
+        self, blank_cells: List[Tuple[str, str]], topic_map: TopicMap,
+    ) -> Dict[Tuple[str, str], ResearchGap]:
+        out: Dict[Tuple[str, str], ResearchGap] = {}
+        for method, dataset in blank_cells:
+            desc = f"No study in the reviewed corpus applies {method} to {dataset}."
+            out[(method, dataset)] = ResearchGap(
+                description=desc,
+                gap_type="dataset",
+                related_topics=[method, dataset],
+                potential_questions=[f"How does {method} perform when evaluated on {dataset}?"],
+                evidence=[desc],
+                score_components={"importance": 0.5, "tractability": 0.6},
+                priority=0.5,
+                detection_method="rules",
+            )
+        return out
+
+    def _llm_matrix_gaps(
+        self, blank_cells: List[Tuple[str, str]], topic_map: TopicMap,
+    ) -> Dict[Tuple[str, str], ResearchGap]:
+        pairs_text = "\n".join(f"  - method={m}, dataset={d}" for m, d in blank_cells)
+        prompt = (
+            "The following (method, dataset) combinations have NO study in the reviewed "
+            f"corpus for the topic '{topic_map.main_topic}'. For each, propose one research "
+            "question a future study could answer. Return ONLY a JSON array of objects with "
+            "keys: method, dataset, potential_question, importance (0.0-1.0), "
+            "tractability (0.0-1.0: how feasible with current resources).\n\n"
+            f"Pairs:\n{pairs_text}"
+        )
+        raw = llm_client.chat(
+            prompt, max_tokens=2048, temperature=0.0,
+            tracker=self.tracker, purpose="matrix_gap_detection",
+        ).strip()
+        raw = re.sub(r"^```(?:json)?\s*", "", raw)
+        raw = re.sub(r"\s*```$", "", raw)
+        items = json.loads(raw)
+
+        out: Dict[Tuple[str, str], ResearchGap] = {}
+        for item in items:
+            method, dataset = item.get("method"), item.get("dataset")
+            if (method, dataset) not in blank_cells:
+                continue
+            importance = float(item.get("importance", 0.5))
+            tractability = float(item.get("tractability", 0.5))
+            out[(method, dataset)] = ResearchGap(
+                description=f"No study applies {method} to {dataset}.",
+                gap_type="dataset",
+                related_topics=[method, dataset],
+                potential_questions=[item.get("potential_question", "")],
+                evidence=[f"No evidence row has method={method} and dataset={dataset}"],
+                score_components={"importance": importance, "tractability": tractability},
+                priority=round(0.6 * importance + 0.4 * tractability, 3),
+                detection_method="llm",
+            )
+        return out
 
     def get_gap_summary(self, gaps: List[ResearchGap]) -> Dict[str, Any]:
         """Get summary statistics about research gaps."""

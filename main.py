@@ -1,107 +1,64 @@
-"""
-Main entry point for the Autonomous Research Agent System.
-"""
+"""Command-line entry point for the Autonomous Research Agent System."""
 import asyncio
 import json
+import sys
 from pathlib import Path
+
+from src.reporting.report_builder import build_report_dict, render_markdown
 from src.research_system import AutonomousResearchSystem
 
 
-async def main():
-    """Main function to run the research system."""
-    
-    # Initialize the research system
+DEFAULT_TOPIC = "Use of Graph Neural Networks in Drug Discovery"
+
+
+def _parse_args(argv):
+    flags = {arg for arg in argv if arg.startswith("--")}
+    unknown = flags - {"--markdown", "--report", "--json-only"}
+    if unknown:
+        raise ValueError(f"Unknown flag(s): {', '.join(sorted(unknown))}")
+    topic = " ".join(arg for arg in argv if not arg.startswith("--")).strip()
+    return topic or DEFAULT_TOPIC, bool(flags & {"--markdown", "--report"}), "--json-only" in flags
+
+
+async def main(argv=None):
+    """Run research and write the canonical JSON/optional Markdown reports."""
+    topic, write_markdown, json_only = _parse_args(sys.argv[1:] if argv is None else argv)
     system = AutonomousResearchSystem()
-    
-    # Example research topic
-    topic = "Use of Graph Neural Networks in Drug Discovery"
-    
-    print(f"🔬 Starting autonomous research on: {topic}")
-    print("=" * 60)
-    
-    try:
-        # Perform research
-        results = await system.research(topic)
-        
-        # Display results
-        print("\n📊 RESEARCH RESULTS")
-        print("=" * 60)
-        
-        print(f"\n🎯 Topic Map:")
-        print(f"Main Topic: {results.topic_map.main_topic}")
-        print(f"Subtopics: {', '.join(results.topic_map.subtopics[:5])}")
-        print(f"Methods: {', '.join(results.topic_map.methods[:5])}")
-        print(f"Keywords: {', '.join(results.topic_map.keywords[:10])}")
-        
-        print(f"\n📚 Papers Discovered: {len(results.papers)}")
-        for i, paper in enumerate(results.papers[:3], 1):
-            print(f"{i}. {paper.title}")
-            print(f"   Authors: {', '.join(paper.authors[:3])}")
-            print(f"   Year: {paper.year}, Venue: {paper.venue}")
-            print(f"   Relevance: {paper.relevance_score:.2f}")
-            print()
-        
-        print(f"\n🔍 Claims Extracted: {len(results.claims)}")
-        for i, claim in enumerate(results.claims[:3], 1):
-            print(f"{i}. {claim.statement[:100]}...")
-            if claim.metrics:
-                print(f"   Metrics: {claim.metrics}")
-            print(f"   Confidence: {claim.confidence:.2f}")
-            print()
-        
-        print(f"\n⚡ Contradictions Found: {len(results.contradictions)}")
-        print(f"🔬 Research Gaps Identified: {len(results.research_gaps)}")
-        print(f"📖 Citations Generated: {len(results.citations)}")
-        
-        # Save results to file
-        output_dir = Path("output")
-        output_dir.mkdir(exist_ok=True)
-        
-        # Save as JSON (simplified version)
-        output_data = {
-            "topic": results.topic_map.main_topic,
-            "generated_at": results.generated_at.isoformat(),
-            "summary": {
-                "papers_analyzed": results.total_papers_analyzed,
-                "claims_extracted": results.total_claims_extracted,
-                "contradictions_found": len(results.contradictions),
-                "research_gaps_identified": len(results.research_gaps)
-            },
-            "papers": [
-                {
-                    "title": paper.title,
-                    "authors": paper.authors,
-                    "year": paper.year,
-                    "venue": paper.venue,
-                    "relevance_score": paper.relevance_score
-                }
-                for paper in results.papers
-            ],
-            "top_claims": [
-                {
-                    "statement": claim.statement,
-                    "metrics": claim.metrics,
-                    "confidence": claim.confidence
-                }
-                for claim in results.claims[:10]
-            ]
-        }
-        
-        with open(output_dir / "research_results.json", "w") as f:
-            json.dump(output_data, f, indent=2, default=str)
-        
-        print(f"\n💾 Results saved to: {output_dir / 'research_results.json'}")
-        
-        # Display memory stats
-        memory_stats = await system.get_memory_stats()
-        print(f"\n🧠 Memory Stats:")
-        print(f"Cache size: {memory_stats['cache_size']}")
-        print(f"Knowledge nodes: {memory_stats['knowledge_nodes']}")
-        print(f"Knowledge edges: {memory_stats['knowledge_edges']}")
-        
-    except Exception as e:
-        print(f"❌ Error during research: {e}")
-        raise
+
+    if not json_only:
+        print(f"Starting autonomous research on: {topic}")
+
+    results = await system.research(topic)
+    report = build_report_dict(results)
+
+    output_dir = Path("output")
+    output_dir.mkdir(parents=True, exist_ok=True)
+    json_path = output_dir / "research_results.json"
+    with open(json_path, "w", encoding="utf-8") as handle:
+        json.dump(report, handle, indent=2, default=str)
+
+    if write_markdown:
+        markdown_path = output_dir / "research_results.md"
+        with open(markdown_path, "w", encoding="utf-8") as handle:
+            handle.write(render_markdown(report))
+
+    if not json_only:
+        print("\n" + (report["executive_summary"] or "No executive summary was generated."))
+        summary = report["summary"]
+        print(
+            f"Papers: {summary['papers_analyzed']} | Claims: {summary['claims_extracted']} | "
+            f"Contradictions: {summary['contradictions_found']} | "
+            f"Gaps: {summary['research_gaps_identified']}"
+        )
+        for recommendation in report["recommendations"][:3]:
+            print(
+                f"#{recommendation.get('rank', '-')} "
+                f"[{float(recommendation.get('priority') or 0):.0%}] "
+                f"{recommendation.get('title', '')}"
+            )
+        print(f"JSON report: {json_path}")
+        if write_markdown:
+            print(f"Markdown report: {output_dir / 'research_results.md'}")
 
 
 if __name__ == "__main__":

@@ -87,6 +87,14 @@ class JournalScopus(Base):
     journal_id = Column(Integer, ForeignKey("journals.id"), unique=True, nullable=False)
     citescore = Column(Float)
     percentile = Column(Float)
+    # Real Scopus CiteScore isn't available from any source we have automated,
+    # unauthenticated access to (scopus.com and ScienceDirect are both
+    # Cloudflare/captcha-blocked, confirmed live; Elsevier's public CiteScore
+    # page has no bulk data file). This is a clearly-separate, clearly-labeled
+    # proxy from OpenAlex's free API - never written into `citescore` above,
+    # which stays NULL until a real Scopus figure is available.
+    citescore_estimated = Column(Float)
+    citescore_estimate_source = Column(String(50))  # e.g. "openalex_2yr_mean_citedness"
     asjc_codes = Column(String(200))
     active_status = Column(String(20))  # active | discontinued
     coverage_years = Column(String(50))
@@ -199,6 +207,12 @@ class JournalAPCConsolidated(Base):
     journal_id = Column(Integer, ForeignKey("journals.id"), unique=True, nullable=False)
     apc_usd = Column(Float)
     apc_source = Column(String(50))  # doaj_live | publisher_bulk:<name> | openalex_estimate | unknown
+    # When a same-publisher bulk price and DOAJ's price both exist and
+    # disagree by a meaningful margin, apc_usd holds the publisher-bulk
+    # figure (more authoritative for what they currently charge) but this
+    # field records the DOAJ figure too, so the disagreement is visible
+    # rather than silently erased.
+    apc_discrepancy_notes = Column(Text)
     waiver_available = Column(Boolean)
     waiver_notes = Column(Text)
     confidence = Column(String(20))  # verified | estimated | unknown

@@ -6,13 +6,27 @@ annotations.
 Usage:
     python -m eval.run_eval                       # all topics, LLM mode
     python -m eval.run_eval --mode pattern        # rule-based ablation
+    python -m eval.run_eval --mode scored         # matched scored-grounding ablation
     python -m eval.run_eval --topics slug1,slug2  # subset
 
+Modes:
+    llm      research pipeline in LLM mode; evidence-grounded synthesis with the
+             build-time citation gate ("reject").
+    pattern  research pipeline with rule-based extraction fallbacks; gate on.
+    scored   research pipeline in LLM mode, but the evidence-grounded synthesis
+             sub-pipeline KEEPS unverifiable evidence rows and narrative
+             sentences (with a grounding score / verified flag) instead of
+             rejecting them. This is the ablation the paper contrasts against
+             "reject" on otherwise identical decomposition and LLM calls.
+
 Writes eval/results/<run_id>/:
-    <slug>/predictions.json   raw pipeline outputs
-    <slug>/metrics.json       per-topic scores
-    summary.json / summary.md aggregate table (incl. cost + parse failures)
-    failure_modes.md          missed golds and FPs on known negatives
+    <slug>/predictions.json   raw pipeline outputs, incl. a "narrative" block
+    <slug>/metrics.json       per-topic scores, incl. "downstream_errors"
+    summary.json / summary.md aggregate table (adds: unsupported sentences in
+                              narrative, retained FP contradictions, narrative
+                              build failed)
+    failure_modes.md          missed golds, FPs on known negatives, narrative
+                              gate outcome
 """
 import argparse
 import asyncio
@@ -79,6 +93,49 @@ def predictions_from_results(results) -> dict:
     }
 
 
+def run_literature(results, grounding_mode: str) -> dict:
+    """Run the evidence-grounded synthesis sub-pipeline on the same research
+    results and report the verify-or-reject gate's downstream effect.
+
+    reject mode: an unsupported sentence raises UnsupportedSentenceError and the
+    build fails (build_failed=True; unsupported_sentences=0 by construction).
+    scored mode: unsupported sentences are kept with verified=False and counted.
+    Any other failure is recorded in "error" without aborting the eval run.
+    """
+    from src.agents.literature_builder_agent import LiteratureBuilderAgent
+    from src.agents.narrative_verifier import UnsupportedSentenceError
+
+    empty = {
+        "grounding_mode": grounding_mode, "build_failed": False, "error": None,
+        "total_sentences": 0, "unsupported_sentences": 0,
+        "evidence_rows": 0, "evidence_rows_no_verbatim": 0, "sentences": [],
+    }
+    agent = LiteratureBuilderAgent(grounding_mode=grounding_mode)
+    try:
+        doc = asyncio.run(agent.process(results))
+    except UnsupportedSentenceError as e:
+        return {**empty, "build_failed": True, "error": str(e)}
+    except Exception as e:  # noqa: BLE001 - record, don't crash the eval run
+        return {**empty, "error": f"{type(e).__name__}: {e}"}
+
+    sents = [s for sec in doc.sections for s in (sec.sentences or [])]
+    rows = doc.evidence_table or []
+    return {
+        "grounding_mode": grounding_mode,
+        "build_failed": False,
+        "error": None,
+        "total_sentences": len(sents),
+        "unsupported_sentences": sum(1 for s in sents if not s.verified),
+        "evidence_rows": len(rows),
+        "evidence_rows_no_verbatim": sum(1 for r in rows if not r.verbatim_evidence),
+        "sentences": [
+            {"text": s.text, "verified": bool(s.verified),
+             "cite_keys": list(s.cite_keys)}
+            for s in sents
+        ],
+    }
+
+
 def evaluate_topic(topic_dir: Path, predictions: dict, k: int) -> dict:
     metrics = {}
     gold_claims = load_json(topic_dir / "gold_claims.json", [])
@@ -105,6 +162,26 @@ def evaluate_topic(topic_dir: Path, predictions: dict, k: int) -> dict:
         "llm_calls": predictions["usage"].get("calls", 0),
         "parse_failures": predictions["usage"].get("parse_failures", 0),
     }
+
+    # ---- downstream-error metrics (verify-or-reject vs scored grounding) ----
+    narr = predictions.get("narrative") or {}
+    con = metrics.get("contradictions", {})
+    metrics["downstream_errors"] = {
+        "unsupported_sentences_in_narrative": (
+            0 if narr.get("build_failed") else int(narr.get("unsupported_sentences", 0))),
+        "retained_fp_contradictions": (
+            len(con.get("false_positives_on_negatives", [])) if con else 0),
+        "narrative_build_failed": bool(narr.get("build_failed")),
+        "narrative_total_sentences": int(narr.get("total_sentences", 0)),
+        "evidence_rows_no_verbatim": int(narr.get("evidence_rows_no_verbatim", 0)),
+        "narrative_error": narr.get("error"),
+    }
+
+    gold_narrative = load_json(topic_dir / "gold_narrative.json", [])
+    if gold_narrative and narr.get("sentences"):
+        metrics["narrative"] = matching.match_narrative(
+            narr["sentences"], gold_narrative)
+
     return metrics
 
 
@@ -129,11 +206,20 @@ def write_failure_modes(run_dir: Path, per_topic: dict) -> None:
         gaps = metrics.get("gaps")
         if gaps and gaps.get("missed_gold_indices"):
             lines.append(f"- Missed gold gaps: indices {gaps['missed_gold_indices']}")
+        de = metrics.get("downstream_errors", {})
+        if de.get("narrative_build_failed"):
+            lines.append(f"- Narrative build FAILED (reject gate fired): "
+                         f"{de.get('narrative_error', '')}")
+        elif de.get("unsupported_sentences_in_narrative"):
+            lines.append(f"- {de['unsupported_sentences_in_narrative']} unsupported "
+                         f"sentence(s) reached the final narrative (scored grounding)")
+        elif de.get("narrative_error"):
+            lines.append(f"- Narrative build error: {de['narrative_error']}")
         lines.append("")
     (run_dir / "failure_modes.md").write_text("\n".join(lines))
 
 
-def write_summary(run_dir: Path, per_topic: dict, mode: str) -> None:
+def summary_rows(per_topic: dict) -> list:
     rows = []
     for slug, data in per_topic.items():
         metrics = data["metrics"]
@@ -141,7 +227,7 @@ def write_summary(run_dir: Path, per_topic: dict, mode: str) -> None:
         con = metrics.get("contradictions", {}).get("pair_level", {})
         gaps = metrics.get("gaps", {})
         cost = metrics.get("cost", {})
-
+        de = metrics.get("downstream_errors", {})
         rows.append({
             "topic": slug,
             "claim_f1": claims.get("f1"),
@@ -150,9 +236,17 @@ def write_summary(run_dir: Path, per_topic: dict, mode: str) -> None:
             "con_fp_rate_neg": con.get("false_positive_rate_on_negatives"),
             "gap_p_at_3": gaps.get("precision_at_3"),
             "gap_recall": gaps.get("recall"),
+            "unsup_sents": de.get("unsupported_sentences_in_narrative"),
+            "retained_fp_contra": de.get("retained_fp_contradictions"),
+            "nar_build_fail": de.get("narrative_build_failed"),
             "cost_usd": cost.get("estimated_cost_usd"),
             "parse_failures": cost.get("parse_failures"),
         })
+    return rows
+
+
+def write_summary(run_dir: Path, per_topic: dict, mode: str) -> None:
+    rows = summary_rows(per_topic)
 
     (run_dir / "summary.json").write_text(json.dumps({
         "mode": mode,
@@ -161,11 +255,14 @@ def write_summary(run_dir: Path, per_topic: dict, mode: str) -> None:
     }, indent=2))
 
     header = ("| topic | claim F1 | contra P (labeled) | contra R | "
-              "FP rate (neg) | gap P@3 | gap R | cost $ | parse fails |")
-    sep = "|" + "---|" * 9
+              "FP rate (neg) | gap P@3 | gap R | unsup sents | "
+              "retained FP contra | narrative build fail | cost $ | parse fails |")
+    sep = "|" + "---|" * 12
     lines = [f"# Eval summary — mode: {mode}", "", header, sep]
 
     def fmt(value):
+        if isinstance(value, bool):
+            return "yes" if value else "no"
         if isinstance(value, float):
             return f"{value:.3f}"
         if isinstance(value, int):
@@ -177,6 +274,8 @@ def write_summary(run_dir: Path, per_topic: dict, mode: str) -> None:
             row["topic"], fmt(row["claim_f1"]), fmt(row["con_precision"]),
             fmt(row["con_recall"]), fmt(row["con_fp_rate_neg"]),
             fmt(row["gap_p_at_3"]), fmt(row["gap_recall"]),
+            fmt(row["unsup_sents"]), fmt(row["retained_fp_contra"]),
+            fmt(row["nar_build_fail"]),
             fmt(row["cost_usd"]), fmt(row["parse_failures"]),
         ]) + " |")
     (run_dir / "summary.md").write_text("\n".join(lines))
@@ -186,14 +285,17 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--topics", default=None,
                         help="comma-separated slugs (default: all)")
-    parser.add_argument("--mode", choices=["llm", "pattern"], default="llm",
-                        help="pattern = rule-based ablation")
+    parser.add_argument("--mode", choices=["llm", "pattern", "scored"], default="llm",
+                        help="pattern = rule-based ablation; "
+                             "scored = matched scored-grounding ablation")
     parser.add_argument("--k", type=int, default=5, help="k for precision@k")
     args = parser.parse_args()
 
     if args.mode == "pattern":
         os.environ["CONTRADICTION_MODE"] = "pattern"
         os.environ["GAP_MODE"] = "rules"
+
+    grounding = "scored" if args.mode == "scored" else "reject"
 
     from src.research_system import AutonomousResearchSystem
 
@@ -221,6 +323,7 @@ def main() -> None:
         system = AutonomousResearchSystem()
         results = asyncio.run(system.research(topic_info["topic"], papers=frozen))
         predictions = predictions_from_results(results)
+        predictions["narrative"] = run_literature(results, grounding)
         metrics = evaluate_topic(topic_dir, predictions, args.k)
 
         out_dir = run_dir / slug
@@ -231,6 +334,7 @@ def main() -> None:
             json.dumps(metrics, indent=2, default=str))
         per_topic[slug] = {"metrics": metrics}
         print(json.dumps(metrics.get("cost", {}), indent=2))
+        print(json.dumps(metrics.get("downstream_errors", {}), indent=2))
 
     write_summary(run_dir, per_topic, args.mode)
     write_failure_modes(run_dir, per_topic)

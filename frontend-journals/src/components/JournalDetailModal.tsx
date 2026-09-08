@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useJournalDetail } from '../hooks/useJournals'
 import { Badge, ProvenanceChip, QuartileBadge } from './Badges'
-import type { RiskSeverity } from '../types/journal'
+import type { ApcStatus, CiteScoreStatus, JournalDetail, RiskSeverity } from '../types/journal'
 
 interface JournalDetailModalProps {
   issn: string | null
@@ -37,6 +37,36 @@ function Field({ label, value }: { label: string; value: ReactNode }) {
       <dd className="text-sm text-neutral-800 dark:text-neutral-100">{value ?? '—'}</dd>
     </div>
   )
+}
+
+function citeScoreText(data: JournalDetail): string | number {
+  if (data.scopus?.citescore != null) return data.scopus.citescore
+  if (data.citescore_status === 'estimated' && data.scopus?.citescore_estimated != null) {
+    return `≈ ${data.scopus.citescore_estimated.toFixed(2)} (estimated)`
+  }
+  const labels: Record<CiteScoreStatus, string> = {
+    real: 'Not reported',
+    estimated: 'Not reported',
+    not_in_scopus: 'Not applicable (not indexed in Scopus)',
+    unknown: 'Not reported',
+  }
+  return labels[data.citescore_status]
+}
+
+function apcText(data: JournalDetail): string {
+  if (data.apc_consolidated?.apc_usd != null) {
+    const prefix = data.apc_status === 'estimated' ? '≈ ' : ''
+    return `${prefix}$${data.apc_consolidated.apc_usd.toLocaleString()} USD${
+      data.apc_status === 'estimated' ? ' (estimated)' : ''
+    }`
+  }
+  const labels: Record<ApcStatus, string> = {
+    known: 'Not reported',
+    estimated: 'Not reported',
+    not_charged: 'No APC (free to publish)',
+    unknown: 'Not reported',
+  }
+  return labels[data.apc_status]
 }
 
 export function JournalDetailModal({ issn, onClose }: JournalDetailModalProps) {
@@ -108,6 +138,16 @@ export function JournalDetailModal({ issn, onClose }: JournalDetailModalProps) {
                     <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
                       {data.publisher ?? 'Unknown publisher'} · {data.country ?? 'Unknown country'} · ISSN {data.issn}
                     </p>
+                    {data.homepage_url && (
+                      <a
+                        href={data.homepage_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-2 inline-flex text-sm font-medium text-accent-600 hover:underline dark:text-accent-400"
+                      >
+                        Visit journal website ↗
+                      </a>
+                    )}
                   </div>
                   <button
                     type="button"
@@ -150,18 +190,29 @@ export function JournalDetailModal({ issn, onClose }: JournalDetailModalProps) {
 
                 <Section title="Scopus">
                   {data.scopus ? (
-                    <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                      <Field label="CiteScore" value={data.scopus.citescore} />
-                      <Field label="Percentile" value={data.scopus.percentile ? `${data.scopus.percentile}%` : null} />
-                      <Field label="ASJC codes" value={data.scopus.asjc_codes} />
-                      <Field label="Status" value={data.scopus.active_status} />
-                    </dl>
+                    <div className="space-y-2">
+                      <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                        <Field
+                          label="CiteScore"
+                          value={
+                            citeScoreText(data)
+                          }
+                        />
+                        <Field label="Percentile" value={data.scopus.percentile ? `${data.scopus.percentile}%` : null} />
+                        <Field label="ASJC codes" value={data.scopus.asjc_codes} />
+                        <Field label="Status" value={data.scopus.active_status} />
+                      </dl>
+                      {data.scopus.citescore == null && data.scopus.citescore_estimated != null && (
+                        <p className="text-xs text-neutral-400 dark:text-neutral-500">
+                          Real Scopus CiteScore isn't available (scopus.com and
+                          ScienceDirect are both login/captcha-gated) — the figure
+                          above is an OpenAlex citation-rate estimate, not the
+                          official Scopus metric.
+                        </p>
+                      )}
+                    </div>
                   ) : (
-                    <p className="text-sm text-neutral-400">
-                      Unavailable — Scopus data requires a Scopus/Elsevier account
-                      (confirmed: scopus.com redirects to Elsevier's login, no public
-                      source list exists). Not shown here rather than guessed.
-                    </p>
+                    <Field label="CiteScore" value={citeScoreText(data)} />
                   )}
                 </Section>
 
@@ -235,15 +286,19 @@ export function JournalDetailModal({ issn, onClose }: JournalDetailModalProps) {
                     <div className="space-y-2">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="text-sm font-semibold text-neutral-800 dark:text-neutral-100">
-                          {data.apc_consolidated.apc_usd != null
-                            ? `$${data.apc_consolidated.apc_usd.toLocaleString()} USD`
-                            : 'No APC figure available'}
+                          {apcText(data)}
                         </span>
                         <ProvenanceChip confidence={data.apc_consolidated.confidence} />
                       </div>
                       <p className="text-xs text-neutral-400 dark:text-neutral-500">
                         Source: {data.apc_consolidated.source ?? 'unknown'}
                       </p>
+                      {data.apc_consolidated.discrepancy_notes && (
+                        <div className="rounded-lg border border-sky-200 bg-sky-50 p-3 text-xs text-sky-800 dark:border-sky-500/30 dark:bg-sky-500/10 dark:text-sky-300">
+                          <p className="mb-1 font-semibold">Sources disagree on this APC</p>
+                          <p>{data.apc_consolidated.discrepancy_notes}</p>
+                        </div>
+                      )}
                       {data.apc_consolidated.waiver_available && (
                         <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300">
                           <p className="mb-1 font-semibold">Waiver may be available — advisory only</p>
@@ -255,7 +310,7 @@ export function JournalDetailModal({ issn, onClose }: JournalDetailModalProps) {
                       )}
                     </div>
                   ) : (
-                    <p className="text-sm text-neutral-400">No consolidated APC data available.</p>
+                    <p className="text-sm text-neutral-400">{apcText(data)}</p>
                   )}
                 </Section>
 

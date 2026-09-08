@@ -32,7 +32,28 @@ _FRONTEND_DIST = os.path.abspath(
 )
 
 
-def _journal_summary(journal: Journal, apc, scimago, doaj, cfr) -> dict:
+def _apc_status(apc, doaj) -> str:
+    confidence = apc.confidence if apc else None
+    if confidence == "verified":
+        return "known"
+    if confidence == "estimated":
+        return "estimated"
+    if doaj and doaj.in_doaj and doaj.has_apc is False:
+        return "not_charged"
+    return "unknown"
+
+
+def _citescore_status(scopus) -> str:
+    if scopus is None:
+        return "not_in_scopus"
+    if scopus.citescore is not None:
+        return "real"
+    if scopus.citescore_estimated is not None:
+        return "estimated"
+    return "unknown"
+
+
+def _journal_summary(journal: Journal, apc, scimago, scopus, doaj, cfr) -> dict:
     return {
         "issn": journal.issn_l,
         "title": journal.title,
@@ -48,6 +69,9 @@ def _journal_summary(journal: Journal, apc, scimago, doaj, cfr) -> dict:
         "apc_usd": apc.apc_usd if apc else None,
         "apc_source": apc.apc_source if apc else "unknown",
         "apc_confidence": apc.confidence if apc else "unknown",
+        "apc_status": _apc_status(apc, doaj),
+        "apc_discrepancy_notes": apc.apc_discrepancy_notes if apc else None,
+        "citescore_status": _citescore_status(scopus),
         "waiver_available": apc.waiver_available if apc else None,
         "in_annauniv_cfr": bool(cfr and cfr.listed),
     }
@@ -67,9 +91,13 @@ def api_search_journals():
 
     with session_scope() as session:
         query = (
-            session.query(Journal, JournalAPCConsolidated, JournalScimago, JournalDOAJ, JournalAnnaUnivCFR)
+            session.query(
+                Journal, JournalAPCConsolidated, JournalScimago, JournalScopus,
+                JournalDOAJ, JournalAnnaUnivCFR,
+            )
             .outerjoin(JournalAPCConsolidated, JournalAPCConsolidated.journal_id == Journal.id)
             .outerjoin(JournalScimago, JournalScimago.journal_id == Journal.id)
+            .outerjoin(JournalScopus, JournalScopus.journal_id == Journal.id)
             .outerjoin(JournalDOAJ, JournalDOAJ.journal_id == Journal.id)
             .outerjoin(JournalAnnaUnivCFR, JournalAnnaUnivCFR.journal_id == Journal.id)
         )
@@ -101,7 +129,10 @@ def api_search_journals():
 
     return jsonify({
         "total": total, "page": page, "page_size": page_size,
-        "results": [_journal_summary(j, apc, sci, doaj, cfr) for j, apc, sci, doaj, cfr in rows],
+        "results": [
+            _journal_summary(j, apc, sci, scopus, doaj, cfr)
+            for j, apc, sci, scopus, doaj, cfr in rows
+        ],
     })
 
 
@@ -145,6 +176,8 @@ def api_journal_detail(issn: str):
             "issn": journal.issn_l, "title": journal.title,
             "publisher": journal.publisher, "country": journal.country,
             "homepage_url": journal.homepage_url,
+            "apc_status": _apc_status(apc, doaj),
+            "citescore_status": _citescore_status(scopus),
             "scimago": {
                 "sjr": scimago.sjr_score, "quartile": scimago.sjr_best_quartile,
                 "h_index": scimago.h_index, "subject_category": scimago.subject_category,
@@ -153,6 +186,8 @@ def api_journal_detail(issn: str):
             } if scimago else None,
             "scopus": {
                 "citescore": scopus.citescore, "percentile": scopus.percentile,
+                "citescore_estimated": scopus.citescore_estimated,
+                "citescore_estimate_source": scopus.citescore_estimate_source,
                 "asjc_codes": scopus.asjc_codes, "active_status": scopus.active_status,
             } if scopus else None,
             "mjl": {
@@ -169,6 +204,7 @@ def api_journal_detail(issn: str):
             "in_annauniv_cfr": bool(cfr and cfr.listed),
             "apc_consolidated": {
                 "apc_usd": apc.apc_usd, "source": apc.apc_source, "confidence": apc.confidence,
+                "discrepancy_notes": apc.apc_discrepancy_notes,
                 "waiver_available": apc.waiver_available, "waiver_notes": apc.waiver_notes,
             } if apc else None,
             "publisher_apcs": [
@@ -180,6 +216,56 @@ def api_journal_detail(issn: str):
                 {"type": f.flag_type, "severity": f.severity, "reason": f.reason, "source": f.source}
                 for f in risk_flags
             ],
+        })
+
+
+@journals_bp.route("/api/admin/coverage")
+def api_coverage():
+    """Live-computed data-completeness table - how many journals actually
+    have each field populated right now, not a hardcoded snapshot. Some
+    rows are structural ceilings (DOAJ only covers OA journals, CFR is a
+    deliberately curated subset, real Scopus CiteScore isn't reachable at
+    all) rather than gaps to close - `note` says which."""
+    with session_scope() as session:
+        total = session.query(Journal).count()
+
+        def pct(n):
+            return {"count": n, "total": total, "pct": round(100 * n / total, 1) if total else 0}
+
+        return jsonify({
+            "total_journals": total,
+            "coverage": {
+                "scimago_quartile": {**pct(
+                    session.query(JournalScimago).filter(JournalScimago.sjr_best_quartile.isnot(None)).count()
+                ), "note": "SCImago only ranks Scopus-indexed journals - a real ceiling, not all closeable"},
+                "scopus_row": pct(session.query(JournalScopus).count()),
+                "citescore_real": {**pct(
+                    session.query(JournalScopus).filter(JournalScopus.citescore.isnot(None)).count()
+                ), "note": "Structural - not reachable from any source we can automate (scopus.com/ScienceDirect both blocked)"},
+                "citescore_estimated": pct(
+                    session.query(JournalScopus).filter(JournalScopus.citescore_estimated.isnot(None)).count()
+                ),
+                "mjl": {**pct(session.query(JournalMJL).count()),
+                        "note": "Needs your free WoS account CSV export - no further automation possible"},
+                "doaj": {**pct(session.query(JournalDOAJ).count()),
+                         "note": "Structural ceiling - DOAJ only lists open-access journals"},
+                "annauniv_cfr": {**pct(session.query(JournalAnnaUnivCFR).count()),
+                                 "note": "Structural - CFR is a deliberately curated subset, not meant to cover everything"},
+                "publisher_apc_any": pct(session.query(JournalPublisherAPC.journal_id).distinct().count()),
+                "apc_usd_known": pct(
+                    session.query(JournalAPCConsolidated).filter(JournalAPCConsolidated.apc_usd.isnot(None)).count()
+                ),
+                "waiver_known": pct(
+                    session.query(JournalAPCConsolidated).filter(JournalAPCConsolidated.waiver_available.isnot(None)).count()
+                ),
+                "publisher_field": pct(
+                    session.query(Journal).filter(Journal.publisher.isnot(None), Journal.publisher != "").count()
+                ),
+                "country_field": pct(
+                    session.query(Journal).filter(Journal.country.isnot(None), Journal.country != "").count()
+                ),
+                "homepage_url": pct(session.query(Journal).filter(Journal.homepage_url.isnot(None)).count()),
+            },
         })
 
 

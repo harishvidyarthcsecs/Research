@@ -141,6 +141,10 @@ def live_cross_check(limit: int = 200, delay_s: float = 0.6):
                         doaj_row.apc_amount = live["apc_amount"]
                         doaj_row.apc_currency = live["apc_currency"]
                 counters.upserted += 1
+                if counters.upserted % 100 == 0:
+                    # Commit periodically - this can run for hours over the
+                    # full DOAJ corpus, don't risk one giant transaction.
+                    session.commit()
                 time.sleep(delay_s)
 
 

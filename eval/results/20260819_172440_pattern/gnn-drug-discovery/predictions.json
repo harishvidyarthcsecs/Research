@@ -1,0 +1,74 @@
+{
+  "claims": [
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "The integration of artificial intelligence (AI) in drug discovery has profoundly transformed the pharmaceutical landscape by significantly accelerating the identification of potential drug candidates.",
+      "confidence": 0.935
+    },
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "Graph Neural Networks (GNNs) have proven to be particularly effective in modeling molecular structures, optimizing drug-target interactions, and enhancing prediction accuracy.",
+      "confidence": 0.85
+    },
+    {
+      "paper_id": "10_1016_j_drudis_2021_02_011",
+      "statement": "Graph neural networks can be used for automated de novo drug design.",
+      "confidence": 0.7
+    }
+  ],
+  "contradictions": [],
+  "gaps": [
+    {
+      "description": "Limited research on Molecular property prediction using GNNs (e.g., solubility, toxicity, bioactivity)",
+      "gap_type": "unexplored_subtopic",
+      "rank": 1,
+      "priority": 1.0,
+      "evidence": [
+        "Only 0 of 3 claims mention this subtopic",
+        "Low-evidence: derived from only 3 extracted claims"
+      ],
+      "detection_method": "rules"
+    },
+    {
+      "description": "Limited research on Protein\u2013ligand interaction modeling and binding affinity prediction",
+      "gap_type": "unexplored_subtopic",
+      "rank": 2,
+      "priority": 1.0,
+      "evidence": [
+        "Only 0 of 3 claims mention this subtopic",
+        "Low-evidence: derived from only 3 extracted claims"
+      ],
+      "detection_method": "rules"
+    }
+  ],
+  "usage": {
+    "calls": 6,
+    "prompt_tokens": 1214,
+    "completion_tokens": 1831,
+    "estimated_cost_usd": 0.001555,
+    "parse_failures": 0,
+    "by_purpose": {
+      "topic_expansion": {
+        "calls": 1,
+        "prompt_tokens": 198,
+        "completion_tokens": 555,
+        "estimated_cost_usd": 0.000446,
+        "parse_failures": 0
+      },
+      "claim_extraction": {
+        "calls": 5,
+        "prompt_tokens": 1016,
+        "completion_tokens": 1276,
+        "estimated_cost_usd": 0.001109,
+        "parse_failures": 0
+      }
+    }
+  },
+  "run_metadata": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.0,
+    "duration_s": 33.3,
+    "frozen_corpus": true
+  }
+}

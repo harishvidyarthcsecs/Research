@@ -80,6 +80,84 @@
 }
 .loading-research.active { display: flex; }
 
+/* ── Live run progress ─────────────────────────────────────────────────── */
+.progress-panel {
+    display: none; margin-top: 16px; padding: 16px;
+    background: rgba(88,166,255,0.05); border: 1px solid rgba(88,166,255,0.18);
+    border-radius: 10px;
+}
+.progress-panel.active { display: block; }
+
+.progress-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap; margin-bottom: 14px;
+}
+.progress-title { font-size: 13.5px; font-weight: 600; color: var(--accent-blue); }
+.progress-topic {
+    font-size: 12px; color: var(--text-muted); margin-top: 2px;
+    max-width: 460px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.progress-meta { display: flex; align-items: center; gap: 14px; }
+.progress-metric { text-align: right; }
+.progress-metric-value { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.progress-metric-label { font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; }
+
+.btn-cancel-run {
+    background: transparent; color: var(--accent-red);
+    border: 1px solid rgba(247,129,102,0.4); border-radius: 7px;
+    padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer;
+    transition: background 0.16s, border-color 0.16s;
+}
+.btn-cancel-run:hover:not(:disabled) { background: rgba(247,129,102,0.1); border-color: var(--accent-red); }
+.btn-cancel-run:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.stage-list { display: flex; flex-direction: column; gap: 2px; }
+.stage-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 10px; border-radius: 7px;
+    font-size: 12.5px; color: var(--text-muted);
+    transition: background 0.2s, color 0.2s;
+}
+.stage-row.is-running { background: rgba(88,166,255,0.08); color: var(--text-primary); }
+.stage-row.is-done { color: var(--text-secondary); }
+.stage-row.is-failed { color: var(--accent-red); }
+
+.stage-dot {
+    width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0;
+    border: 1.5px solid var(--border-color);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: var(--bg-primary);
+}
+.stage-row.is-running .stage-dot {
+    border-color: var(--accent-blue);
+    border-top-color: transparent;
+    animation: stageSpin 0.7s linear infinite;
+}
+.stage-row.is-done .stage-dot { background: var(--accent-green); border-color: var(--accent-green); }
+.stage-row.is-failed .stage-dot { background: var(--accent-red); border-color: var(--accent-red); }
+
+.stage-name { flex: 1; }
+.stage-detail { font-size: 11.5px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+@keyframes stageSpin { to { transform: rotate(360deg); } }
+
+/* Skeleton placeholders shown where results will land */
+.skeleton-wrap { display: none; margin-top: 14px; }
+.skeleton-wrap.active { display: block; }
+.skeleton {
+    height: 12px; border-radius: 6px; margin-bottom: 8px;
+    background: linear-gradient(90deg, var(--bg-card-hover) 25%, var(--border-color) 37%, var(--bg-card-hover) 63%);
+    background-size: 400% 100%;
+    animation: shimmer 1.4s ease infinite;
+}
+@keyframes shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+
+@media (prefers-reduced-motion: reduce) {
+    .stage-row.is-running .stage-dot { animation: none; border-top-color: var(--accent-blue); }
+    .skeleton { animation: none; }
+    .slide-in { animation: none; }
+}
+
 .search-input-wrap { position: relative; flex: 1; min-width: 200px; }
 .search-input-wrap .fa-search { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 12px; }
 .search-input-wrap input { padding-left: 32px; width: 100%; }
@@ -129,11 +207,38 @@
         </div>
     </form>
 
-    <div class="loading-research" id="loadingIndicator">
-        <div class="spinner-ring"></div>
-        <div>
-            <div style="font-size:13.5px;font-weight:600;color:var(--accent-blue);">Researching...</div>
-            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Analyzing topic, discovering papers, extracting claims</div>
+    <div class="progress-panel" id="progressPanel" aria-live="polite">
+        <div class="progress-head">
+            <div>
+                <div class="progress-title" id="progressTitle">Researching...</div>
+                <div class="progress-topic" id="progressTopic"></div>
+            </div>
+            <div class="progress-meta">
+                <div class="progress-metric">
+                    <div class="progress-metric-value" id="papersCount">—</div>
+                    <div class="progress-metric-label">Papers</div>
+                </div>
+                <div class="progress-metric">
+                    <div class="progress-metric-value" id="costMeter">$0.0000</div>
+                    <div class="progress-metric-label">LLM cost</div>
+                </div>
+                <div class="progress-metric">
+                    <div class="progress-metric-value" id="elapsedTime">0:00</div>
+                    <div class="progress-metric-label">Elapsed</div>
+                </div>
+                <button type="button" class="btn-cancel-run" id="cancelRunBtn">
+                    <i class="fas fa-stop"></i> Cancel
+                </button>
+            </div>
+        </div>
+
+        <div class="stage-list" id="stageList"></div>
+
+        <div class="skeleton-wrap" id="skeletonWrap">
+            <div class="skeleton" style="width:70%;"></div>
+            <div class="skeleton" style="width:92%;"></div>
+            <div class="skeleton" style="width:84%;"></div>
+            <div class="skeleton" style="width:60%;"></div>
         </div>
     </div>
 </div>
@@ -173,6 +278,13 @@
 <!-- Results section -->
 <div id="resultsSection" style="display:none;" class="slide-in">
 
+    <div id="runModeBanner" class="glass-card mb-3" style="display:none;border-color:rgba(227,179,65,0.45);background:rgba(227,179,65,0.08);color:var(--accent-orange);"></div>
+
+    <div id="executiveSummaryCard" class="glass-card mb-4" style="display:none;">
+        <div class="card-label mb-2"><i class="fas fa-align-left"></i> Executive Summary</div>
+        <div id="executiveSummaryText" style="font-size:13.5px;line-height:1.65;color:var(--text-secondary);"></div>
+    </div>
+
     <div class="row g-3 mb-4" id="summaryStats"></div>
 
     <div class="export-bar mb-4">
@@ -185,6 +297,9 @@
         <button class="btn-export" onclick="exportResults('docx')" style="background:rgba(247,129,102,0.1);color:var(--accent-red);border-color:rgba(247,129,102,0.25);">
             <i class="fas fa-file-word"></i> Download Word Report
         </button>
+        <button class="btn-export" onclick="downloadMarkdownReport()" style="background:rgba(227,179,65,0.1);color:var(--accent-orange);border-color:rgba(227,179,65,0.25);">
+            <i class="fas fa-file-lines"></i> Download report (.md)
+        </button>
         <button class="btn-ghost ms-auto" onclick="clearAllFilters()">
             <i class="fas fa-times"></i> Clear Filters
         </button>
@@ -194,7 +309,7 @@
         <div class="filter-row">
             <div class="search-input-wrap">
                 <i class="fas fa-search"></i>
-                <input type="text" class="form-control-dark" id="globalSearch" placeholder="Search papers, authors, citations...">
+                <input type="text" class="form-control-dark" id="globalSearch" placeholder="Search recommendations, papers, authors, citations...">
             </div>
             <div class="filter-group">
                 <label>Venue</label>
@@ -216,7 +331,11 @@
 
     <div class="glass-card">
         <div class="results-tabs">
-            <button class="tab-btn active" data-tab="papers">
+            <button class="tab-btn active" data-tab="recommendations">
+                <i class="fas fa-wand-magic-sparkles"></i> Recommendations
+                <span class="tab-badge" id="recommendationsCount">0</span>
+            </button>
+            <button class="tab-btn" data-tab="papers">
                 <i class="fas fa-file-alt"></i> Papers
                 <span class="tab-badge" id="papersCount">0</span>
             </button>
@@ -238,7 +357,8 @@
             </button>
         </div>
 
-        <div class="tab-panel active" id="tab-papers"><div id="papersSection"></div></div>
+        <div class="tab-panel active" id="tab-recommendations"><div id="recommendationsSection"></div></div>
+        <div class="tab-panel" id="tab-papers"><div id="papersSection"></div></div>
         <div class="tab-panel" id="tab-claims"><div id="claimsSection"></div></div>
         <div class="tab-panel" id="tab-contradictions"><div id="contradictionsSection"></div></div>
         <div class="tab-panel" id="tab-gaps"><div id="gapsSection"></div></div>
@@ -263,6 +383,7 @@
 {% block extra_js %}
 <script>
 let currentResults = null;
+let allRecommendations = [], filteredRecommendations = [];
 let allPapers = [], filteredPapers = [];
 let allClaims = [], filteredClaims = [];
 let allContradictions = [], filteredContradictions = [];
@@ -279,56 +400,216 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     });
 });
 
-// Research form
-document.getElementById('researchForm').addEventListener('submit', async function(e) {
+// ── Live research run: start job, stream stage events, then fetch result ────
+let activeJobId = null;
+let eventSource = null;
+let elapsedTimer = null;
+
+function renderStages(stages) {
+    document.getElementById('stageList').innerHTML = stages.map(s => `
+        <div class="stage-row" id="stage-${s.stage}">
+            <div class="stage-dot"></div>
+            <div class="stage-name">${s.name}</div>
+            <div class="stage-detail" id="stage-detail-${s.stage}"></div>
+        </div>
+    `).join('');
+}
+
+// Turn a stage's detail payload into a short human-readable line.
+function formatDetail(detail) {
+    if (!detail) return '';
+    const parts = [];
+    if (detail.papers !== undefined) parts.push(`${detail.papers} papers`);
+    if (detail.claims !== undefined) parts.push(`${detail.claims} claims`);
+    if (detail.contradictions !== undefined) parts.push(`${detail.contradictions} contradictions`);
+    if (detail.gaps !== undefined) parts.push(`${detail.gaps} gaps`);
+    if (detail.citations !== undefined) parts.push(`${detail.citations} citations`);
+    if (detail.recommendations !== undefined) parts.push(`${detail.recommendations} recommendations`);
+    if (detail.subtopics !== undefined) parts.push(`${detail.subtopics} subtopics`);
+    return parts.join(' · ');
+}
+
+function updateStage(ev) {
+    const row = document.getElementById('stage-' + ev.stage);
+    if (!row) return;
+
+    row.classList.remove('is-running', 'is-done', 'is-failed');
+    row.classList.add(ev.state === 'done' ? 'is-done' : 'is-running');
+    if (ev.state === 'done') row.querySelector('.stage-dot').innerHTML = '<i class="fas fa-check"></i>';
+
+    const detail = ev.detail || {};
+    const detailEl = document.getElementById('stage-detail-' + ev.stage);
+    if (detailEl) detailEl.textContent = formatDetail(detail);
+
+    if (detail.papers !== undefined) document.getElementById('papersCount').textContent = detail.papers;
+    if (detail.cost_usd !== undefined) {
+        document.getElementById('costMeter').textContent = '$' + Number(detail.cost_usd).toFixed(4);
+    }
+}
+
+function startElapsedTimer() {
+    const started = Date.now();
+    clearInterval(elapsedTimer);
+    elapsedTimer = setInterval(() => {
+        const s = Math.floor((Date.now() - started) / 1000);
+        document.getElementById('elapsedTime').textContent =
+            `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+    }, 1000);
+}
+
+function endRun() {
+    clearInterval(elapsedTimer);
+    if (eventSource) { eventSource.close(); eventSource = null; }
+    document.getElementById('skeletonWrap').classList.remove('active');
+    document.getElementById('cancelRunBtn').disabled = true;
+    activeJobId = null;
+}
+
+function hideProgress() {
+    document.getElementById('progressPanel').classList.remove('active');
+}
+
+async function loadJobResult(jobId) {
+    const res = await fetch(`/research/result/${jobId}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Could not load results');
+
+    currentResults = data;
+    allRecommendations = data.recommendations || [];
+    allPapers = data.papers || [];
+    allClaims = data.claims || [];
+    allContradictions = data.contradictions || [];
+    allGaps = data.research_gaps || [];
+    allCitations = data.citations || [];
+
+    filteredRecommendations = [...allRecommendations];
+    filteredPapers = [...allPapers];
+    filteredClaims = [...allClaims];
+    filteredContradictions = [...allContradictions];
+    filteredGaps = [...allGaps];
+    filteredCitations = [...allCitations];
+
+    displayResults(data);
+    setupResultFilters();
+    document.getElementById('resultsSection').style.display = 'block';
+    document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+document.getElementById('cancelRunBtn').addEventListener('click', async function () {
+    if (!activeJobId) return;
+    this.disabled = true;
+    document.getElementById('progressTitle').textContent = 'Cancelling...';
+    try {
+        await fetch(`/research/cancel/${activeJobId}`, { method: 'POST' });
+    } catch (err) {
+        console.error('Cancel failed', err);
+    }
+});
+
+// Research form — submits a job, then follows its event stream
+document.getElementById('researchForm').addEventListener('submit', async function (e) {
     e.preventDefault();
     const topic = document.getElementById('topic').value.trim();
     if (!topic) return;
 
-    document.getElementById('loadingIndicator').classList.add('active');
     document.getElementById('resultsSection').style.display = 'none';
     document.getElementById('featuresSection').style.display = 'none';
 
+    const panel = document.getElementById('progressPanel');
+    panel.classList.add('active');
+    document.getElementById('progressTitle').textContent = 'Researching...';
+    document.getElementById('progressTopic').textContent = topic;
+    document.getElementById('papersCount').textContent = '—';
+    document.getElementById('costMeter').textContent = '$0.0000';
+    document.getElementById('elapsedTime').textContent = '0:00';
+    document.getElementById('cancelRunBtn').disabled = false;
+    document.getElementById('skeletonWrap').classList.add('active');
+    document.getElementById('stageList').innerHTML = '';
+
     try {
-        const response = await fetch('/research', {
+        const res = await fetch('/research/start', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ topic })
         });
-        const data = await response.json();
+        const job = await res.json();
+        if (!res.ok) throw new Error(job.error || 'Could not start research');
 
-        if (response.ok) {
-            currentResults = data;
-            allPapers = data.papers || [];
-            allClaims = data.claims || [];
-            allContradictions = data.contradictions || [];
-            allGaps = data.research_gaps || [];
-            allCitations = data.citations || [];
+        activeJobId = job.job_id;
+        renderStages(job.stages || []);
+        startElapsedTimer();
 
-            filteredPapers = [...allPapers];
-            filteredClaims = [...allClaims];
-            filteredContradictions = [...allContradictions];
-            filteredGaps = [...allGaps];
-            filteredCitations = [...allCitations];
+        eventSource = new EventSource(`/research/events/${job.job_id}`);
 
-            displayResults(data);
-            setupResultFilters();
-            document.getElementById('resultsSection').style.display = 'block';
-            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
-        } else {
-            alert('Error: ' + (data.error || 'Research failed'));
-            document.getElementById('featuresSection').style.display = 'block';
-        }
+        eventSource.addEventListener('start', ev => {
+            const data = JSON.parse(ev.data);
+            if (data.stages) renderStages(data.stages);
+        });
+
+        eventSource.addEventListener('stage', ev => updateStage(JSON.parse(ev.data)));
+
+        eventSource.addEventListener('end', async ev => {
+            const data = JSON.parse(ev.data);
+            const jobId = activeJobId;
+            endRun();
+
+            if (data.status === 'done') {
+                document.getElementById('progressTitle').textContent = 'Research complete';
+                try {
+                    await loadJobResult(jobId);
+                    hideProgress();
+                } catch (err) {
+                    alert('Error: ' + err.message);
+                    document.getElementById('featuresSection').style.display = 'block';
+                }
+            } else if (data.status === 'cancelled') {
+                hideProgress();
+                document.getElementById('featuresSection').style.display = 'block';
+            } else {
+                document.getElementById('progressTitle').textContent = 'Research failed';
+                alert('Error: ' + (data.error || 'Research failed'));
+                document.getElementById('featuresSection').style.display = 'block';
+            }
+        });
+
+        // Network drop or server restart — the run may still be alive, so poll once.
+        eventSource.onerror = async () => {
+            if (!activeJobId) return;
+            const jobId = activeJobId;
+            endRun();
+            try {
+                await loadJobResult(jobId);
+                hideProgress();
+            } catch (err) {
+                document.getElementById('progressTitle').textContent = 'Connection lost';
+                document.getElementById('featuresSection').style.display = 'block';
+            }
+        };
+
     } catch (err) {
+        endRun();
+        hideProgress();
         alert('Error: ' + err.message);
         document.getElementById('featuresSection').style.display = 'block';
-    } finally {
-        document.getElementById('loadingIndicator').classList.remove('active');
     }
 });
 
 function displayResults(data) {
     const s = data.summary;
+    const executiveSummary = data.executive_summary || '';
+    const summaryCard = document.getElementById('executiveSummaryCard');
+    summaryCard.style.display = executiveSummary ? 'block' : 'none';
+    document.getElementById('executiveSummaryText').textContent = executiveSummary;
+
+    const runMode = data.run_mode || { mode: 'rules', reason: 'Run-mode metadata was unavailable.' };
+    const modeBanner = document.getElementById('runModeBanner');
+    if (runMode.mode !== 'llm') {
+        modeBanner.style.display = 'block';
+        modeBanner.innerHTML = `<i class="fas fa-triangle-exclamation"></i> <strong>${runMode.mode === 'degraded' ? 'Degraded mode' : 'Rule-based mode'}:</strong> ${escHtml(runMode.reason || '')}`;
+    } else {
+        modeBanner.style.display = 'none';
+        modeBanner.innerHTML = '';
+    }
     document.getElementById('summaryStats').innerHTML = `
         <div class="col-6 col-md-3"><div class="stat-card">
             <div class="stat-number" style="color:var(--accent-blue);">${s.papers_analyzed}</div>
@@ -358,8 +639,38 @@ function displayResults(data) {
         </div></div>` : ''}
     `;
 
-    renderPapers(); renderClaims(); renderContradictions(); renderGaps(); renderCitations();
-    updateCounts();
+    renderRecommendations(); renderPapers(); renderClaims(); renderContradictions(); renderGaps(); renderCitations();
+}
+
+function renderRecommendations() {
+    document.getElementById('recommendationsCount').textContent = filteredRecommendations.length;
+    if (!filteredRecommendations.length) {
+        document.getElementById('recommendationsSection').innerHTML = `<p style="color:var(--text-muted);font-size:13px;">No recommendations match the current filters.</p>`;
+        return;
+    }
+    const groups = filteredRecommendations.reduce((result, recommendation) => {
+        const category = recommendation.category || 'other';
+        (result[category] ||= []).push(recommendation);
+        return result;
+    }, {});
+    document.getElementById('recommendationsSection').innerHTML = Object.entries(groups).map(([category, recommendations]) => `
+        <div class="mb-4">
+            <div class="card-label mb-2">${escHtml(category.replaceAll('_', ' '))}</div>
+            ${recommendations.map(recommendation => `
+                <div class="gap-item" style="border-left:3px solid var(--accent-orange);border-radius:0 10px 10px 0;">
+                    <div class="d-flex justify-content-between align-items-start gap-2">
+                        <div class="flex-grow-1">
+                            <div class="paper-title" style="font-size:13.5px;">${recommendation.rank ? `<span class="tag tag-blue" style="margin-right:6px;">#${recommendation.rank}</span>` : ''}${escHtml(recommendation.title || '')}</div>
+                            <div class="paper-abstract mt-1">${escHtml(recommendation.rationale || '')}</div>
+                            ${recommendation.action ? `<div style="font-size:12.5px;margin-top:8px;"><strong>Action:</strong> ${escHtml(recommendation.action)}</div>` : ''}
+                            ${(recommendation.supporting_evidence || []).length ? `<div style="font-size:12px;color:var(--text-muted);margin-top:7px;">${recommendation.supporting_evidence.slice(0, 5).map(evidence => `<div><i class="fas fa-circle-info" style="font-size:10px;"></i> ${escHtml(evidence)}</div>`).join('')}</div>` : ''}
+                        </div>
+                        <span class="tag tag-orange flex-shrink-0">${(Number(recommendation.priority || 0) * 100).toFixed(0)}% priority</span>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `).join('');
 }
 
 function renderPapers() {
@@ -509,14 +820,6 @@ function copyCitation(index) {
     });
 }
 
-function updateCounts() {
-    document.getElementById('papersCount').textContent = filteredPapers.length;
-    document.getElementById('claimsCount').textContent = filteredClaims.length;
-    document.getElementById('contradictionsCount').textContent = filteredContradictions.length;
-    document.getElementById('gapsCount').textContent = filteredGaps.length;
-    document.getElementById('citationCount').textContent = filteredCitations.length;
-}
-
 function setupResultFilters() {
     const venues = [...new Set(allPapers.map(p => p.venue).filter(Boolean))].sort();
     const years = [...new Set(allPapers.map(p => p.year).filter(Boolean))].sort((a, b) => b - a);
@@ -537,6 +840,10 @@ function setupResultFilters() {
     document.getElementById('venueResultFilter').addEventListener('change', applyFilters);
     document.getElementById('yearResultFilter').addEventListener('change', applyFilters);
     document.getElementById('formatFilter').addEventListener('change', renderCitations);
+    document.getElementById('journalFilter').addEventListener('change', function () {
+        document.getElementById('venueResultFilter').value = this.value;
+        applyFilters();
+    });
 }
 
 function applyFilters() {
@@ -564,9 +871,11 @@ function applyFilters() {
     filteredGaps = allGaps.filter(g => !search || [g.description, g.type, ...(g.potential_questions || [])].join(' ').toLowerCase().includes(search));
     filteredClaims = allClaims.filter(c => !search || c.statement.toLowerCase().includes(search));
     filteredContradictions = allContradictions.filter(c => !search || c.explanation.toLowerCase().includes(search));
+    filteredRecommendations = allRecommendations.filter(recommendation => !search || [
+        recommendation.title, recommendation.rationale, recommendation.action
+    ].join(' ').toLowerCase().includes(search));
 
-    renderPapers(); renderClaims(); renderContradictions(); renderGaps(); renderCitations();
-    updateCounts();
+    renderRecommendations(); renderPapers(); renderClaims(); renderContradictions(); renderGaps(); renderCitations();
     document.getElementById('filterStats').textContent = `Showing ${filteredPapers.length} / ${allPapers.length} papers`;
 }
 
@@ -574,11 +883,12 @@ function clearAllFilters() {
     document.getElementById('globalSearch').value = '';
     document.getElementById('venueResultFilter').value = '';
     document.getElementById('yearResultFilter').value = '';
+    document.getElementById('journalFilter').value = '';
     filteredPapers = [...allPapers]; filteredClaims = [...allClaims];
     filteredContradictions = [...allContradictions]; filteredGaps = [...allGaps];
     filteredCitations = [...allCitations];
-    renderPapers(); renderClaims(); renderContradictions(); renderGaps(); renderCitations();
-    updateCounts();
+    filteredRecommendations = [...allRecommendations];
+    renderRecommendations(); renderPapers(); renderClaims(); renderContradictions(); renderGaps(); renderCitations();
     document.getElementById('filterStats').textContent = 'All results';
 }
 
@@ -603,6 +913,18 @@ async function exportResults(type) {
     } catch (err) {
         alert('Export error: ' + err.message);
     }
+}
+
+function downloadMarkdownReport() {
+    if (activeJobId) {
+        window.open('/report/' + activeJobId + '.md', '_blank');
+        return;
+    }
+    if (currentResults && currentResults.report_url) {
+        window.open(currentResults.report_url, '_blank');
+        return;
+    }
+    alert('No Markdown report is available for this result.');
 }
 
 async function loadHistory() {

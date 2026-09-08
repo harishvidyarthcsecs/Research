@@ -12,6 +12,7 @@ from datetime import datetime
 from ..models.data_models import PaperMetadata, Claim
 from .base_agent import BaseAgent
 from . import llm_client
+from .paper_ids import paper_id_for
 
 
 class ClaimExtractionAgent(BaseAgent):
@@ -149,7 +150,7 @@ class ClaimExtractionAgent(BaseAgent):
                         confidence=pat_info["confidence"],
                         datasets=self._extract_datasets(text),
                         conditions=self._extract_conditions(sentence),
-                        limitations=self._extract_limitations(text),
+                        limitations=self._extract_limitations(text, exclude_sentence=sentence),
                     ))
                     break
         return claims
@@ -187,18 +188,17 @@ class ClaimExtractionAgent(BaseAgent):
                     conditions.append(cond)
         return conditions
 
-    def _extract_limitations(self, text: str) -> List[str]:
+    def _extract_limitations(self, text: str, exclude_sentence: str = "") -> List[str]:
         keywords = {"limitation", "limited", "constraint", "drawback", "weakness", "shortcoming"}
+        exclude = exclude_sentence.strip().lower()
         limitations = []
         for sentence in re.split(r"[.!?]+", text):
+            sentence = sentence.strip()
+            if sentence.lower() == exclude:
+                continue
             if any(kw in sentence.lower() for kw in keywords):
-                limitations.append(sentence.strip())
+                limitations.append(sentence)
         return limitations
 
     def _generate_paper_id(self, paper: PaperMetadata) -> str:
-        if paper.doi:
-            return paper.doi.replace("/", "_").replace(".", "_")
-        if paper.arxiv_id:
-            return f"arxiv_{paper.arxiv_id}"
-        words = re.findall(r"\w+", paper.title.lower())[:5]
-        return f"{'_'.join(words)}_{paper.year}"
+        return paper_id_for(paper)

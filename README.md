@@ -37,7 +37,7 @@ what's actually measured here today.
 
 ## System Architecture
 
-### Core research pipeline (8 stages)
+### Core research pipeline (9 stages)
 
 Each stage below is an AI-based agent — LLM-driven by default, with a
 transparent rule-based fallback/ablation mode for reproducibility and for
@@ -72,7 +72,10 @@ final decision on its own.
    ablation via `GAP_MODE=rules`.
 7. **Citation Builder Agent** — generates BibTeX, APA, IEEE, and MLA
    citations (rule-based formatting).
-8. **Long-Term Memory** — JSON-backed persistent knowledge graph and cache
+8. **Recommendation Agent** — synthesizes a ranked reading/action plan from
+   papers, gaps, and contradictions, with an executive summary and evidence
+   links (`RECOMMENDATION_MODE=llm|rules`).
+9. **Long-Term Memory** — JSON-backed persistent knowledge graph and cache
    (`MemoryStore`), no fragile pickle files.
 
 Every LLM-backed agent falls back gracefully to its rule-based mode on any
@@ -120,6 +123,8 @@ pipeline above:
 - **Contradiction Detection**: ContraCrow-style Likert-scale LLM judge over a
   TF-IDF-prefiltered candidate set
 - **Research Gap Analysis**: typed, ranked, evidence-grounded gaps
+- **AI Recommendations**: ranked next steps, experiments, risks, and reading
+  guidance linked back to corpus evidence
 - **Benchmark Dashboard**: `/benchmark` — run the dedicated pipeline against a
   naive single-LLM baseline on a frozen worked-example corpus and see the
   comparison live in the browser
@@ -129,6 +134,18 @@ pipeline above:
   **Citation Network Explorer**
 - **Multi-Format Citations**: BibTeX, APA, IEEE, MLA
 - **Persistent Memory**: JSON-backed knowledge graph (no fragile pickle files)
+
+## Screenshots
+
+A visual walkthrough of every screen lives in [`docs/screenshots/`](docs/screenshots/README.md).
+
+| Research console | Recommendations | Journal Database |
+|---|---|---|
+| ![Research console](docs/screenshots/01-home.png) | ![AI recommendations](docs/screenshots/17-recommendations-tab.png) | ![Journal database](docs/screenshots/19-journal-database.png) |
+
+| Journal Fit Recommender | Benchmark dashboard | Literature Builder |
+|---|---|---|
+| ![Journal fit](docs/screenshots/18-journal-fit-results.png) | ![Benchmark](docs/screenshots/13-benchmark.png) | ![Literature builder](docs/screenshots/14-literature-builder.png) |
 
 ## Journal Database
 
@@ -202,6 +219,19 @@ python app.py
 # open http://localhost:5000
 ```
 
+The results page shows an amber banner whenever a configured provider silently
+degrades or the run uses deterministic rules, so fallback output is explicit.
+
+### CLI
+
+```bash
+python main.py "Graph neural networks in drug discovery" --markdown
+```
+
+JSON is always written to `output/research_results.json`. Add `--markdown` or
+`--report` to also write `output/research_results.md`; use `--json-only` to
+suppress the console summary.
+
 ### Programmatic
 
 ```python
@@ -238,6 +268,11 @@ Typed (`methodological | dataset | unexplored_subtopic | evaluation |
 contradiction_driven`), ranked, scored by importance × tractability, with
 supporting evidence.
 
+### Recommendations
+
+An executive summary plus ranked, evidence-linked actions grouped into next
+steps, reading, experiments, method adoption, and risks.
+
 ### Citations
 BibTeX, APA, IEEE, MLA, with venue-specific formatting.
 
@@ -251,6 +286,7 @@ TOPIC_MODE=llm|rules            # Topic Expansion Agent
 CONTRADICTION_MODE=llm|pattern  # Contradiction Detection Agent
 GAP_MODE=llm|rules              # Research Gap Detection Agent
 LITERATURE_MODE=llm|rules       # Literature Builder Agent
+RECOMMENDATION_MODE=llm|rules   # Recommendation Agent
 LLM_PROVIDER=xai|anthropic|groq|ollama|openrouter  # pin a provider (reproducible eval runs)
 ```
 

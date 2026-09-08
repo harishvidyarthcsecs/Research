@@ -78,14 +78,24 @@ class IssnIndex:
             if ident.issn_online:
                 self._by_issn.setdefault(ident.issn_online, ident.journal_id)
 
+    def find(self, issns: list) -> Journal | None:
+        """Return an existing canonical journal matching any supplied ISSN.
+
+        Unlike ``resolve``, this never creates a journal or identifier row. It
+        is intended for enrichment sources that must not expand the canonical
+        journal set.
+        """
+        norm_issns = [normalize_issn(i) for i in issns if normalize_issn(i)]
+        journal_id = next((self._by_issn[i] for i in norm_issns if i in self._by_issn), None)
+        return self.session.get(Journal, journal_id) if journal_id else None
+
     def resolve(self, issns: list, title: str = "", publisher: str = "",
                 country: str = "", homepage_url: str = "") -> Journal:
         norm_issns = [normalize_issn(i) for i in issns if normalize_issn(i)]
         if not norm_issns:
             raise ValueError("cannot upsert a journal without at least one valid ISSN")
 
-        journal_id = next((self._by_issn[i] for i in norm_issns if i in self._by_issn), None)
-        journal = self.session.get(Journal, journal_id) if journal_id else None
+        journal = self.find(norm_issns)
 
         if journal is None:
             journal = Journal(issn_l=norm_issns[0], title=title or norm_issns[0],

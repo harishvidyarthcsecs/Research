@@ -1,0 +1,43 @@
+{
+  "claims": [],
+  "contradictions": [],
+  "gaps": [
+    {
+      "description": "Limited research on Message Passing Neural Networks",
+      "gap_type": "unexplored_subtopic",
+      "rank": 1,
+      "priority": 1.0,
+      "evidence": [
+        "Only 0 of 0 claims mention this subtopic",
+        "Low-evidence: derived from only 0 extracted claims"
+      ],
+      "detection_method": "rules"
+    },
+    {
+      "description": "Limited research on ADMET Prediction",
+      "gap_type": "unexplored_subtopic",
+      "rank": 2,
+      "priority": 1.0,
+      "evidence": [
+        "Only 0 of 0 claims mention this subtopic",
+        "Low-evidence: derived from only 0 extracted claims"
+      ],
+      "detection_method": "rules"
+    }
+  ],
+  "usage": {
+    "calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "parse_failures": 0,
+    "by_purpose": {}
+  },
+  "run_metadata": {
+    "provider": "xai",
+    "model": "grok-3-mini",
+    "temperature": 0.0,
+    "duration_s": 2.61,
+    "frozen_corpus": true
+  }
+}

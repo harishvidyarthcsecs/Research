@@ -23,6 +23,9 @@ import ingest_elsevier_apc
 import ingest_frontiers_apc
 import ingest_ieee_apc
 import ingest_mjl_csv
+import ingest_openalex_bulk
+import ingest_openalex_citescore_estimate
+import ingest_openalex_enrichment
 import ingest_scimago
 import ingest_scopus_source_list
 import ingest_tf_sage_apc
@@ -41,13 +44,30 @@ SOURCES = {
     "elsevier": ingest_elsevier_apc.run,
     "wiley": ingest_wiley_apc.run,
     "ieee": ingest_ieee_apc.run,
-    "frontiers": ingest_frontiers_apc.run,
+    "frontiers": ingest_frontiers_apc.run,  # derives real slugs from DB (~219 journals), not the old 5-item stub
     "cloudscraper_publishers": ingest_cloudscraper_publishers.run,  # MDPI/ACM/OUP/PLOS
-    "tf_sage": ingest_tf_sage_apc.run,  # prints guidance only, on-demand elsewhere
+    "tf_sage": ingest_tf_sage_apc.run,  # real bulk sweep, see note in EXCLUDED_FROM_ALL below
     "worldbank": ingest_world_bank_income.run,
     "waiver_seed": seed_publisher_waiver_policy.run,
+    "openalex_bulk": ingest_openalex_bulk.run,
+    # Capped batch per run (same incremental-convergence pattern as the DOAJ
+    # live-check above) - real Scopus CiteScore isn't reachable at all, this
+    # backfills the honest OpenAlex-estimate substitute a few hundred
+    # journals at a time across repeated scheduled runs.
+    "openalex_citescore": lambda: ingest_openalex_citescore_estimate.run(limit=500),
+    "openalex_enrichment": lambda: ingest_openalex_enrichment.run(limit=500),
+    "reconcile": reconcile.run,
 }
-# reconcile always runs last, separately - it depends on every other source.
+
+# Addressable by name (--source tf_sage) but excluded from the default "all"
+# sweep: ingest_tf_sage_apc.run() is a real bulk sweep now, but the APC
+# figure isn't actually reachable in either publisher's journal-page HTML
+# yet (confirmed live, see ingest_tf_sage_apc.py's docstring) - running it
+# under "all" would just log a wall of honest `failed` results for no
+# benefit until that's resolved.
+EXCLUDED_FROM_ALL = {"tf_sage"}
+
+# Reconcile is the final default source because it depends on every ingest.
 
 
 def main():
@@ -59,14 +79,19 @@ def main():
     args = parser.parse_args()
 
     init_db()
-    names = list(SOURCES.keys()) if args.source == "all" else args.source.split(",")
+    names = (
+        [n for n in SOURCES if n not in EXCLUDED_FROM_ALL]
+        if args.source == "all" else args.source.split(",")
+    )
+    if args.source != "all" and len(names) > 1 and "reconcile" not in names:
+        names.append("reconcile")
     unknown = [n for n in names if n not in SOURCES]
     if unknown:
         print(f"Unknown source(s): {unknown}. Valid: {list(SOURCES.keys())}", file=sys.stderr)
         sys.exit(1)
 
     if args.dry_run:
-        print("Would run, in order:", names, "then reconcile")
+        print("Would run, in order:", names)
         return
 
     for name in names:
@@ -76,10 +101,6 @@ def main():
         except Exception as exc:
             print(f"[{name}] FAILED: {exc}", file=sys.stderr)
         print(f"[{name}] took {time.monotonic() - started:.1f}s")
-
-    if args.source == "all" or len(names) > 1:
-        reconcile.run()
-
 
 if __name__ == "__main__":
     main()

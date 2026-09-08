@@ -1,0 +1,199 @@
+\begin{thebibliography}{10}
+
+\bibitem{zhang2025hallucination}
+Wei Zhang and Jian Zhang.
+\newblock Hallucination mitigation for retrieval-augmented large language
+  models: A review.
+\newblock {\em Mathematics}, 13(5):856, 2025.
+\newblock Cited as general background; journal quartile not independently
+  confirmed at time of writing.
+
+\bibitem{ji2023survey}
+Ziwei Ji, Nayeon Lee, Rita Frieske, Tiezheng Yu, Dan Su, Yan Xu, Etsuko Ishii,
+  Yejin Bang, Andrea Madotto, and Pascale Fung.
+\newblock Survey of hallucination in natural language generation.
+\newblock {\em ACM Computing Surveys}, 55(12):248, 2023.
+
+\bibitem{tonmoy2024comprehensive}
+S.~M. Towhidul~Islam Tonmoy, S.~M.~Mehedi Zaman, Vinija Jain, Anku Rani, Vipula
+  Rawte, Aman Chadha, and Amitava Das.
+\newblock A comprehensive survey of hallucination mitigation techniques in
+  large language models, 2024.
+
+\bibitem{zhang2025citation}
+Manlin Zhang and Tianyu Zhao.
+\newblock Citation accuracy challenges posed by large language models.
+\newblock {\em JMIR Medical Education}, 11:e72998, 2025.
+
+\bibitem{li2025enhancing}
+Yingxin Li, Susmita Datta, Majid Rastegar-Mojarad, Kyubum Lee, Hongryul Paek,
+  Janice Glasgow, Conor Liston, Lang He, Xin Wang, and Ying Xu.
+\newblock Enhancing systematic literature reviews with generative artificial
+  intelligence: development, applications, and performance evaluation.
+\newblock {\em Journal of the American Medical Informatics Association},
+  32(4):616--625, 2025.
+
+\bibitem{haryanto2024llassist}
+Christoforus~Yoga Haryanto.
+\newblock Llassist: Simple tools for automating literature review using large
+  language models, 2024.
+\newblock Presented at CIE51, 2024.
+
+\bibitem{scherbakov2025emergence}
+Dmitry Scherbakov, Nina Hubig, Vinita Jansari, Alexander Bakumenko, and
+  Leslie~A. Lenert.
+\newblock The emergence of large language models as tools in literature
+  reviews: A large language model-assisted systematic review.
+\newblock {\em Journal of the American Medical Informatics Association},
+  32(6):1071, 2025.
+
+\bibitem{vandinter2021automation}
+Raymon van Dinter, Bedir Tekinerdogan, and Cagatay Catal.
+\newblock Automation of systematic literature reviews: A systematic literature
+  review.
+\newblock {\em Information and Software Technology}, 136:106589, 2021.
+
+\bibitem{lewis2020retrieval}
+Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio Petroni, Vladimir
+  Karpukhin, Naman Goyal, Heinrich K\"{u}ttler, Mike Lewis, Wen-tau Yih, Tim
+  Rockt\"{a}schel, Sebastian Riedel, and Douwe Kiela.
+\newblock Retrieval-augmented generation for knowledge-intensive nlp tasks.
+\newblock In {\em Advances in Neural Information Processing Systems 33 (NeurIPS
+  2020)}, pages 9459--9474, 2020.
+
+\bibitem{yao2023react}
+Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan,
+  and Yuan Cao.
+\newblock React: Synergizing reasoning and acting in language models, 2023.
+\newblock ICLR 2023.
+
+\bibitem{asai2024selfrag}
+Akari Asai, Zeqiu Wu, Yizhong Wang, Avirup Sil, and Hannaneh Hajishirzi.
+\newblock Self-rag: Learning to retrieve, generate, and critique through
+  self-reflection, 2024.
+\newblock ICLR 2024.
+
+\bibitem{alamri2016contradiction}
+Abdulaziz Alamri and Mark Stevenson.
+\newblock A survey of technologies for detecting contradiction in biomedical
+  literature.
+\newblock {\em Journal of Biomedical Semantics}, 7:36, 2016.
+
+\bibitem{williams2018broad}
+Adina Williams, Nikita Nangia, and Samuel Bowman.
+\newblock A broad-coverage challenge corpus for sentence understanding through
+  inference.
+\newblock In {\em Proceedings of the 2018 Conference of the North American
+  Chapter of the Association for Computational Linguistics: Human Language
+  Technologies, Volume 1 (Long Papers)}, pages 1112--1122, 2018.
+
+\bibitem{zheng2023judging}
+Lianmin Zheng, Wei-Lin Chiang, Ying Sheng, Siyuan Zhuang, Zhanghao Wu, Yonghao
+  Zhuang, Zi~Lin, Zhuohan Li, Dacheng Li, Eric~P. Xing, Hao Zhang, Joseph~E.
+  Gonzalez, and Ion Stoica.
+\newblock Judging llm-as-a-judge with mt-bench and chatbot arena.
+\newblock In {\em Advances in Neural Information Processing Systems 36 (NeurIPS
+  2023), Datasets and Benchmarks Track}, 2023.
+
+\bibitem{prismatraice2025}
+{JMIR AI Editorial}.
+\newblock Transparent reporting of ai in systematic literature reviews:
+  Development of the prisma-traice checklist.
+\newblock {\em JMIR AI}, 4:e80247, 2025.
+\newblock Cited as general background; journal quartile not independently
+  confirmed at time of writing.
+
+\bibitem{lin2022truthfulqa}
+Stephanie Lin, Jacob Hilton, and Owain Evans.
+\newblock Truthfulqa: Measuring how models mimic human falsehoods.
+\newblock In {\em Proceedings of the 60th Annual Meeting of the Association for
+  Computational Linguistics (Volume 1: Long Papers)}, pages 3214--3252, 2022.
+
+\bibitem{li2023halueval}
+Junyi Li, Xiaoxue Cheng, Xin Zhao, Jian-Yun Nie, and Ji-Rong Wen.
+\newblock Halueval: A large-scale hallucination evaluation benchmark for large
+  language models.
+\newblock In {\em Proceedings of the 2023 Conference on Empirical Methods in
+  Natural Language Processing}, 2023.
+
+\bibitem{manakul2023selfcheckgpt}
+Potsawee Manakul, Adian Liusie, and Mark Gales.
+\newblock Selfcheckgpt: Zero-resource black-box hallucination detection for
+  generative large language models.
+\newblock In {\em Proceedings of the 2023 Conference on Empirical Methods in
+  Natural Language Processing}, pages 9004--9017, 2023.
+
+\bibitem{rashkin2023measuring}
+Hannah Rashkin, Vitaly Nikolaev, Matthew Lamm, Lora Aroyo, Michael Collins,
+  Dipanjan Das, Slav Petrov, Gaurav~Singh Tomar, Iulia Turc, and David Reitter.
+\newblock Measuring attribution in natural language generation models.
+\newblock {\em Computational Linguistics}, 49(4):777--840, 2023.
+
+\bibitem{bohnet2022attributed}
+Bernd Bohnet, Vinh~Q. Tran, Pat Verga, Roee Aharoni, Daniel Andor,
+  Livio~Baldini Soares, Massimiliano Ciaramita, Jacob Eisenstein, Kuzman
+  Ganchev, Jonathan Herzig, Kai Hui, Tom Kwiatkowski, Ji~Ma, Jianmo Ni,
+  Lierni~Sestorain Saralegui, Tal Schuster, William~W. Cohen, Michael Collins,
+  Dipanjan Das, Donald Metzler, Slav Petrov, and Kellie Webster.
+\newblock Attributed question answering: Evaluation and modeling for attributed
+  large language models, 2022.
+
+\bibitem{gao2023enabling}
+Tianyu Gao, Howard Yen, Jiatong Yu, and Danqi Chen.
+\newblock Enabling large language models to generate text with citations.
+\newblock In {\em Proceedings of the 2023 Conference on Empirical Methods in
+  Natural Language Processing}, 2023.
+
+\bibitem{press2024citeme}
+Ori Press, Andreas Hochlehnert, Ameya Prabhu, Vishaal Udandarao, Ofir Press,
+  and Matthias Bethge.
+\newblock Citeme: Can language models accurately cite scientific claims?
+\newblock In {\em Advances in Neural Information Processing Systems 38 (NeurIPS
+  2024), Datasets and Benchmarks Track}, 2024.
+
+\bibitem{machacek2022predatory}
+V{\'i}t Mach{\'a}{\v{c}}ek and Martin Srholec.
+\newblock Predatory publishing in scopus: Evidence on cross-country
+  differences.
+\newblock {\em Quantitative Science Studies}, 3(3):859--887, 2022.
+
+\bibitem{mongeon2016journal}
+Philippe Mongeon and Adr\`{e}ge Paul-Hus.
+\newblock The journal coverage of web of science and scopus: A comparative
+  analysis.
+\newblock {\em Scientometrics}, 106(1):213--228, 2016.
+
+\bibitem{chen2023open}
+Cheng-Yu Chen, Peng-Yu Su, Hsiu-Chin Liao, et~al.
+\newblock An open automation system for predatory journal detection.
+\newblock {\em Scientific Reports}, 13:2976, 2023.
+
+\bibitem{scientometrics2025editorial}
+{Scientometrics Editorial}.
+\newblock Ai for scientometrics.
+\newblock {\em Scientometrics}, 2025.
+\newblock Cited as general background for gap-detection framing; no dedicated
+  Q1-journal gap-detection method paper was found.
+
+\bibitem{liu2024agentbench}
+Xiao Liu, Hao Yu, Hanchen Zhang, Yifan Xu, Xuanyu Lei, Hanyu Lai, Yu~Gu,
+  Hangliang Ding, Kaiwen Men, Kejuan Yang, Shudan Zhang, Xiang Deng, Aohan
+  Zeng, Zhengxiao Du, Chenhui Zhang, Sheng Shen, Tianjun Zhang, Yu~Su, Huan
+  Sun, Minlie Huang, Yuxiao Dong, and Jie Tang.
+\newblock Agentbench: Evaluating llms as agents, 2024.
+\newblock ICLR 2024.
+
+\bibitem{thorne2018fever}
+James Thorne, Andreas Vlachos, Christos Christodoulopoulos, and Arpit Mittal.
+\newblock {FEVER}: a large-scale dataset for fact extraction and
+  {VER}ification.
+\newblock In {\em Proceedings of the 2018 Conference of the North American
+  Chapter of the Association for Computational Linguistics: Human Language
+  Technologies, Volume 1 (Long Papers)}, pages 809--819, 2018.
+
+\bibitem{saltzer1975protection}
+Jerome~H. Saltzer and Michael~D. Schroeder.
+\newblock The protection of information in computer systems.
+\newblock {\em Proceedings of the IEEE}, 63(9):1278--1308, 1975.
+
+\end{thebibliography}

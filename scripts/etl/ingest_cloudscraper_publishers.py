@@ -13,6 +13,16 @@ not assumed:
     the script stays forward-compatible if that changes, but today these
     three simply do not populate - that's reported honestly in the run
     log (records_fetched=0), not silently hidden.
+
+PLOS hand-curation attempted (2026-08-18) and deliberately abandoned:
+PLOS only runs ~15-20 journals, small enough to hand-curate like the
+publisher waiver seed - but a third-party PDF mirror of PLOS's fee sheet
+(enago.com) gives PLOS ONE = $1,595, while independently confirmed
+current pricing (search results referencing plos.org/fees directly) puts
+it at $2,477 - a real, material disagreement, meaning that mirror is
+stale. Rather than seed a table from a source proven unreliable, PLOS
+stays honestly unpopulated until the real plos.org/fees page is
+reachable (via cloudscraper or otherwise) and can be read directly.
 """
 from __future__ import annotations
 

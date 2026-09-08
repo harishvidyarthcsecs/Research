@@ -5,6 +5,10 @@ export type Quartile = 'Q1' | 'Q2' | 'Q3' | 'Q4'
 
 export type Confidence = 'verified' | 'estimated' | 'unknown' | string
 
+export type ApcStatus = 'known' | 'estimated' | 'not_charged' | 'unknown'
+
+export type CiteScoreStatus = 'real' | 'estimated' | 'not_in_scopus' | 'unknown'
+
 export type RiskSeverity = 'high' | 'medium' | 'low' | string
 
 /** One row from GET /api/journals */
@@ -13,6 +17,7 @@ export interface JournalSummary {
   title: string
   publisher: string | null
   country: string | null
+  homepage_url: string | null
   quartile: Quartile | string | null
   quartile_source: 'verified' | 'unknown' | string
   sjr: number | null
@@ -22,6 +27,9 @@ export interface JournalSummary {
   apc_usd: number | null
   apc_source: string
   apc_confidence: Confidence
+  apc_status: ApcStatus
+  citescore_status: CiteScoreStatus
+  apc_discrepancy_notes: string | null
   waiver_available: boolean | null
   in_annauniv_cfr: boolean
 }
@@ -51,6 +59,10 @@ export interface ScimagoDetail {
 export interface ScopusDetail {
   citescore: number | null
   percentile: number | null
+  /** Not real Scopus CiteScore - an OpenAlex citation-rate proxy, only
+   * populated when `citescore` is null. Always show its source label. */
+  citescore_estimated: number | null
+  citescore_estimate_source: string | null
   asjc_codes: string | null
   active_status: string | null
 }
@@ -78,6 +90,9 @@ export interface ApcConsolidated {
   apc_usd: number | null
   source: string | null
   confidence: Confidence
+  /** Set when a same-publisher price and DOAJ's price disagree by >10% -
+   * apc_usd is the publisher's own figure; this names DOAJ's differing one. */
+  discrepancy_notes: string | null
   waiver_available: boolean | null
   waiver_notes: string | null
 }
@@ -103,6 +118,9 @@ export interface JournalDetail {
   title: string
   publisher: string | null
   country: string | null
+  homepage_url: string | null
+  apc_status: ApcStatus
+  citescore_status: CiteScoreStatus
   scimago: ScimagoDetail | null
   scopus: ScopusDetail | null
   mjl: MjlDetail | null

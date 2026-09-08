@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "description": "None of the reviewed papers address contrastive or self-supervised pretraining on molecular graphs",
+    "gap_type": "unexplored_subtopic",
+    "keywords": ["contrastive", "self-supervised", "molecular graphs", "pretraining"]
+  },
+  {
+    "description": "None of the reviewed papers address drug repurposing or virtual screening using graph representations",
+    "gap_type": "unexplored_subtopic",
+    "keywords": ["drug repurposing", "virtual screening", "graph representations"]
+  }
+]

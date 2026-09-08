@@ -93,6 +93,21 @@ class Citation(BaseModel):
     mla: Optional[str] = None
 
 
+class Recommendation(BaseModel):
+    """Evidence-linked action recommended from the analyzed corpus."""
+    id: str = Field(default_factory=lambda: f"rec_{datetime.now().timestamp()}")
+    category: str
+    title: str
+    rationale: str
+    action: str = ""
+    supporting_evidence: List[str] = []
+    linked_gap_ids: List[str] = []
+    linked_paper_ids: List[str] = []
+    priority: float = 0.0
+    rank: Optional[int] = None
+    detection_method: str = "rules"
+
+
 class KnowledgeNode(BaseModel):
     """Node in the knowledge graph."""
     id: str
@@ -118,6 +133,8 @@ class ResearchResults(BaseModel):
     contradictions: List[Contradiction]
     research_gaps: List[ResearchGap]
     citations: List[Citation]
+    recommendations: List[Recommendation] = []
+    executive_summary: str = ""
     generated_at: datetime = Field(default_factory=datetime.now)
     total_papers_analyzed: int = 0
     total_claims_extracted: int = 0
@@ -148,16 +165,69 @@ class ClaimCluster(BaseModel):
     sa_papers: List[str] = []  # List of SA (Systematic Analysis) paper IDs
 
 
+class EvidenceRow(BaseModel):
+    """One paper's structured extraction — the atomic unit of the evidence table."""
+    id: str = Field(default_factory=lambda: f"evrow_{datetime.now().timestamp()}")
+    paper_id: str
+    bibitem_key: str = ""
+    population: Optional[str] = None
+    method: Optional[str] = None
+    dataset: Optional[str] = None
+    metric: Optional[str] = None
+    result: Optional[str] = None
+    limitation: Optional[str] = None
+    verbatim_evidence: str = ""  # sentence verified to appear in the paper's abstract
+    confidence: float = 0.0
+    extraction_source: str = "rules"  # "llm" | "rules" | "manual_edit"
+    claim_ids: List[str] = []  # traceability to Claim objects that fed this row
+
+
+class MatrixCell(BaseModel):
+    """One (method, dataset) cell of the synthesis matrix."""
+    method: str
+    dataset: str
+    row_ids: List[str] = []
+    status: str = "blank"  # "agreement" | "conflict" | "single" | "blank"
+    summary: str = ""  # carries \cite{} keys of its row_ids
+    gap_id: Optional[str] = None  # set when status == "blank"
+
+
+class SynthesisMatrix(BaseModel):
+    """Methods x datasets grid built from the evidence table."""
+    methods: List[str] = []
+    datasets: List[str] = []
+    cells: List[MatrixCell] = []
+
+
+class NarrativeSentence(BaseModel):
+    """One sentence of generated narrative, verified against the evidence table."""
+    text: str
+    cite_keys: List[str] = []
+    source_row_ids: List[str] = []
+    verified: bool = False
+
+
+class PrismaCounts(BaseModel):
+    """Counts backing the PRISMA flow diagram export."""
+    identified: int = 0
+    duplicates_removed: int = 0
+    screened: int = 0
+    excluded_no_abstract: int = 0
+    excluded_extraction_failed: int = 0
+    included: int = 0
+
+
 class LiteratureSection(BaseModel):
     """Represents a section of literature."""
-    section_type: str  # introduction, related_work, comparative_analysis, trends
+    section_type: str  # introduction, related_work, comparative_analysis, trends, evidence_synthesis
     title: str
     content: str
     citations: List[str] = []
     claim_ids: List[str] = []  # Traceability to original claims
     subsections: Optional[List['LiteratureSection']] = None
     word_count: int = 0
-    
+    sentences: List[NarrativeSentence] = []  # per-sentence traceability to evidence rows
+
     def __init__(self, **data):
         super().__init__(**data)
         self.word_count = len(self.content.split())
@@ -179,6 +249,9 @@ class LiteratureDocument(BaseModel):
     sections: List[LiteratureSection]
     bibliography: List[str]
     metadata: Dict[str, Any]
+    evidence_table: List[EvidenceRow] = []
+    synthesis_matrix: Optional[SynthesisMatrix] = None
+    prisma: Optional[PrismaCounts] = None
     generated_at: datetime = Field(default_factory=datetime.now)
     
     @property

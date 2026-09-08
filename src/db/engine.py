@@ -27,7 +27,12 @@ def get_engine():
     global _engine
     if _engine is None:
         os.makedirs(_DATA_DIR, exist_ok=True)
-        connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
+        # timeout=30: SQLite has one writer at a time. Several ETL batch
+        # scripts now commit periodically and can run concurrently for
+        # hours - without this, one script's brief write lock makes any
+        # other script hitting the DB at the same moment fail immediately
+        # instead of just waiting a beat.
+        connect_args = {"check_same_thread": False, "timeout": 30} if DATABASE_URL.startswith("sqlite") else {}
         _engine = create_engine(DATABASE_URL, connect_args=connect_args)
     return _engine
 

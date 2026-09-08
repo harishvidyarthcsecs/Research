@@ -1,0 +1,96 @@
+{
+  "claims": {
+    "tp": 3,
+    "fp": 6,
+    "fn": 0,
+    "precision": 0.3333333333333333,
+    "recall": 1.0,
+    "f1": 0.5,
+    "matches": [
+      {
+        "pred_index": 1,
+        "gold_index": 1,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 0,
+        "gold_index": 0,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 2,
+        "gold_index": 2,
+        "similarity": 0.829
+      }
+    ],
+    "missed_gold_indices": []
+  },
+  "contradictions": {
+    "pair_level": {
+      "tp": 0,
+      "fp_on_negatives": 0,
+      "fn": 0,
+      "precision_on_labeled": null,
+      "recall": null,
+      "false_positive_rate_on_negatives": 0.0
+    },
+    "claim_level_strict": {
+      "tp": 0,
+      "recall": null
+    },
+    "unlabeled_prediction_volume": 0,
+    "missed_gold": [],
+    "false_positives_on_negatives": [],
+    "unlabeled_predictions": []
+  },
+  "gaps": {
+    "recall": 0.5,
+    "per_prediction": [
+      {
+        "description": "Standard benchmark datasets (e.g., MoleculeNet, ChEMBL, PDBbind, PubChem BioAssay, ZINC15) are never used in the reported claims.",
+        "gap_type": "dataset",
+        "matched_gold_index": null
+      },
+      {
+        "description": "The literature contains no empirical studies on molecular property prediction (e.g., solubility, toxicity, bioactivity) using graph neural networks.",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      },
+      {
+        "description": "There is a complete absence of work on protein\u2013ligand interaction modeling and binding affinity prediction with GNNs.",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Methodological comparisons across core GNN variants (MPNN, GCN, GAT, Graph Transformers) are missing.",
+        "gap_type": "methodological",
+        "matched_gold_index": null
+      },
+      {
+        "description": "No studies have investigated de novo molecular generation and optimization using graph\u2011based generative models.",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Contrastive self\u2011supervised learning on molecular graphs has not been explored in the corpus.",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": 0
+      },
+      {
+        "description": "Evaluations are limited to generic claims; there is no real\u2011world, prospective, or human\u2011in\u2011the\u2011loop assessment of GNN\u2011driven drug discovery pipelines.",
+        "gap_type": "evaluation",
+        "matched_gold_index": null
+      }
+    ],
+    "missed_gold_indices": [
+      1
+    ],
+    "precision_at_3": 0.0,
+    "precision_at_5": 0.0
+  },
+  "cost": {
+    "estimated_cost_usd": 0.007929,
+    "llm_calls": 16,
+    "parse_failures": 0
+  }
+}

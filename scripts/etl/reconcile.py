@@ -1,10 +1,22 @@
 """Reconcile all ingested sources into journal_apc_consolidated and
 journal_risk_flags per journal. Run after the source ingest scripts.
 
-APC preference order (per plan): DOAJ live/CSV -> publisher bulk list ->
-unknown. (OpenAlex-estimate is still owned by journal_metadata.py's
-legacy JSON path until that module is swapped to read this DB - not
-duplicated here to avoid two sources of truth mid-migration.)
+APC preference order (revised 2026-08-18 after a real discrepancy was
+caught: Ain Shams Engineering Journal, ISSN 2090-4479, showed $1,500 from
+DOAJ while Elsevier's own live price list says $1,800 - the old
+DOAJ-always-wins rule was surfacing the less-authoritative figure):
+  1. Same-publisher journal_publisher_apc match (via _publisher_key) -
+     the publisher's own current stated price, most authoritative for
+     what they actually charge.
+  2. DOAJ (live-checked, then CSV) - primary for the majority of
+     journals, which have no publisher-bulk list at all.
+  3. Any other publisher's bulk row (rare - publisher transfer, etc).
+  4. OpenAlex estimate retained from the bulk enrichment pass.
+  5. unknown.
+When #1 and #2 both exist and disagree by >10%, #1 still wins as
+apc_usd, but the DOAJ figure is recorded in apc_discrepancy_notes so the
+disagreement is visible, not silently erased. OpenAlex estimates remain
+explicitly labelled and only fill the gap when no verified source exists.
 
 Risk flags port journal_metadata.py::_predatory_flags to be DB-driven:
 same high-risk publisher list, same OA-not-in-DOAJ check, same
@@ -49,17 +61,71 @@ def _publisher_key(publisher_name: str) -> str:
     return ""
 
 
-def _consolidate_apc(doaj, pub_apcs: list):
-    if doaj and doaj.has_apc and doaj.apc_amount:
-        source = "doaj_live" if doaj.live_checked_at else "doaj_csv"
-        return doaj.apc_amount, source, "verified"
+def _differs_by_more_than_10_percent(reference, candidate) -> bool:
+    return bool(
+        reference
+        and candidate
+        and abs(candidate - reference) / reference > 0.10
+    )
 
+
+def _join_notes(*notes) -> str | None:
+    return "\n".join(note for note in notes if note) or None
+
+
+def _openalex_discrepancy_note(verified_amount, openalex_amount) -> str | None:
+    if not _differs_by_more_than_10_percent(verified_amount, openalex_amount):
+        return None
+    return (
+        f"OpenAlex estimates ${openalex_amount:,.0f} for this journal, differing "
+        f"from the verified APC (${verified_amount:,.0f}) by more than 10%. "
+        "Showing the verified figure as primary; verify at submission."
+    )
+
+
+def _prior_openalex_note(notes) -> str | None:
+    if not notes:
+        return None
+    return next(
+        (line for line in notes.splitlines() if line.startswith("OpenAlex estimates ")),
+        None,
+    )
+
+
+def _consolidate_apc(journal_publisher: str, doaj, pub_apcs: list,
+                     openalex_amount=None):
     priced = [p for p in pub_apcs if p.apc_amount is not None]
+    doaj_amount = doaj.apc_amount if (doaj and doaj.has_apc and doaj.apc_amount) else None
+    doaj_source = "doaj_live" if (doaj and doaj.live_checked_at) else "doaj_csv"
+
+    publisher_key = _publisher_key(journal_publisher)
+    same_pub = [p for p in priced if publisher_key and p.publisher == publisher_key]
+    if same_pub:
+        best = max(same_pub, key=lambda p: p.snapshot_date or 0)
+        note = None
+        if _differs_by_more_than_10_percent(best.apc_amount, doaj_amount):
+            note = _join_notes(note, (
+                f"DOAJ lists ${doaj_amount:,.0f} for this journal, differing from "
+                f"{journal_publisher}'s own price list (${best.apc_amount:,.0f}) by more "
+                f"than 10%. Showing the publisher's own figure as primary; DOAJ may "
+                f"reflect an older or different tier - verify at submission."
+            ))
+        note = _join_notes(note, _openalex_discrepancy_note(best.apc_amount, openalex_amount))
+        return best.apc_amount, f"publisher_bulk:{best.publisher}", "verified", note
+
+    if doaj_amount:
+        note = _openalex_discrepancy_note(doaj_amount, openalex_amount)
+        return doaj_amount, doaj_source, "verified", note
+
     if priced:
         best = max(priced, key=lambda p: p.snapshot_date or 0)
-        return best.apc_amount, f"publisher_bulk:{best.publisher}", "verified"
+        note = _openalex_discrepancy_note(best.apc_amount, openalex_amount)
+        return best.apc_amount, f"publisher_bulk:{best.publisher}", "verified", note
 
-    return None, "unknown", "unknown"
+    if openalex_amount:
+        return openalex_amount, "openalex", "estimated", None
+
+    return None, "unknown", "unknown", None
 
 
 def _waiver_advisory(journal: Journal, policies_by_key: dict):
@@ -120,16 +186,34 @@ def run():
                 in_doaj = bool(doaj and doaj.in_doaj)
                 is_oa = in_doaj  # our schema's only direct OA signal today is DOAJ listing
 
-                apc_usd, apc_source, confidence = _consolidate_apc(doaj, pub_apcs_by_journal.get(journal.id, []))
+                consolidated = existing_consolidated.get(journal.id)
+                openalex_amount = (
+                    consolidated.apc_usd
+                    if consolidated is not None
+                    and consolidated.apc_source == "openalex"
+                    and consolidated.confidence == "estimated"
+                    else None
+                )
+                apc_usd, apc_source, confidence, discrepancy_note = _consolidate_apc(
+                    journal.publisher, doaj, pub_apcs_by_journal.get(journal.id, []),
+                    openalex_amount,
+                )
+                if openalex_amount is None:
+                    discrepancy_note = _join_notes(
+                        discrepancy_note,
+                        _prior_openalex_note(
+                            consolidated.apc_discrepancy_notes if consolidated else None
+                        ),
+                    )
                 waiver_available, waiver_notes = _waiver_advisory(journal, policies_by_key)
 
-                consolidated = existing_consolidated.get(journal.id)
                 if consolidated is None:
                     consolidated = JournalAPCConsolidated(journal_id=journal.id)
                     session.add(consolidated)
                 consolidated.apc_usd = apc_usd
                 consolidated.apc_source = apc_source
                 consolidated.confidence = confidence
+                consolidated.apc_discrepancy_notes = discrepancy_note
                 consolidated.waiver_available = waiver_available
                 consolidated.waiver_notes = waiver_notes
 

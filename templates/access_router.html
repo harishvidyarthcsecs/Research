@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+
+{% block title %}Paper Access Router{% endblock %}
+{% block hero_title %}Paper Access Router{% endblock %}
+{% block hero_subtitle %}Paste a DOI or title. Finds a legal free copy, checks your library, and drafts an author request if nothing else works.{% endblock %}
+
+{% block extra_css %}
+.step-row {
+    display: flex; gap: 12px; padding: 12px 14px; border-radius: 9px;
+    border: 1px solid var(--border-muted); margin-bottom: 8px;
+    background: var(--bg-input); align-items: flex-start;
+}
+.step-row.found { border-color: rgba(63,185,80,0.3); background: rgba(63,185,80,0.05); }
+.step-row.not_found { border-color: rgba(139,148,158,0.2); opacity: 0.75; }
+.step-row.skipped { opacity: 0.5; }
+
+.step-icon {
+    width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 10px;
+}
+.step-icon.found { background: rgba(63,185,80,0.15); color: var(--accent-green); }
+.step-icon.not_found { background: rgba(139,148,158,0.12); color: var(--text-muted); }
+.step-icon.skipped { background: rgba(139,148,158,0.08); color: var(--text-muted); }
+
+.step-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.step-detail { font-size: 12px; color: var(--text-muted); margin-top: 2px; line-height: 1.45; }
+
+.best-banner {
+    padding: 16px; border-radius: 10px; margin-top: 14px;
+    background: rgba(63,185,80,0.08); border: 1px solid rgba(63,185,80,0.3);
+}
+.best-banner.none { background: rgba(227,179,65,0.06); border-color: rgba(227,179,65,0.3); }
+
+.inst-chip {
+    display: inline-block; font-size: 11.5px; padding: 4px 10px; margin: 3px 4px 0 0;
+    border-radius: 12px; background: var(--bg-card-hover);
+    border: 1px solid var(--border-color); color: var(--text-secondary);
+}
+
+.email-box {
+    background: var(--bg-input); border: 1px solid var(--border-color);
+    border-radius: 8px; padding: 12px; font-size: 12.5px; color: var(--text-secondary);
+    white-space: pre-wrap; line-height: 1.55; max-height: 260px; overflow-y: auto;
+}
+{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <div class="card-label">Find a paper</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <input type="text" class="form-control-dark" id="queryInput" style="flex:1;min-width:260px;"
+               placeholder="10.1038/nature14539 — or paste the paper title">
+        <button class="btn-primary-dark" onclick="runResolve()">
+            <i class="fas fa-unlock"></i> Find access
+        </button>
+    </div>
+
+    <details style="margin-top:14px;">
+        <summary style="font-size:12.5px;color:var(--text-secondary);cursor:pointer;">
+            Your institution (optional — checks your library's subscription)
+        </summary>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+            <input type="text" class="form-control-dark" id="instName" style="flex:1;min-width:180px;"
+                   placeholder="Institution name">
+            <input type="text" class="form-control-dark" id="instResolver" style="flex:2;min-width:240px;"
+                   placeholder="OpenURL resolver, e.g. https://yourlib.on.worldcat.org/atoztitles/link">
+            <input type="text" class="form-control-dark" id="instProxy" style="flex:2;min-width:220px;"
+                   placeholder="EZproxy prefix, e.g. https://ezproxy.youruni.edu">
+            <button class="btn-primary-dark" onclick="saveInstitution()" style="flex-shrink:0;">Save</button>
+        </div>
+        <div style="font-size:11.5px;color:var(--text-muted);margin-top:8px;line-height:1.5;">
+            Your library website or librarian has both values. They are stored in this browser only,
+            and used solely to build the link you click.
+        </div>
+    </details>
+
+    <div id="loadingBox" style="display:none;margin-top:14px;padding:14px;border-radius:9px;
+        background:rgba(88,166,255,0.06);border:1px solid rgba(88,166,255,0.2);">
+        <div style="font-size:13px;color:var(--accent-blue);">
+            <i class="fas fa-circle-notch fa-spin"></i> Checking OpenAlex, Unpaywall, arXiv...
+        </div>
+    </div>
+
+    <div id="errorBox" style="display:none;margin-top:12px;padding:12px;border-radius:8px;
+        background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);
+        color:var(--accent-red);font-size:13px;"></div>
+</div>
+
+<div id="resultsArea" style="display:none;">
+    <div class="glass-card">
+        <div id="paperHeader"></div>
+        <div id="bestBanner"></div>
+        <div class="card-label" style="margin:18px 0 10px;">What was tried</div>
+        <div id="stepsList"></div>
+    </div>
+
+    <div class="glass-card" id="institutionsCard" style="display:none;">
+        <div class="card-label">Institutions publishing in this journal</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px;line-height:1.5;">
+            These institutions publish here regularly, so a contact at one of them very likely has
+            access. This is inferred from publication records — no open dataset lists who subscribes
+            to what.
+        </div>
+        <div id="institutionsList"></div>
+    </div>
+
+    <div class="glass-card" id="emailCard" style="display:none;">
+        <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+            <div class="card-label mb-0">Ask the author</div>
+            <button class="btn-primary-dark" style="font-size:12px;padding:5px 12px;" onclick="copyEmail()">
+                <i class="fas fa-copy"></i> Copy email
+            </button>
+        </div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px;line-height:1.5;">
+            Authors may share their own manuscript with individuals, and most are glad to.
+            In practice this is the most reliable step here.
+        </div>
+        <div id="emailMeta" style="font-size:12.5px;color:var(--text-secondary);margin-bottom:8px;"></div>
+        <div class="email-box" id="emailBody"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let _lastResult = null;
+
+function loadInstitution() {
+    try {
+        const saved = JSON.parse(localStorage.getItem('accessInstitution') || '{}');
+        document.getElementById('instName').value = saved.name || '';
+        document.getElementById('instResolver').value = saved.resolver_url || '';
+        document.getElementById('instProxy').value = saved.ezproxy_prefix || '';
+        return saved;
+    } catch (e) { return {}; }
+}
+
+function saveInstitution() {
+    const inst = {
+        name: document.getElementById('instName').value.trim(),
+        resolver_url: document.getElementById('instResolver').value.trim(),
+        ezproxy_prefix: document.getElementById('instProxy').value.trim(),
+    };
+    localStorage.setItem('accessInstitution', JSON.stringify(inst));
+    return inst;
+}
+
+async function runResolve() {
+    const query = document.getElementById('queryInput').value.trim();
+    if (!query) return;
+
+    document.getElementById('errorBox').style.display = 'none';
+    document.getElementById('resultsArea').style.display = 'none';
+    document.getElementById('loadingBox').style.display = 'block';
+
+    try {
+        const res = await fetch('/resolve-access', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query, institution: saveInstitution() })
+        });
+        const data = await res.json();
+        if (!res.ok || data.error) throw new Error(data.error || 'Lookup failed');
+        _lastResult = data;
+        render(data);
+    } catch (err) {
+        const box = document.getElementById('errorBox');
+        box.textContent = err.message;
+        box.style.display = 'block';
+    } finally {
+        document.getElementById('loadingBox').style.display = 'none';
+    }
+}
+
+function render(d) {
+    const retracted = d.is_retracted
+        ? `<div style="margin-top:8px;padding:8px 12px;border-radius:7px;background:rgba(247,129,102,0.1);
+             border:1px solid rgba(247,129,102,0.35);color:var(--accent-red);font-size:12.5px;font-weight:600;">
+             <i class="fas fa-ban"></i> This paper is marked RETRACTED. Do not cite it as valid evidence.
+           </div>` : '';
+
+    document.getElementById('paperHeader').innerHTML = `
+        <div style="font-size:15px;font-weight:650;color:var(--text-primary);line-height:1.4;">${escHtml(d.title || d.query)}</div>
+        <div style="font-size:12.5px;color:var(--text-muted);margin-top:4px;">
+            ${escHtml(d.journal || 'Unknown venue')}${d.year ? ' · ' + d.year : ''}
+            ${d.doi ? ' · DOI: ' + escHtml(d.doi) : ''}
+            ${d.cited_by ? ' · ' + d.cited_by.toLocaleString() + ' citations' : ''}
+        </div>${retracted}`;
+
+    const best = d.best;
+    document.getElementById('bestBanner').innerHTML = best
+        ? `<div class="best-banner">
+             <div style="font-size:12px;color:var(--accent-green);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">
+               Legal free copy found
+             </div>
+             <a href="${escHtml(best.url)}" target="_blank" rel="noopener noreferrer"
+                class="btn-primary-dark" style="display:inline-block;margin-top:10px;text-decoration:none;">
+                <i class="fas fa-download"></i> Open ${best.kind === 'pdf' ? 'PDF' : 'page'}
+             </a>
+             <div style="font-size:11.5px;color:var(--text-muted);margin-top:8px;">
+               via ${escHtml(best.source)} · ${escHtml(best.version)} · licence: ${escHtml(best.license)}
+             </div>
+           </div>`
+        : `<div class="best-banner none">
+             <div style="font-size:12px;color:var(--accent-orange);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">
+               No free copy found
+             </div>
+             <div style="font-size:12.5px;color:var(--text-secondary);margin-top:6px;line-height:1.5;">
+               Try your library link below, ask a contact at one of the listed institutions,
+               or send the author request — it works more often than people expect.
+             </div>
+           </div>`;
+
+    const icons = { found: 'fa-check', not_found: 'fa-xmark', skipped: 'fa-minus' };
+    document.getElementById('stepsList').innerHTML = (d.steps || []).map(s => `
+        <div class="step-row ${s.status}">
+            <div class="step-icon ${s.status}"><i class="fas ${icons[s.status]}"></i></div>
+            <div style="flex:1;">
+                <div class="step-name">${escHtml(s.name)}</div>
+                <div class="step-detail">${escHtml(s.detail)}</div>
+                ${s.url ? `<a href="${escHtml(s.url)}" target="_blank" rel="noopener noreferrer"
+                    style="font-size:11.5px;color:var(--accent-blue);">Open <i class="fas fa-external-link-alt"></i></a>` : ''}
+            </div>
+        </div>`).join('');
+
+    const insts = d.institutions_with_access || [];
+    document.getElementById('institutionsCard').style.display = insts.length ? 'block' : 'none';
+    document.getElementById('institutionsList').innerHTML = insts.map(i =>
+        `<span class="inst-chip">${escHtml(i.name)} <span style="color:var(--text-muted);">· ${i.works.toLocaleString()} papers</span></span>`
+    ).join('');
+
+    const email = d.author_request || {};
+    document.getElementById('emailCard').style.display = email.body ? 'block' : 'none';
+    document.getElementById('emailMeta').innerHTML =
+        `<strong>To:</strong> ${escHtml(email.author_name || 'Corresponding author')}`
+        + (email.author_institution ? ` · ${escHtml(email.author_institution)}` : '')
+        + `<br><strong>Subject:</strong> ${escHtml(email.subject || '')}`;
+    document.getElementById('emailBody').textContent = email.body || '';
+
+    document.getElementById('resultsArea').style.display = 'block';
+    document.getElementById('resultsArea').scrollIntoView({ behavior: 'smooth' });
+}
+
+function copyEmail() {
+    const email = (_lastResult || {}).author_request || {};
+    navigator.clipboard.writeText(`Subject: ${email.subject || ''}\n\n${email.body || ''}`);
+}
+
+function escHtml(s) {
+    return String(s === null || s === undefined ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+document.getElementById('queryInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') runResolve();
+});
+
+loadInstitution();
+</script>
+{% endblock %}

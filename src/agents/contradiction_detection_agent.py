@@ -17,7 +17,7 @@ import re
 from typing import List, Dict, Any, Optional, Tuple
 from itertools import combinations
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from ..models.data_models import Claim, Contradiction, PaperMetadata
 from .base_agent import BaseAgent
@@ -34,6 +34,11 @@ class _PairJudgment(BaseModel):
     explanation: str = ""
     evidence_1: str = ""
     evidence_2: str = ""
+
+    @field_validator("contradiction_type", "verdict", "explanation", "evidence_1", "evidence_2", mode="before")
+    @classmethod
+    def _none_to_default(cls, v):
+        return "" if v is None else v
 
 
 class ContradictionDetectionAgent(BaseAgent):

@@ -1,0 +1,89 @@
+{
+  "claims": {
+    "tp": 1,
+    "fp": 8,
+    "fn": 2,
+    "precision": 0.1111111111111111,
+    "recall": 0.3333333333333333,
+    "f1": 0.16666666666666666,
+    "matches": [
+      {
+        "pred_index": 1,
+        "gold_index": 1,
+        "similarity": 0.814
+      }
+    ],
+    "missed_gold_indices": [
+      0,
+      2
+    ]
+  },
+  "contradictions": {
+    "pair_level": {
+      "tp": 0,
+      "fp_on_negatives": 0,
+      "fn": 0,
+      "precision_on_labeled": null,
+      "recall": null,
+      "false_positive_rate_on_negatives": 0.0
+    },
+    "claim_level_strict": {
+      "tp": 0,
+      "recall": null
+    },
+    "unlabeled_prediction_volume": 1,
+    "missed_gold": [],
+    "false_positives_on_negatives": [],
+    "unlabeled_predictions": [
+      {
+        "paper1_id": "10_1016_j_neucom_2021_04_039",
+        "paper2_id": "10_1016_j_drudis_2021_02_011",
+        "claim_text_1": "Molecular\u2011generative GNN models achieve higher novelty scores than traditional SMILES\u2011based generators.",
+        "claim_text_2": "De\u202fnovo GNN generators produce molecules with synthetic accessibility comparable to expert\u2011crafted molecules but do not explicitly claim higher novelty over SMILES methods.",
+        "explanation": "Paper\u202f6 emphasizes novelty as a primary advantage of generative GNNs, whereas Paper\u202f7 focuses on synthetic accessibility and does not report a novelty advantage, suggesting a potential tension between optimizing for novelty versus synthetic feasibility that is not reconciled across the two studies.",
+        "detection_method": "baseline"
+      }
+    ]
+  },
+  "gaps": {
+    "recall": 0.0,
+    "per_prediction": [
+      {
+        "description": "A standardized, large\u2011scale, experimentally validated benchmark that simultaneously evaluates property prediction, activity classification, and generative performance of GNNs is missing.",
+        "gap_type": "dataset",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Current literature lacks systematic studies on the interpretability of GNN decisions in the context of medicinal chemistry, limiting trust and adoption by chemists.",
+        "gap_type": "methodological",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Few works explore the integration of GNN\u2011based property predictors with reinforcement\u2011learning driven molecular generation to create closed\u2011loop design pipelines.",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Evaluation protocols often report performance on in\u2011distribution test sets only; out\u2011of\u2011distribution generalization to novel chemical space remains under\u2011studied.",
+        "gap_type": "evaluation",
+        "matched_gold_index": null
+      },
+      {
+        "description": "The contradictory emphasis on novelty versus synthetic accessibility in generative GNN studies indicates a need for multi\u2011objective optimization frameworks that balance these objectives.",
+        "gap_type": "contradiction_driven",
+        "matched_gold_index": null
+      }
+    ],
+    "missed_gold_indices": [
+      0,
+      1
+    ],
+    "precision_at_3": 0.0,
+    "precision_at_5": 0.0
+  },
+  "cost": {
+    "estimated_cost_usd": 0.001087,
+    "llm_calls": 1,
+    "parse_failures": 0
+  }
+}

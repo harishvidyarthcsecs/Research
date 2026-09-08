@@ -1,0 +1,175 @@
+{
+  "claims": [
+    {
+      "paper_id": "10_51847_8w12ouixi5",
+      "statement": "This article provides a narrative review of molecular graph neural networks in drug discovery.",
+      "confidence": 0.99
+    },
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "The integration of artificial intelligence (AI) in drug discovery has profoundly transformed the pharmaceutical landscape by significantly accelerating the identification of potential drug candidates.",
+      "confidence": 0.935
+    },
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "Graph Neural Networks (GNNs) have proven to be particularly effective in modeling molecular structures, optimizing drug\u2011target interactions, and enhancing prediction accuracy.",
+      "confidence": 0.9
+    },
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "GNNs have advantages compared to traditional molecular representations.",
+      "confidence": 0.8
+    },
+    {
+      "paper_id": "10_1016_b978-0-443-34059-8_00015-4",
+      "statement": "Graph neural networks can be applied to drug discovery.",
+      "confidence": 0.8
+    },
+    {
+      "paper_id": "10_1021_acs_chemrev_5c00461_s001",
+      "statement": "Graph Neural Networks are used in modern AI-aided drug discovery.",
+      "confidence": 0.6
+    },
+    {
+      "paper_id": "10_1109_metroxraine58569_2023_10405789",
+      "statement": "Graph Neural Networks can be applied to drug discovery.",
+      "confidence": 0.7
+    },
+    {
+      "paper_id": "10_1109_metroxraine58569_2023_10405789",
+      "statement": "An integrated decision support pipeline based on Graph Neural Networks has been developed for drug discovery.",
+      "confidence": 0.7
+    },
+    {
+      "paper_id": "10_1016_j_neucom_2021_04_039",
+      "statement": "Molecular generative Graph Neural Networks can be used for drug discovery.",
+      "confidence": 0.6
+    },
+    {
+      "paper_id": "10_1016_j_drudis_2021_02_011",
+      "statement": "Graph neural networks can be used for automated de novo drug design.",
+      "confidence": 0.8
+    }
+  ],
+  "contradictions": [],
+  "gaps": [
+    {
+      "description": "No publicly recognized drug\u2011discovery datasets (e.g., ChEMBL, MoleculeNet, PDBbind) have been used in any reported study.",
+      "gap_type": "dataset",
+      "rank": 1,
+      "priority": 0.936,
+      "evidence": [
+        "Datasets used in claims: none detected",
+        "Expected datasets never used: ChEMBL, MoleculeNet, PDBbind, PubChem BioAssay, ZINC15"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Empirical studies on molecular property prediction (e.g., solubility, toxicity, bioactivity) using GNNs are absent.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 2,
+      "priority": 0.91,
+      "evidence": [
+        "Claims per subtopic: Molecular property prediction =0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Specific GNN architectures (MPNN, GAT, Graph Transformers) have never been reported in the literature corpus.",
+      "gap_type": "methodological",
+      "rank": 3,
+      "priority": 0.904,
+      "evidence": [
+        "Claims per method: Message Passing Neural Networks (MPNN)=0",
+        "Claims per method: Graph Attention Networks (GAT)=0",
+        "Claims per method: Graph Transformers=0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "No research has applied GNNs to protein\u2013ligand interaction modeling and binding affinity prediction.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 4,
+      "priority": 0.87,
+      "evidence": [
+        "Claims per subtopic: Protein\u2013ligand interaction modeling and binding affinity prediction =0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "De\u202fnovo molecular generation and optimization using graph generative models have not been explored.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 5,
+      "priority": 0.86,
+      "evidence": [
+        "Claims per subtopic: De novo molecular generation and optimization using graph generative models =0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Absence of systematic baseline comparisons makes it impossible to gauge the incremental value of GNNs over traditional molecular representations.",
+      "gap_type": "methodological",
+      "rank": 6,
+      "priority": 0.85,
+      "evidence": [
+        "All sample claims are generic and lack quantitative baselines",
+        "Claims per method: none reported"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Self\u2011supervised contrastive learning on molecular graphs is completely absent.",
+      "gap_type": "methodological",
+      "rank": 7,
+      "priority": 0.824,
+      "evidence": [
+        "Claims per method: Contrastive self\u2011supervised learning on molecular graphs=0"
+      ],
+      "detection_method": "llm"
+    }
+  ],
+  "usage": {
+    "calls": 18,
+    "prompt_tokens": 6702,
+    "completion_tokens": 12748,
+    "estimated_cost_usd": 0.010566,
+    "parse_failures": 1,
+    "by_purpose": {
+      "topic_expansion": {
+        "calls": 1,
+        "prompt_tokens": 198,
+        "completion_tokens": 521,
+        "estimated_cost_usd": 0.00042,
+        "parse_failures": 0
+      },
+      "claim_extraction": {
+        "calls": 10,
+        "prompt_tokens": 1921,
+        "completion_tokens": 3249,
+        "estimated_cost_usd": 0.002725,
+        "parse_failures": 0
+      },
+      "contradiction_judge": {
+        "calls": 5,
+        "prompt_tokens": 3081,
+        "completion_tokens": 5071,
+        "estimated_cost_usd": 0.004265,
+        "parse_failures": 0
+      },
+      "gap_detection": {
+        "calls": 2,
+        "prompt_tokens": 1502,
+        "completion_tokens": 3907,
+        "estimated_cost_usd": 0.003156,
+        "parse_failures": 1
+      }
+    }
+  },
+  "run_metadata": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.0,
+    "duration_s": 91.83,
+    "frozen_corpus": true
+  }
+}
