@@ -122,9 +122,9 @@ class ClaimExtractionAgent(BaseAgent):
     ]
 
     _METRIC_PATTERNS = [
-        {"pattern": r"accuracy[:\s]+(\d+(?:\.\d+)?)\s*(%|percent)?", "metric": "accuracy"},
-        {"pattern": r"precision[:\s]+(\d+(?:\.\d+)?)\s*(%|percent)?", "metric": "precision"},
-        {"pattern": r"recall[:\s]+(\d+(?:\.\d+)?)\s*(%|percent)?", "metric": "recall"},
+        {"pattern": r"accuracy(?:\s+of)?[:\s]+(\d+(?:\.\d+)?)\s*(%|percent)?", "metric": "accuracy"},
+        {"pattern": r"precision(?:\s+of)?[:\s]+(\d+(?:\.\d+)?)\s*(%|percent)?", "metric": "precision"},
+        {"pattern": r"recall(?:\s+of)?[:\s]+(\d+(?:\.\d+)?)\s*(%|percent)?", "metric": "recall"},
         {"pattern": r"f1[-\s]score[:\s]+(\d+(?:\.\d+)?)\s*(%|percent)?", "metric": "f1_score"},
         {"pattern": r"auc[:\s]+(\d+(?:\.\d+)?)", "metric": "auc"},
         {"pattern": r"rmse[:\s]+(\d+(?:\.\d+)?)", "metric": "rmse"},
@@ -133,7 +133,9 @@ class ClaimExtractionAgent(BaseAgent):
 
     def _regex_extract(self, text: str, paper_id: str, paper: PaperMetadata) -> List[Claim]:
         claims = []
-        sentences = re.split(r"[.!?]+", text)
+        # Sentence punctuation ends a claim, but decimal points (for example
+        # ``95.2%``) must remain part of the metric value.
+        sentences = re.split(r"(?<!\d)[.!?]+|[.!?]+(?!\d)", text)
         for sentence in sentences:
             sentence = sentence.strip()
             if not sentence:

@@ -57,6 +57,11 @@ class TestAutonomousResearchSystem:
         research_system.topic_expansion_agent.process = AsyncMock(return_value=sample_topic_map)
         research_system.paper_discovery_agent.process = AsyncMock(return_value=sample_papers)
         research_system.claim_extraction_agent.process = AsyncMock(return_value=[])
+        research_system.claim_normalization_agent.process = AsyncMock(return_value=[])
+        research_system.contradiction_detection_agent.process = AsyncMock(return_value=[])
+        research_system.research_gap_detection_agent.process = AsyncMock(return_value=[])
+        research_system.citation_builder_agent.process = AsyncMock(return_value=[])
+        research_system.recommendation_agent.process = AsyncMock(return_value=([], "Test summary"))
         
         # Run research
         results = await research_system.research("Graph Neural Networks in Drug Discovery")
@@ -70,7 +75,7 @@ class TestAutonomousResearchSystem:
     def test_bibtex_generation(self, research_system, sample_papers):
         """Test BibTeX citation generation."""
         paper = sample_papers[0]
-        bibtex = research_system._generate_bibtex(paper)
+        bibtex = research_system.citation_builder_agent._generate_bibtex(paper, paper.id)
         
         assert "Graph Neural Networks for Drug Discovery" in bibtex
         assert "John Doe and Jane Smith" in bibtex
@@ -80,16 +85,16 @@ class TestAutonomousResearchSystem:
     def test_apa_generation(self, research_system, sample_papers):
         """Test APA citation generation."""
         paper = sample_papers[0]
-        apa = research_system._generate_apa(paper)
+        apa = research_system.citation_builder_agent._generate_apa(paper)
         
-        assert "John Doe & Jane Smith" in apa
+        assert "Doe, J. & Smith, J." in apa
         assert "(2023)" in apa
         assert "Graph Neural Networks for Drug Discovery" in apa
     
     def test_ieee_generation(self, research_system, sample_papers):
         """Test IEEE citation generation."""
         paper = sample_papers[0]
-        ieee = research_system._generate_ieee(paper)
+        ieee = research_system.citation_builder_agent._generate_ieee(paper)
         
         assert "John Doe, Jane Smith" in ieee
         assert "Graph Neural Networks for Drug Discovery" in ieee
@@ -103,7 +108,7 @@ class TestTopicExpansionAgent:
     def topic_expansion_agent(self):
         """Create a topic expansion agent for testing."""
         from src.agents.topic_expansion_agent import TopicExpansionAgent
-        return TopicExpansionAgent()
+        return TopicExpansionAgent(mode="rules")
     
     @pytest.mark.asyncio
     async def test_topic_expansion(self, topic_expansion_agent):
@@ -114,7 +119,8 @@ class TestTopicExpansionAgent:
         assert topic_map.main_topic == topic
         assert len(topic_map.subtopics) > 0
         assert len(topic_map.keywords) > 0
-        assert "graph neural network" in [kw.lower() for kw in topic_map.keywords]
+        keywords = {kw.lower() for kw in topic_map.keywords}
+        assert {"graph", "neural", "networks"} <= keywords
     
     def test_subtopic_extraction(self, topic_expansion_agent):
         """Test subtopic extraction."""
@@ -146,7 +152,7 @@ class TestClaimExtractionAgent:
     def test_metric_extraction(self, claim_extraction_agent):
         """Test metric extraction from sentences."""
         sentence = "The model achieves an accuracy of 95.2% on the test dataset."
-        metrics = claim_extraction_agent._extract_metrics_from_sentence(sentence)
+        metrics = claim_extraction_agent._extract_metrics(sentence)
         
         assert "accuracy" in metrics
         assert metrics["accuracy"] == 95.2
@@ -154,19 +160,30 @@ class TestClaimExtractionAgent:
     def test_dataset_extraction(self, claim_extraction_agent):
         """Test dataset extraction from text."""
         text = "We evaluated our method on ChEMBL and PubChem datasets."
-        datasets = claim_extraction_agent._extract_datasets_from_text(text)
+        datasets = claim_extraction_agent._extract_datasets(text)
         
         assert "ChEMBL" in datasets
         assert "PubChem" in datasets
     
     def test_sentence_splitting(self, claim_extraction_agent):
         """Test sentence splitting functionality."""
-        text = "This is the first sentence. This is the second sentence!"
-        sentences = claim_extraction_agent._split_into_sentences(text)
-        
-        assert len(sentences) == 2
-        assert "first sentence" in sentences[0]
-        assert "second sentence" in sentences[1]
+        paper = PaperMetadata(
+            id="paper_1",
+            title="Metric extraction",
+            authors=["Test Author"],
+            year=2024,
+            venue="Test Journal",
+            abstract="",
+        )
+        claims = claim_extraction_agent._regex_extract(
+            "The model achieves accuracy of 95.2%. The approach is state-of-the-art!",
+            paper.id,
+            paper,
+        )
+
+        assert len(claims) == 2
+        assert claims[0].metrics["accuracy"] == 95.2
+        assert "state-of-the-art" in claims[1].statement
 
 
 if __name__ == "__main__":

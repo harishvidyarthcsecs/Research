@@ -12,14 +12,14 @@ from datetime import datetime
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
 # Import directly without going through __init__.py
-from models.data_models import (
+from src.models.data_models import (
     PaperMetadata, Claim, ResearchResults, TopicMap, 
     Contradiction, ResearchGap, Citation
 )
 
 # Import the literature builder directly
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src', 'agents'))
-from literature_builder_agent import LiteratureBuilderAgent
+from src.agents.literature_builder_agent import LiteratureBuilderAgent
 
 def create_test_data():
     """Create test data with real-looking papers and abstracts."""

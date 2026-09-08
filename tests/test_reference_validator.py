@@ -6,13 +6,20 @@ Test script for the Reference Validator system.
 import sys
 import os
 import asyncio
+import pytest
+
+pytestmark = pytest.mark.skipif(
+    os.getenv("RESEARCH_AGENT_LIVE") != "1",
+    reason="requires live CrossRef verification; set RESEARCH_AGENT_LIVE=1 to run",
+)
 
 # Add src to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+REPO_ROOT = os.path.dirname(os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(REPO_ROOT, 'src'))
 
 # Import directly
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src', 'agents'))
-from reference_validator import ReferenceValidator, ReferenceValidationResult
+sys.path.insert(0, os.path.join(REPO_ROOT, 'src', 'agents'))
+from src.agents.reference_validator import ReferenceValidator, ReferenceValidationResult
 
 def create_test_references():
     """Create test reference content with various issues."""

@@ -485,13 +485,14 @@ def _job_sse_response(job_id: str):
                 if is_sentinel(item):
                     break
                 yield sse_format(item)
+                if item.get('type') == 'end':
+                    return
         finally:
             job.unsubscribe(q)
 
     return Response(stream(), mimetype='text/event-stream', headers={
         'Cache-Control': 'no-cache',
         'X-Accel-Buffering': 'no',
-        'Connection': 'keep-alive',
     })
 
 

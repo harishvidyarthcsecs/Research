@@ -12,15 +12,15 @@ from datetime import datetime
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
 # Import directly
-from models.data_models import PaperMetadata, Claim, ResearchResults, TopicMap
+from src.models.data_models import PaperMetadata, Claim, ResearchResults, TopicMap
 
 # Import agents
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src', 'agents'))
-from literature_builder_agent import LiteratureBuilderAgent
-from custom_citation_formatter import CustomCitationFormatter
+from src.agents.literature_builder_agent import LiteratureBuilderAgent
+from src.agents.custom_citation_formatter import CustomCitationFormatter
 
 # Import app functions
-import app_fixed
+from src.reporting import report_builder as app_fixed
 
 def create_test_paper_with_real_doi():
     """Create test paper with a real DOI for testing CrossRef integration."""

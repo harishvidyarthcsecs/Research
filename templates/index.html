@@ -402,6 +402,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
 // ── Live research run: start job, stream stage events, then fetch result ────
 let activeJobId = null;
+let currentJobId = null;
 let eventSource = null;
 let elapsedTimer = null;
 
@@ -457,12 +458,13 @@ function startElapsedTimer() {
     }, 1000);
 }
 
-function endRun() {
+function endRun(source = eventSource, jobId = activeJobId) {
     clearInterval(elapsedTimer);
-    if (eventSource) { eventSource.close(); eventSource = null; }
+    if (source) source.close();
+    if (eventSource === source) eventSource = null;
     document.getElementById('skeletonWrap').classList.remove('active');
     document.getElementById('cancelRunBtn').disabled = true;
-    activeJobId = null;
+    if (activeJobId === jobId) activeJobId = null;
 }
 
 function hideProgress() {
@@ -472,8 +474,10 @@ function hideProgress() {
 async function loadJobResult(jobId) {
     const res = await fetch(`/research/result/${jobId}`);
     const data = await res.json();
+    if (res.status === 202) throw new Error('Research is still running');
     if (!res.ok) throw new Error(data.error || 'Could not load results');
 
+    currentJobId = jobId;
     currentResults = data;
     allRecommendations = data.recommendations || [];
     allPapers = data.papers || [];
@@ -514,6 +518,7 @@ document.getElementById('researchForm').addEventListener('submit', async functio
 
     document.getElementById('resultsSection').style.display = 'none';
     document.getElementById('featuresSection').style.display = 'none';
+    currentJobId = null;
 
     const panel = document.getElementById('progressPanel');
     panel.classList.add('active');
@@ -535,27 +540,32 @@ document.getElementById('researchForm').addEventListener('submit', async functio
         const job = await res.json();
         if (!res.ok) throw new Error(job.error || 'Could not start research');
 
-        activeJobId = job.job_id;
+        const jobId = job.job_id;
+        activeJobId = jobId;
         renderStages(job.stages || []);
         startElapsedTimer();
 
-        eventSource = new EventSource(`/research/events/${job.job_id}`);
+        const source = new EventSource(`/research/events/${jobId}`);
+        eventSource = source;
 
-        eventSource.addEventListener('start', ev => {
+        source.addEventListener('start', ev => {
             const data = JSON.parse(ev.data);
             if (data.stages) renderStages(data.stages);
         });
 
-        eventSource.addEventListener('stage', ev => updateStage(JSON.parse(ev.data)));
+        source.addEventListener('stage', ev => updateStage(JSON.parse(ev.data)));
 
-        eventSource.addEventListener('end', async ev => {
+        source.addEventListener('end', async ev => {
+            if (eventSource !== source || activeJobId !== jobId) return;
             const data = JSON.parse(ev.data);
-            const jobId = activeJobId;
-            endRun();
+            endRun(source, jobId);
 
             if (data.status === 'done') {
                 document.getElementById('progressTitle').textContent = 'Research complete';
                 try {
+                    // Let the browser release the terminal SSE connection before
+                    // opening the result request on the same origin.
+                    await new Promise(resolve => setTimeout(resolve, 0));
                     await loadJobResult(jobId);
                     hideProgress();
                 } catch (err) {
@@ -573,10 +583,9 @@ document.getElementById('researchForm').addEventListener('submit', async functio
         });
 
         // Network drop or server restart — the run may still be alive, so poll once.
-        eventSource.onerror = async () => {
-            if (!activeJobId) return;
-            const jobId = activeJobId;
-            endRun();
+        source.onerror = async () => {
+            if (eventSource !== source || activeJobId !== jobId) return;
+            endRun(source, jobId);
             try {
                 await loadJobResult(jobId);
                 hideProgress();
@@ -916,8 +925,8 @@ async function exportResults(type) {
 }
 
 function downloadMarkdownReport() {
-    if (activeJobId) {
-        window.open('/report/' + activeJobId + '.md', '_blank');
+    if (currentJobId) {
+        window.open('/report/' + currentJobId + '.md', '_blank');
         return;
     }
     if (currentResults && currentResults.report_url) {

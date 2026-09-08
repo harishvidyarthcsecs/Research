@@ -10,10 +10,10 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
 # Import data models
-from models.data_models import PaperMetadata
+from src.models.data_models import PaperMetadata
 
 # Import app functions
-import app_fixed
+from src.reporting import report_builder as app_fixed
 
 def create_paper_with_journal_doi():
     """Create test paper with a real journal DOI that should have volume/issue data."""

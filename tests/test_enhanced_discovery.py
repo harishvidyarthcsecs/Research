@@ -4,6 +4,12 @@ Test script for enhanced paper discovery with multiple sources.
 import asyncio
 import sys
 import os
+import pytest
+
+pytestmark = pytest.mark.skipif(
+    os.getenv("RESEARCH_AGENT_LIVE") != "1",
+    reason="requires live academic APIs; set RESEARCH_AGENT_LIVE=1 to run",
+)
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))

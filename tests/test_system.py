@@ -4,6 +4,12 @@ Simple test script to verify the research system works.
 import asyncio
 import sys
 import os
+import pytest
+
+pytestmark = pytest.mark.skipif(
+    os.getenv("RESEARCH_AGENT_LIVE") != "1",
+    reason="requires live LLM and academic APIs; set RESEARCH_AGENT_LIVE=1 to run",
+)
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
