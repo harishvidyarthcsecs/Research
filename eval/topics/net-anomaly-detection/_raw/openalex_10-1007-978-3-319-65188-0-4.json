@@ -1,0 +1,631 @@
+{
+  "id": "https://openalex.org/W2750895881",
+  "doi": "https://doi.org/10.1007/978-3-319-65188-0_4",
+  "title": "Network Traffic Anomaly Detection Techniques and Systems",
+  "display_name": "Network Traffic Anomaly Detection Techniques and Systems",
+  "publication_year": 2017,
+  "publication_date": "2017-01-01",
+  "ids": {
+    "openalex": "https://openalex.org/W2750895881",
+    "doi": "https://doi.org/10.1007/978-3-319-65188-0_4",
+    "mag": "2750895881"
+  },
+  "language": "en",
+  "primary_location": {
+    "id": "doi:10.1007/978-3-319-65188-0_4",
+    "is_oa": false,
+    "landing_page_url": "https://doi.org/10.1007/978-3-319-65188-0_4",
+    "pdf_url": null,
+    "source": {
+      "id": "https://openalex.org/S4210175725",
+      "display_name": "Computer communications and networks",
+      "issn_l": "1617-7975",
+      "issn": [
+        "1617-7975",
+        "2197-8433"
+      ],
+      "is_oa": false,
+      "is_in_doaj": false,
+      "is_core": true,
+      "host_organization": null,
+      "host_organization_name": null,
+      "host_organization_lineage": [],
+      "host_organization_lineage_names": [],
+      "type": "book series"
+    },
+    "license": null,
+    "license_id": null,
+    "version": "publishedVersion",
+    "is_accepted": true,
+    "is_published": true,
+    "raw_source_name": "Computer Communications and Networks",
+    "raw_type": "book-chapter"
+  },
+  "type": "book-chapter",
+  "indexed_in": [
+    "crossref"
+  ],
+  "open_access": {
+    "is_oa": false,
+    "oa_status": "closed",
+    "oa_url": null,
+    "any_repository_has_fulltext": false
+  },
+  "authorships": [
+    {
+      "author_position": "first",
+      "author": {
+        "id": "https://openalex.org/A5044933320",
+        "display_name": "Monowar Bhuyan",
+        "orcid": "https://orcid.org/0000-0002-9842-7840"
+      },
+      "institutions": [
+        {
+          "id": "https://openalex.org/I332121957",
+          "display_name": "Kaziranga University",
+          "ror": "https://ror.org/00vadgf54",
+          "country_code": "IN",
+          "type": "education",
+          "lineage": [
+            "https://openalex.org/I332121957"
+          ]
+        }
+      ],
+      "countries": [
+        "IN"
+      ],
+      "is_corresponding": false,
+      "raw_author_name": "Monowar H. Bhuyan",
+      "raw_affiliation_strings": [
+        "Kaziranga University, Jorhat, India"
+      ],
+      "raw_orcid": null,
+      "affiliations": [
+        {
+          "raw_affiliation_string": "Kaziranga University, Jorhat, India",
+          "institution_ids": [
+            "https://openalex.org/I332121957"
+          ]
+        }
+      ]
+    },
+    {
+      "author_position": "middle",
+      "author": {
+        "id": "https://openalex.org/A5071372272",
+        "display_name": "Dhruba K. Bhattacharyya",
+        "orcid": "https://orcid.org/0000-0002-9506-7640"
+      },
+      "institutions": [
+        {
+          "id": "https://openalex.org/I126601174",
+          "display_name": "Tezpur University",
+          "ror": "https://ror.org/005x56091",
+          "country_code": "IN",
+          "type": "education",
+          "lineage": [
+            "https://openalex.org/I126601174"
+          ]
+        }
+      ],
+      "countries": [
+        "IN"
+      ],
+      "is_corresponding": false,
+      "raw_author_name": "Dhruba K. Bhattacharyya",
+      "raw_affiliation_strings": [
+        "Tezpur University, Napaam, India"
+      ],
+      "raw_orcid": null,
+      "affiliations": [
+        {
+          "raw_affiliation_string": "Tezpur University, Napaam, India",
+          "institution_ids": [
+            "https://openalex.org/I126601174"
+          ]
+        }
+      ]
+    },
+    {
+      "author_position": "last",
+      "author": {
+        "id": "https://openalex.org/A5049180880",
+        "display_name": "Jugal Kalita",
+        "orcid": "https://orcid.org/0000-0002-8765-7018"
+      },
+      "institutions": [
+        {
+          "id": "https://openalex.org/I888729015",
+          "display_name": "University of Colorado Colorado Springs",
+          "ror": "https://ror.org/054spjc55",
+          "country_code": "US",
+          "type": "education",
+          "lineage": [
+            "https://openalex.org/I888729015"
+          ]
+        }
+      ],
+      "countries": [
+        "US"
+      ],
+      "is_corresponding": false,
+      "raw_author_name": "Jugal K. Kalita",
+      "raw_affiliation_strings": [
+        "University of Colorado, Colorado Springs, Colorado, USA"
+      ],
+      "raw_orcid": null,
+      "affiliations": [
+        {
+          "raw_affiliation_string": "University of Colorado, Colorado Springs, Colorado, USA",
+          "institution_ids": [
+            "https://openalex.org/I888729015"
+          ]
+        }
+      ]
+    }
+  ],
+  "institutions": [],
+  "countries_distinct_count": 2,
+  "institutions_distinct_count": 3,
+  "corresponding_author_ids": [],
+  "corresponding_institution_ids": [],
+  "apc_list": null,
+  "apc_paid": null,
+  "fwci": 5.1529,
+  "has_fulltext": false,
+  "cited_by_count": 23,
+  "citation_normalized_percentile": {
+    "value": 0.96192308,
+    "is_in_top_1_percent": false,
+    "is_in_top_10_percent": true
+  },
+  "cited_by_percentile_year": {
+    "min": 90,
+    "max": 98
+  },
+  "biblio": {
+    "volume": null,
+    "issue": null,
+    "first_page": "115",
+    "last_page": "169"
+  },
+  "is_retracted": false,
+  "is_paratext": false,
+  "is_xpac": false,
+  "primary_topic": {
+    "id": "https://openalex.org/T10400",
+    "display_name": "Network Security and Intrusion Detection",
+    "score": 1.0,
+    "subfield": {
+      "id": "https://openalex.org/subfields/1705",
+      "display_name": "Computer Networks and Communications"
+    },
+    "field": {
+      "id": "https://openalex.org/fields/17",
+      "display_name": "Computer Science"
+    },
+    "domain": {
+      "id": "https://openalex.org/domains/3",
+      "display_name": "Physical Sciences"
+    }
+  },
+  "topics": [
+    {
+      "id": "https://openalex.org/T10400",
+      "display_name": "Network Security and Intrusion Detection",
+      "score": 1.0,
+      "subfield": {
+        "id": "https://openalex.org/subfields/1705",
+        "display_name": "Computer Networks and Communications"
+      },
+      "field": {
+        "id": "https://openalex.org/fields/17",
+        "display_name": "Computer Science"
+      },
+      "domain": {
+        "id": "https://openalex.org/domains/3",
+        "display_name": "Physical Sciences"
+      }
+    },
+    {
+      "id": "https://openalex.org/T11512",
+      "display_name": "Anomaly Detection Techniques and Applications",
+      "score": 0.9998999834060669,
+      "subfield": {
+        "id": "https://openalex.org/subfields/1702",
+        "display_name": "Artificial Intelligence"
+      },
+      "field": {
+        "id": "https://openalex.org/fields/17",
+        "display_name": "Computer Science"
+      },
+      "domain": {
+        "id": "https://openalex.org/domains/3",
+        "display_name": "Physical Sciences"
+      }
+    },
+    {
+      "id": "https://openalex.org/T11598",
+      "display_name": "Internet Traffic Analysis and Secure E-voting",
+      "score": 0.9965999722480774,
+      "subfield": {
+        "id": "https://openalex.org/subfields/1702",
+        "display_name": "Artificial Intelligence"
+      },
+      "field": {
+        "id": "https://openalex.org/fields/17",
+        "display_name": "Computer Science"
+      },
+      "domain": {
+        "id": "https://openalex.org/domains/3",
+        "display_name": "Physical Sciences"
+      }
+    }
+  ],
+  "keywords": [
+    {
+      "id": "https://openalex.org/keywords/anomaly-detection",
+      "display_name": "Anomaly detection",
+      "score": 0.8457438349723816
+    },
+    {
+      "id": "https://openalex.org/keywords/computer-science",
+      "display_name": "Computer science",
+      "score": 0.7062466144561768
+    },
+    {
+      "id": "https://openalex.org/keywords/data-mining",
+      "display_name": "Data mining",
+      "score": 0.5682080388069153
+    },
+    {
+      "id": "https://openalex.org/keywords/cluster-analysis",
+      "display_name": "Cluster analysis",
+      "score": 0.5525283813476562
+    },
+    {
+      "id": "https://openalex.org/keywords/outlier",
+      "display_name": "Outlier",
+      "score": 0.43786975741386414
+    },
+    {
+      "id": "https://openalex.org/keywords/anomaly",
+      "display_name": "Anomaly (physics)",
+      "score": 0.4269542694091797
+    },
+    {
+      "id": "https://openalex.org/keywords/artificial-intelligence",
+      "display_name": "Artificial intelligence",
+      "score": 0.38040396571159363
+    }
+  ],
+  "concepts": [
+    {
+      "id": "https://openalex.org/C739882",
+      "wikidata": "https://www.wikidata.org/wiki/Q3560506",
+      "display_name": "Anomaly detection",
+      "level": 2,
+      "score": 0.8457438349723816
+    },
+    {
+      "id": "https://openalex.org/C41008148",
+      "wikidata": "https://www.wikidata.org/wiki/Q21198",
+      "display_name": "Computer science",
+      "level": 0,
+      "score": 0.7062466144561768
+    },
+    {
+      "id": "https://openalex.org/C124101348",
+      "wikidata": "https://www.wikidata.org/wiki/Q172491",
+      "display_name": "Data mining",
+      "level": 1,
+      "score": 0.5682080388069153
+    },
+    {
+      "id": "https://openalex.org/C73555534",
+      "wikidata": "https://www.wikidata.org/wiki/Q622825",
+      "display_name": "Cluster analysis",
+      "level": 2,
+      "score": 0.5525283813476562
+    },
+    {
+      "id": "https://openalex.org/C79337645",
+      "wikidata": "https://www.wikidata.org/wiki/Q779824",
+      "display_name": "Outlier",
+      "level": 2,
+      "score": 0.43786975741386414
+    },
+    {
+      "id": "https://openalex.org/C12997251",
+      "wikidata": "https://www.wikidata.org/wiki/Q567560",
+      "display_name": "Anomaly (physics)",
+      "level": 2,
+      "score": 0.4269542694091797
+    },
+    {
+      "id": "https://openalex.org/C154945302",
+      "wikidata": "https://www.wikidata.org/wiki/Q11660",
+      "display_name": "Artificial intelligence",
+      "level": 1,
+      "score": 0.38040396571159363
+    },
+    {
+      "id": "https://openalex.org/C26873012",
+      "wikidata": "https://www.wikidata.org/wiki/Q214781",
+      "display_name": "Condensed matter physics",
+      "level": 1,
+      "score": 0.0
+    },
+    {
+      "id": "https://openalex.org/C121332964",
+      "wikidata": "https://www.wikidata.org/wiki/Q413",
+      "display_name": "Physics",
+      "level": 0,
+      "score": 0.0
+    }
+  ],
+  "mesh": [],
+  "locations_count": 1,
+  "locations": [
+    {
+      "id": "doi:10.1007/978-3-319-65188-0_4",
+      "is_oa": false,
+      "landing_page_url": "https://doi.org/10.1007/978-3-319-65188-0_4",
+      "pdf_url": null,
+      "source": {
+        "id": "https://openalex.org/S4210175725",
+        "display_name": "Computer communications and networks",
+        "issn_l": "1617-7975",
+        "issn": [
+          "1617-7975",
+          "2197-8433"
+        ],
+        "is_oa": false,
+        "is_in_doaj": false,
+        "is_core": true,
+        "host_organization": null,
+        "host_organization_name": null,
+        "host_organization_lineage": [],
+        "host_organization_lineage_names": [],
+        "type": "book series"
+      },
+      "license": null,
+      "license_id": null,
+      "version": "publishedVersion",
+      "is_accepted": true,
+      "is_published": true,
+      "raw_source_name": "Computer Communications and Networks",
+      "raw_type": "book-chapter"
+    }
+  ],
+  "best_oa_location": null,
+  "sustainable_development_goals": [],
+  "awards": [],
+  "funders": [],
+  "has_content": {
+    "pdf": false,
+    "grobid_xml": false
+  },
+  "content_urls": null,
+  "referenced_works_count": 165,
+  "referenced_works": [
+    "https://openalex.org/W44307044",
+    "https://openalex.org/W64760530",
+    "https://openalex.org/W123655944",
+    "https://openalex.org/W151108041",
+    "https://openalex.org/W172095630",
+    "https://openalex.org/W1498348584",
+    "https://openalex.org/W1504945105",
+    "https://openalex.org/W1506285740",
+    "https://openalex.org/W1515747060",
+    "https://openalex.org/W1516506771",
+    "https://openalex.org/W1521150922",
+    "https://openalex.org/W1526821023",
+    "https://openalex.org/W1536929369",
+    "https://openalex.org/W1539151385",
+    "https://openalex.org/W1540371141",
+    "https://openalex.org/W1543388142",
+    "https://openalex.org/W1545302662",
+    "https://openalex.org/W1556024794",
+    "https://openalex.org/W1563027355",
+    "https://openalex.org/W1566480186",
+    "https://openalex.org/W1567032921",
+    "https://openalex.org/W1580203049",
+    "https://openalex.org/W1585665690",
+    "https://openalex.org/W1591094652",
+    "https://openalex.org/W1591687134",
+    "https://openalex.org/W1593884111",
+    "https://openalex.org/W1604400617",
+    "https://openalex.org/W1614204437",
+    "https://openalex.org/W1627728918",
+    "https://openalex.org/W1674877186",
+    "https://openalex.org/W1687244664",
+    "https://openalex.org/W1744212210",
+    "https://openalex.org/W1777713421",
+    "https://openalex.org/W1815125660",
+    "https://openalex.org/W1817561967",
+    "https://openalex.org/W1876033015",
+    "https://openalex.org/W1913855765",
+    "https://openalex.org/W1963678392",
+    "https://openalex.org/W1964793108",
+    "https://openalex.org/W1966147156",
+    "https://openalex.org/W1967228187",
+    "https://openalex.org/W1968597682",
+    "https://openalex.org/W1969466477",
+    "https://openalex.org/W1974102697",
+    "https://openalex.org/W1975415766",
+    "https://openalex.org/W1979877030",
+    "https://openalex.org/W1981560284",
+    "https://openalex.org/W1987971958",
+    "https://openalex.org/W1989359075",
+    "https://openalex.org/W1990490415",
+    "https://openalex.org/W1990517717",
+    "https://openalex.org/W1994373811",
+    "https://openalex.org/W1995064042",
+    "https://openalex.org/W1995450389",
+    "https://openalex.org/W1996747841",
+    "https://openalex.org/W2001143354",
+    "https://openalex.org/W2007087405",
+    "https://openalex.org/W2009250942",
+    "https://openalex.org/W2010521478",
+    "https://openalex.org/W2012918711",
+    "https://openalex.org/W2014104262",
+    "https://openalex.org/W2016184967",
+    "https://openalex.org/W2017420094",
+    "https://openalex.org/W2026109714",
+    "https://openalex.org/W2026224128",
+    "https://openalex.org/W2026559036",
+    "https://openalex.org/W2029064186",
+    "https://openalex.org/W2029979651",
+    "https://openalex.org/W2039729742",
+    "https://openalex.org/W2041453110",
+    "https://openalex.org/W2042790056",
+    "https://openalex.org/W2045012776",
+    "https://openalex.org/W2048452516",
+    "https://openalex.org/W2051224630",
+    "https://openalex.org/W2059073895",
+    "https://openalex.org/W2064806155",
+    "https://openalex.org/W2065479644",
+    "https://openalex.org/W2066664409",
+    "https://openalex.org/W2075225004",
+    "https://openalex.org/W2076384720",
+    "https://openalex.org/W2078408680",
+    "https://openalex.org/W2083911205",
+    "https://openalex.org/W2087615914",
+    "https://openalex.org/W2095345875",
+    "https://openalex.org/W2096723957",
+    "https://openalex.org/W2096847629",
+    "https://openalex.org/W2097747396",
+    "https://openalex.org/W2100537916",
+    "https://openalex.org/W2101109743",
+    "https://openalex.org/W2101112476",
+    "https://openalex.org/W2101357108",
+    "https://openalex.org/W2104248525",
+    "https://openalex.org/W2104524589",
+    "https://openalex.org/W2104593144",
+    "https://openalex.org/W2104837959",
+    "https://openalex.org/W2104847067",
+    "https://openalex.org/W2105642232",
+    "https://openalex.org/W2105779206",
+    "https://openalex.org/W2107070213",
+    "https://openalex.org/W2107409339",
+    "https://openalex.org/W2107941094",
+    "https://openalex.org/W2108938091",
+    "https://openalex.org/W2109172044",
+    "https://openalex.org/W2111890927",
+    "https://openalex.org/W2113785273",
+    "https://openalex.org/W2116065364",
+    "https://openalex.org/W2117002131",
+    "https://openalex.org/W2117356311",
+    "https://openalex.org/W2117999036",
+    "https://openalex.org/W2121035740",
+    "https://openalex.org/W2122646361",
+    "https://openalex.org/W2123104473",
+    "https://openalex.org/W2123619513",
+    "https://openalex.org/W2126930370",
+    "https://openalex.org/W2127048307",
+    "https://openalex.org/W2129139910",
+    "https://openalex.org/W2129827899",
+    "https://openalex.org/W2130802299",
+    "https://openalex.org/W2132870739",
+    "https://openalex.org/W2133524609",
+    "https://openalex.org/W2134255060",
+    "https://openalex.org/W2136420282",
+    "https://openalex.org/W2140437701",
+    "https://openalex.org/W2140711496",
+    "https://openalex.org/W2140978634",
+    "https://openalex.org/W2142889610",
+    "https://openalex.org/W2144208713",
+    "https://openalex.org/W2146232384",
+    "https://openalex.org/W2147029177",
+    "https://openalex.org/W2147191819",
+    "https://openalex.org/W2149706766",
+    "https://openalex.org/W2150172949",
+    "https://openalex.org/W2155806188",
+    "https://openalex.org/W2156541424",
+    "https://openalex.org/W2157665255",
+    "https://openalex.org/W2158365839",
+    "https://openalex.org/W2159767611",
+    "https://openalex.org/W2160872803",
+    "https://openalex.org/W2162275200",
+    "https://openalex.org/W2162409230",
+    "https://openalex.org/W2166275707",
+    "https://openalex.org/W2166715167",
+    "https://openalex.org/W2166804592",
+    "https://openalex.org/W2167917621",
+    "https://openalex.org/W2168938675",
+    "https://openalex.org/W2169662797",
+    "https://openalex.org/W2170196582",
+    "https://openalex.org/W2275675895",
+    "https://openalex.org/W2284033649",
+    "https://openalex.org/W2295102560",
+    "https://openalex.org/W2325898041",
+    "https://openalex.org/W2328093613",
+    "https://openalex.org/W2330820318",
+    "https://openalex.org/W2349081471",
+    "https://openalex.org/W2396217158",
+    "https://openalex.org/W2408744761",
+    "https://openalex.org/W2536080933",
+    "https://openalex.org/W2549403671",
+    "https://openalex.org/W2914982603",
+    "https://openalex.org/W3085162807",
+    "https://openalex.org/W3121480663",
+    "https://openalex.org/W3139607050",
+    "https://openalex.org/W4231975640",
+    "https://openalex.org/W4254025347",
+    "https://openalex.org/W4285719527"
+  ],
+  "related_works": [
+    "https://openalex.org/W3183283580",
+    "https://openalex.org/W4250175685",
+    "https://openalex.org/W2337929971",
+    "https://openalex.org/W2575052681",
+    "https://openalex.org/W2143077131",
+    "https://openalex.org/W2391943197",
+    "https://openalex.org/W4312609022",
+    "https://openalex.org/W4366152651",
+    "https://openalex.org/W2348044294",
+    "https://openalex.org/W2949320318"
+  ],
+  "abstract_inverted_index": null,
+  "counts_by_year": [
+    {
+      "year": 2026,
+      "cited_by_count": 1
+    },
+    {
+      "year": 2025,
+      "cited_by_count": 4
+    },
+    {
+      "year": 2024,
+      "cited_by_count": 2
+    },
+    {
+      "year": 2023,
+      "cited_by_count": 2
+    },
+    {
+      "year": 2022,
+      "cited_by_count": 2
+    },
+    {
+      "year": 2021,
+      "cited_by_count": 6
+    },
+    {
+      "year": 2020,
+      "cited_by_count": 2
+    },
+    {
+      "year": 2019,
+      "cited_by_count": 1
+    },
+    {
+      "year": 2018,
+      "cited_by_count": 3
+    }
+  ],
+  "updated_date": "2026-08-04T08:18:43.703281",
+  "created_date": "2025-10-10T00:00:00"
+}

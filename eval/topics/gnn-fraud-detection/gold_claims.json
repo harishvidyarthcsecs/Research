@@ -1,0 +1,47 @@
+[
+  {
+    "paper_id": "10_2139_ssrn_6224978",
+    "statement": "Evaluated on a real-world financial dataset containing 555,717 transactions with confirmed fraud ring ground truth, HMS-GNN achieves state-of-the-art performance with an F1-score of 0.84, detecting 33 fraud rings across varying sizes and complexities",
+    "source": "bootstrapped, not adjudicated"
+  },
+  {
+    "paper_id": "10_2139_ssrn_6224978",
+    "statement": "This represents a 95 percentage improvement over the best single-scale baseline (f1_score: 0.54)",
+    "source": "bootstrapped, not adjudicated"
+  },
+  {
+    "paper_id": "10_1109_icmla61862_2024_00091",
+    "statement": "In this paper, we propose a novel algorithm that employs an efficient neighborhood sampling method, effective for camouflage detection and preserving crucial feature information from non-similar nodes",
+    "source": "bootstrapped, not adjudicated"
+  },
+  {
+    "paper_id": "10_1109_icmla61862_2024_00091",
+    "statement": "Additionally, we introduce a novel GNN architecture that utilizes attention mechanisms and preserves holistic neighborhood information to prevent information loss",
+    "source": "bootstrapped, not adjudicated"
+  },
+  {
+    "paper_id": "10_1109_icmla61862_2024_00091",
+    "statement": "We test our algorithm on financial data to show that our method outperforms other state-of-the-art graph algorithms",
+    "source": "bootstrapped, not adjudicated"
+  },
+  {
+    "paper_id": "10_2139_ssrn_6468378",
+    "statement": "The AI contribution is a novel neural architecture with differentiable memory modules that persist and evolve entity representations over time, enabling effective modeling of long-term behavioral patterns and evolving fraud strategies",
+    "source": "bootstrapped, not adjudicated"
+  },
+  {
+    "paper_id": "10_2139_ssrn_6468378",
+    "statement": "Experimental evaluation on real-world financial data comprising 555,717 transactions with a 0.52 percentage fraud rate demonstrates strong performance: an f1_score-score of 0.693 (21 percentage improvement over XGBoost), auc-ROC of 0.966, and detection of 33 organized fraud rings, 20 classified as high-risk",
+    "source": "bootstrapped, not adjudicated"
+  },
+  {
+    "paper_id": "10_36227_techrxiv_176315444_45025072_v1",
+    "statement": "Evaluation on a synthetic customs benchmark at different levels of label scarcity showed that: (i) across views, performance was constrained below 20 percentage inspection and improved sharply near 40 percentage; (ii) feature-pair choice mattered, with the best pair depending on label availability; and (iii) multi-view aggregation provided the most balanced results, achieving the highest average overall f1_score while remaining competitive on auc and precision@10 percentage",
+    "source": "bootstrapped, not adjudicated"
+  },
+  {
+    "paper_id": "10_1016_j_neunet_2026_108600",
+    "statement": "Extensive experiments on four benchmark datasets-Yelp, Amazon, T-Finance, and T-Social-demonstrate that F-GNN consistently outperforms state-of-the-art GNN-based fraud detection methods under both supervised and semi-supervised settings, achieving up to 99.81 percentage auc and 96.65 percentage f1_score-Macro",
+    "source": "bootstrapped, not adjudicated"
+  }
+]

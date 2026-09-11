@@ -1,0 +1,29 @@
+{
+  "paperId": "f661988ccbc0189ef9bb95b7c619a10f1765312a",
+  "title": "A semi-supervised approach for network traffic labeling",
+  "openAccessPdf": {
+    "url": "",
+    "status": null,
+    "license": null,
+    "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.1049/pbpc032e_ch9?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1049/pbpc032e_ch9, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+  },
+  "authors": [
+    {
+      "authorId": "1699399",
+      "name": "Z. Tari"
+    },
+    {
+      "authorId": "144563590",
+      "name": "A. Fahad"
+    },
+    {
+      "authorId": "3340353",
+      "name": "Abdulmohsen Almalawi"
+    },
+    {
+      "authorId": "143824407",
+      "name": "X. Yi"
+    }
+  ],
+  "abstract": "As discussed in the previous two chapters, the recent promising studies for network classification have relied on the analysis of the statistics of traffic flows and the use of machine learning (ML) methods. However, due to the high cost of manual labeling, it is hard to obtain sufficient, reliable, and up-to-date labeled data for effective IP traffic classification. This chapter discusses a novel semi-supervised approach, called SemTra, which automatically alleviates the shortage of labeled flows for ML by exploiting the advantages of both supervised and unsupervised models. In particular, SemTra involves the followings: (i) generating multi-view representations of the original data based on dimensionality reduction methods to have strong discrimination ability; (ii) incorporating the generated representations into the ensemble clustering model to provide a combined clustering output with better quality and stability; (iii) adapting the concept of self-training to iteratively utilize the few labeled data along with unlabeled within local and global viewpoints; and (iv) obtaining the final class decision by combining the decisions of mapping strategy of clusters, the local self-training and global self-training approaches. Extensive experiments were carried out to compare the effectiveness of SemTra over representative semi-supervised methods using 16 network traffic datasets. The results clearly show that SemTra is able to yield noticeable improvement in accuracy (as high as 94.96%) and stability (as high as 95.04%) in the labeling process."
+}

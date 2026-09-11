@@ -19,13 +19,19 @@ from typing import Optional, Tuple, Dict
 import requests
 
 
+class TransientLLMError(RuntimeError):
+    """A provider returned HTTP 200 with a body that carries no usable
+    completion (an error-shaped payload seen on free tiers under per-minute
+    rate limiting or model overload). Retried with backoff, like a 429."""
+
+
 # Default models for each provider
 DEFAULTS = {
     "xai":       "grok-3-mini",
     "anthropic": "claude-haiku-4-5-20251001",
     "groq":      "openai/gpt-oss-120b",
     "ollama":    os.getenv("OLLAMA_MODEL", "llama3.2"),
-    "openrouter": "meta-llama/llama-3.3-70b-instruct:free",
+    "openrouter": "nvidia/nemotron-3-super-120b-a12b:free",
 }
 
 # USD per million tokens (input, output). Local/free-tier models cost 0.
@@ -33,7 +39,7 @@ PRICING = {
     "grok-3-mini": (0.30, 0.50),
     "claude-haiku-4-5-20251001": (1.00, 5.00),
     "openai/gpt-oss-120b": (0.15, 0.75),
-    "meta-llama/llama-3.3-70b-instruct:free": (0.0, 0.0),
+    "nvidia/nemotron-3-super-120b-a12b:free": (0.0, 0.0),
 }
 
 Usage = Dict[str, int]  # {"prompt_tokens": int, "completion_tokens": int}
@@ -192,11 +198,18 @@ def _openrouter_chat(prompt: str, max_tokens: int, temperature: float) -> Tuple[
             "messages": [{"role": "user", "content": prompt}],
             "max_tokens": max_tokens,
             "temperature": temperature,
+            # The free Nemotron model is a reasoning model; without this it
+            # leaks chain-of-thought into the message content and breaks every
+            # JSON parser in the pipeline.
+            "reasoning": {"enabled": False},
         },
         timeout=90,
     )
     resp.raise_for_status()
     data = resp.json()
+    if not data.get("choices"):
+        detail = str(data.get("error") or data)[:200]
+        raise TransientLLMError(f"OpenRouter response carried no choices: {detail}")
     return data["choices"][0]["message"]["content"], _openai_style_usage(data)
 
 
@@ -277,6 +290,10 @@ def _call_with_retry(func, prompt: str, max_tokens: int, temperature: float,
                 retry_after = e.response.headers.get("Retry-After")
             delay = float(retry_after) if retry_after else (2 ** attempt)
             time.sleep(delay)
+        except TransientLLMError:
+            if attempt == max_retries:
+                raise
+            time.sleep(2 ** attempt)
     raise RuntimeError("unreachable")  # pragma: no cover
 
 

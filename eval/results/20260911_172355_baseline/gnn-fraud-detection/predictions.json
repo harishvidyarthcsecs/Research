@@ -1,0 +1,87 @@
+{
+  "claims": [
+    {
+      "paper_id": "10_2139_ssrn_6224978",
+      "statement": "HMS-GNN framework is designed for cross-scale fraud ring detection by integrating adaptive multi-resolution graph pooling with fraud-aware mechanisms."
+    },
+    {
+      "paper_id": "10_1109_icmla61862_2024_00091",
+      "statement": "Traditional fraud detection methods are ineffective due to their reliance on manual rule creation and inability to detect complex data patterns."
+    },
+    {
+      "paper_id": "10_2139_ssrn_6468378",
+      "statement": "MAST-GNN introduces a novel neural architecture with differentiable memory modules for dynamic fraud detection, enabling effective modeling of long-term behavioral patterns."
+    },
+    {
+      "paper_id": "10_36227_techrxiv_176315444_45025072_v1",
+      "statement": "GraphFC reframes the graph construction strategy for customs fraud detection under label scarcity, evaluating relational-view choice and multi-view aggregation."
+    },
+    {
+      "paper_id": "10_1016_j_neunet_2026_108600",
+      "statement": "Learning frequency-aware graph fraud detection addresses extreme label imbalance and coexistence of homophilic and heterophilic connections in GFD."
+    },
+    {
+      "paper_id": "10_21203_rs_3_rs-6026136_v1",
+      "statement": "Real-time fraud detection framework combines Adaptive Graph Neural Networks and Federated Learning to overcome data privacy and institutional constraints."
+    },
+    {
+      "paper_id": "10_2139_ssrn_7318358",
+      "statement": "GraphSAGE and XGBoost classifiers are compared for blockchain fraud detection under Nigerian AML/KYC compliance constraints."
+    },
+    {
+      "paper_id": "10_1016_j_neunet_2024_106926",
+      "statement": "BalancerGNN framework tackles imbalanced datasets in fraud detection by using balanced neighbor sampling and custom loss function for GNN training."
+    }
+  ],
+  "contradictions": [
+    {
+      "paper1_id": "10_2139_ssrn_6224978",
+      "paper2_id": "10_1016_j_neunet_2026_108600",
+      "claim_text_1": "HMS-GNN framework is designed for cross-scale fraud ring detection by integrating adaptive multi-resolution graph pooling with fraud-aware mechanisms.",
+      "claim_text_2": "Learning frequency-aware graph fraud detection addresses extreme label imbalance and coexistence of homophilic and heterophilic connections in GFD.",
+      "explanation": "While both papers address label imbalance, HMS-GNN focuses on cross-scale detection, whereas Learning frequency-aware GFD focuses on frequency-awareness and coexistence of connections.",
+      "detection_method": "baseline"
+    }
+  ],
+  "gaps": [
+    {
+      "description": "There is a lack of comprehensive evaluation of different graph construction strategies for high-cardinality categorical features in fraud detection, as seen in GraphFC's reframing of graph construction strategies.",
+      "gap_type": "evaluation",
+      "detection_method": "baseline"
+    },
+    {
+      "description": "The integration of real-time fraud detection with adaptive GNNs and federated learning is an emerging area, but specific methodologies and their effectiveness under varying real-time constraints are not thoroughly explored.",
+      "gap_type": "methodological",
+      "detection_method": "baseline"
+    },
+    {
+      "description": "The comparative evaluation of GNNs and traditional machine learning methods under specific regulatory and compliance constraints, such as those in Nigeria, is limited, as seen in the comparison between GraphSAGE and XGBoost.",
+      "gap_type": "dataset",
+      "detection_method": "baseline"
+    },
+    {
+      "description": "The effectiveness of frequency-aware mechanisms in GFD is not fully explored, especially in the context of real-time fraud detection and dynamic financial networks.",
+      "gap_type": "unexplored_subtopic",
+      "detection_method": "baseline"
+    }
+  ],
+  "usage": {
+    "calls": 1,
+    "prompt_tokens": 1383,
+    "completion_tokens": 658,
+    "estimated_cost_usd": 0.0,
+    "parse_failures": 0,
+    "by_purpose": {
+      "baseline": {
+        "calls": 1,
+        "prompt_tokens": 1383,
+        "completion_tokens": 658,
+        "estimated_cost_usd": 0.0,
+        "parse_failures": 0
+      }
+    }
+  },
+  "run_metadata": {
+    "system": "naive_single_llm_baseline"
+  }
+}

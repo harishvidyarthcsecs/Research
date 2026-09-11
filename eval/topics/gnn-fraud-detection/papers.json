@@ -1,0 +1,161 @@
+[
+  {
+    "id": "paper_1788942605.678439",
+    "title": "Hierarchical Fraud Ring Detection in Financial Transaction Networks Using Multi-Scale Graph Neural Networks",
+    "authors": [
+      "Ibrahim Adeyanju",
+      "Omodunbi B.A",
+      "Titilayo Sayikanmi"
+    ],
+    "year": 2023,
+    "venue": "",
+    "doi": "10.2139/ssrn.6224978",
+    "arxiv_id": null,
+    "abstract": "<jats:p>Organized fraud rings exploit financial networks through coordinated activities that span multiple scales, from tight-knit transaction groups to large, diffuse communities. Traditional graph-based detection methods, operating at a single scale, systematically fail to capture this hierarchical nature, creating a critical detection gap that enables sophisticated financial crime. This paper introduces a Hierarchical Multi-Scale Graph Neural Network (HMS-GNN) framework explicitly designed for cross-scale fraud ring detection. Our approach integrates adaptive multi-resolution graph pooling with fraud-aware mechanisms to simultaneously analyze micro-scale transaction patterns (individual coordination), meso-scale entity behaviors (group dynamics), and macro-scale network communities (organized structures). The core innovation lies in our fraud-aware differentiable pooling strategy that maintains structural integrity while enabling multi-resolution analysis tailored to different fraud ring typologies. Evaluated on a real-world financial dataset containing 555,717 transactions with confirmed fraud ring ground truth, HMS-GNN achieves state-of-the-art performance with an F1-score of 0.84, detecting 33 fraud rings across varying sizes and complexities. This represents a 95% improvement over the best single-scale baseline (F1: 0.54). Our analysis reveals dramatic structural disparities: fraud subgraphs exhibit 7.56\u00d7 higher density and 4.73\u00d7 higher clustering coefficients than legitimate networks. The framework demonstrates robust multi-scale capability, with micro-scale analysis achieving 0.92 precision for small rings (3-5 nodes) and macro-scale analysis achieving 0.82 recall for large organized networks (8-15+ nodes). Ablation studies confirm the necessity of hierarchical analysis, with its removal causing a 26.2% F1-score degradation. These findings establish hierarchical multi-scale analysis as a fundamental paradigm for uncovering sophisticated organized crime in financial networks, shifting detection from isolated transaction monitoring to comprehensive network intelligence.</jats:p>",
+    "url": "https://doi.org/10.2139/ssrn.6224978",
+    "relevance_score": 0.8600000000000001,
+    "impact_score": 0.0,
+    "sources": [
+      "crossref"
+    ],
+    "paper_id": "10_2139_ssrn_6224978"
+  },
+  {
+    "id": "paper_1788942605.678617",
+    "title": "Financial Fraud Detection using Jump-Attentive Graph Neural Networks",
+    "authors": [
+      "Prashank Kadam"
+    ],
+    "year": 2024,
+    "venue": "2024 International Conference on Machine Learning and Applications (ICMLA)",
+    "doi": "10.1109/icmla61862.2024.00091",
+    "arxiv_id": null,
+    "abstract": "As the availability of financial services online continues to grow, the incidence of fraud has surged correspondingly. Fraudsters continually seek new and innovative ways to circumvent the detection algorithms in place. Traditionally, fraud detection relied on rule-based methods, where rules were manually created based on transaction data features. However, these techniques soon became ineffective due to their reliance on manual rule creation and their inability to detect complex data patterns. Today, a significant portion of the financial services sector employs various machine learning algorithms, such as XGBoost, Random Forest, and neural networks, to model transaction data. While these techniques have proven more efficient than rule-based methods, they still fail to capture interactions between different transactions and their interrelationships. Recently, graph-based techniques have been adopted for financial fraud detection, leveraging graph topology to aggregate neighborhood information of transaction data using Graph Neural Networks (GNNs). Despite showing improvements over previous methods, these techniques still struggle to keep pace with the evolving camouflaging tactics of fraudsters and suffer from information loss due to over-smoothing. In this paper, we propose a novel algorithm that employs an efficient neighborhood sampling method, effective for camouflage detection and preserving crucial feature information from non-similar nodes. Additionally, we introduce a novel GNN architecture that utilizes attention mechanisms and preserves holistic neighborhood information to prevent information loss. We test our algorithm on financial data to show that our method outperforms other state-of-the-art graph algorithms.",
+    "url": "https://doi.org/10.1109/icmla61862.2024.00091",
+    "relevance_score": 0.78,
+    "impact_score": 0.0,
+    "sources": [
+      "crossref"
+    ],
+    "paper_id": "10_1109_icmla61862_2024_00091"
+  },
+  {
+    "id": "paper_1788942605.678515",
+    "title": "Memory-Augmented Spatio-Temporal Graph Neural Networks for Dynamic Financial Fraud Detection",
+    "authors": [
+      "Titilayo Sayikanmi",
+      "Ibrahim Adeyanju",
+      "Omodunbi B.A"
+    ],
+    "year": 2023,
+    "venue": "",
+    "doi": "10.2139/ssrn.6468378",
+    "arxiv_id": null,
+    "abstract": "<jats:p>Financial fraud detection faces major challenges; extreme class imbalance, complex temporal dependencies in transaction streams, and strict real-time inference constraints. This paper presents a Memory-Augmented Spatio-Temporal Graph Neural Network (MAST-GNN), a unified framework that advances both artificial intelligence (AI) and production engineering for dynamic fraud detection. The AI contribution is a novel neural architecture with differentiable memory modules that persist and evolve entity representations over time, enabling effective modeling of long-term behavioral patterns and evolving fraud strategies. MAST-GNN further introduces a dual attention mechanism that jointly models spatial entity-to-entity relationships and temporal transaction sequences via specialized multi-head attention layers. Together with hierarchical graph processing, adaptive message aggregation, and temporal consistency regularization, the framework ensures stability in evolving financial graphs while uncovering complex relational structures missed by traditional approaches. Beyond modeling advances, our engineering application delivers a production-ready system architecture that bridges research and deployment. We implement a scalable inference engine with sub-10ms latency and a 2GB memory footprint, complemented by monitoring, investigation tools, and automated deployment pipelines for seamless integration with streaming transaction systems. Experimental evaluation on real-world financial data comprising 555,717 transactions with a 0.52% fraud rate demonstrates strong performance: an F1-score of 0.693 (21% improvement over XGBoost), AUC-ROC of 0.966, and detection of 33 organized fraud rings, 20 classified as high-risk. These results demonstrate that MAST-GNN\u2019s methodological innovations deliver measurable production gains, establishing new benchmarks for production-grade fraud detection and underscoring the need to advance AI algorithms and system engineering together.</jats:p>",
+    "url": "https://doi.org/10.2139/ssrn.6468378",
+    "relevance_score": 0.7600000000000001,
+    "impact_score": 0.0,
+    "sources": [
+      "crossref"
+    ],
+    "paper_id": "10_2139_ssrn_6468378"
+  },
+  {
+    "id": "paper_1788942605.678536",
+    "title": "Integrating High-Cardinality Categorical Features and Graph Neural Networks for Customs Fraud Detection with Label Scarcity",
+    "authors": [
+      "Haddon Mwila",
+      "Vaibhav Khatavkar"
+    ],
+    "year": 2023,
+    "venue": "",
+    "doi": "10.36227/techrxiv.176315444.45025072/v1",
+    "arxiv_id": null,
+    "abstract": "<jats:p>Detecting customs fraud is vital to fiscal revenue, trade integrity, and public safety, but low customs inspection rates yield few labels, limiting the effectiveness of conventional machine learning approaches. Graph Neural Networks for Customs Fraud (GraphFC) mitigates label scarcity with GNNs but builds its graph from a narrow set of high-cardinality features, thereby constraining relational diversity. Prior work has not systematically examined graph-construction strategies for such features. This study evaluated how relational-view choice and multi-view aggregation affect performance under label scarcity. GraphFC was reframed as a graph-construction strategy, extending the single importer-commodity view to multi-view graphs induced by alternative high-cardinality feature pairs and combining the views via probability averaging. Evaluation on a synthetic customs benchmark at different levels of label scarcity showed that: (i) across views, performance was constrained below 20% inspection and improved sharply near 40%; (ii) feature-pair choice mattered, with the best pair depending on label availability; and (iii) multi-view aggregation provided the most balanced results, achieving the highest average overall F1 while remaining competitive on AUC and Precision@10%. These findings support diversifying the relational structure and aggregating high-cardinality featuredriven views as a practical default under label scarcity and establish a methodological extension of GraphFC from a single relational view to an ensemble of complementary views.</jats:p>",
+    "url": "https://doi.org/10.36227/techrxiv.176315444.45025072/v1",
+    "relevance_score": 0.7600000000000001,
+    "impact_score": 0.0,
+    "sources": [
+      "crossref"
+    ],
+    "paper_id": "10_36227_techrxiv_176315444_45025072_v1"
+  },
+  {
+    "id": "paper_1788942605.678257",
+    "title": "Learning frequency-aware graph fraud detection",
+    "authors": [
+      "Wei Zhao",
+      "Hao Chen"
+    ],
+    "year": 2026,
+    "venue": "Neural Networks",
+    "doi": "10.1016/j.neunet.2026.108600",
+    "arxiv_id": null,
+    "abstract": "Graph Fraud Detection (GFD) has become a critical task in online systems such as financial networks, review platforms, and social media, where fraudulent behaviors are inherently rare and often embedded within benign communities. Graph Neural Networks (GNNs) have shown promise for GFD by modeling relational dependencies; however, their effectiveness is severely limited by two persistent challenges: extreme label imbalance and the coexistence of homophilic and heterophilic connections. Most existing approaches attempt to mitigate these issues by modifying graph structures or suppressing heterophilic neighbors, which may introduce bias and scalability limitations. In this work, we address GFD from a frequency-domain perspective and propose a Frequency-aware Graph Neural Network (F-GNN). The core insight is that heterophilic interactions often manifest as high-frequency signals that are diluted by dominant low-frequency homophilic patterns in conventional message passing. F-GNN explicitly decouples node representations in the graph frequency domain and employs node-adaptive spectral gating to selectively emphasize informative high-frequency components. In addition, a fraud-aware representation fusion mechanism is introduced to counteract label imbalance during neighborhood aggregation. Extensive experiments on four benchmark datasets-Yelp, Amazon, T-Finance, and T-Social-demonstrate that F-GNN consistently outperforms state-of-the-art GNN-based fraud detection methods under both supervised and semi-supervised settings, achieving up to 99.81% AUC and 96.65% F1-Macro. These results highlight the effectiveness of frequency-aware modeling as a principled alternative to structure-based heuristics for graph fraud detection.",
+    "url": "https://doi.org/10.1016/j.neunet.2026.108600",
+    "relevance_score": 0.42000000000000004,
+    "impact_score": 0.0,
+    "sources": [
+      "crossref"
+    ],
+    "paper_id": "10_1016_j_neunet_2026_108600"
+  },
+  {
+    "id": "paper_1788942605.678384",
+    "title": "Real-Time Financial Fraud Detection Using Adaptive Graph Neural Networks and Federated Learning",
+    "authors": [
+      "Milad Rahmati"
+    ],
+    "year": 2023,
+    "venue": "",
+    "doi": "10.21203/rs.3.rs-6026136/v1",
+    "arxiv_id": null,
+    "abstract": "<title>Abstract</title>\n        <p>Detecting financial fraud in real time is an ongoing challenge due to the ever-evolving nature of fraudulent activities. Conventional fraud detection systems rely heavily on static machine learning models, which often struggle to adapt to emerging fraud patterns. Additionally, data privacy regulations and institutional constraints limit collaborative fraud detection efforts, as financial organizations are often unable to share sensitive transactional data. In this research, we introduce a real-time fraud detection framework that combines Adaptive Graph Neural Networks (GNNs) and Federated Learning (FL) to overcome these limitations. The GNN component dynamically models relationships within financial transactions, allowing the system to detect suspicious patterns as they emerge rather than relying on historical fraud markers. Meanwhile, federated learning enables multiple financial institutions to collaboratively train fraud detection models without directly sharing customer data, thus addressing privacy concerns. To enhance explainability and regulatory compliance, the proposed system integrates Explainable AI (XAI) methods, making fraud detection decisions more transparent. Experimental evaluations on benchmark financial datasets and real-world transactional data reveal that our approach improves fraud detection accuracy by 15\u201330% while reducing false positives compared to existing machine learning-based solutions. The findings highlight the potential of GNNs and FL in advancing fraud prevention strategies while maintaining data security and interpretability, making it a promising alternative to traditional fraud detection mechanisms.</p>",
+    "url": "https://doi.org/10.21203/rs.3.rs-6026136/v1",
+    "relevance_score": 0.8100000000000002,
+    "impact_score": 0.0,
+    "sources": [
+      "crossref"
+    ],
+    "paper_id": "10_21203_rs_3_rs-6026136_v1"
+  },
+  {
+    "id": "paper_1788942605.678595",
+    "title": "Graph Neural Networks versus XGBoost for Blockchain Fraud Detection: A Comparative Evaluation Under Nigerian AML/KYC Compliance Constraints",
+    "authors": [
+      "Atinuke Abson"
+    ],
+    "year": 2023,
+    "venue": "",
+    "doi": "10.2139/ssrn.7318358",
+    "arxiv_id": null,
+    "abstract": "<jats:p>Nigeria's Central Bank has moved to tighten Anti-Money Laundering and Know-Your-Customer (AML/KYC) enforcement for digital asset transactions, following the 2025 classification of cryptocurrencies as securities under the SEC Act 2025. Yet there is limited comparative evidence on how modern machine learning architectures perform under the specific constraints of Nigerian fintech: partial data access, evolving fraud typologies, and a regulatory emphasis on both detection completeness and auditability. This paper presents a condensed account of a comparative evaluation of Graph Neural Network (GraphSAGE) and XGBoost classifiers, each augmented with anomaly detection and reinforcement learning (RL), for blockchain fraud detection. Using a purpose-built synthetic dataset of 30,000 transactions modelling Nigerian-specific fintech behaviour, we find that a baseline GraphSAGE model substantially outperforms baseline XGBoost (F1 0.946 vs. 0.610; McNemar's \u03c7\u00b2 = 501.04, p &amp;lt; .001; paired ttest t(4) = 65.90, p &amp;lt; .001, Cohen's d = 29.47). Adding an RL-based adaptive-thresholding layer closes this gap asymmetrically: RL dramatically improves the weaker XGBoost baseline (F1 rising from 0.61 to 0.99) while offering little benefit, and initially harming precision, when paired with the already-strong GraphSAGE baseline (precision falling from 0.97 to 0.72 at an intermediate training checkpoint). SHAP analysis shows that XGBoost's decisions are considerably more directly auditable than GraphSAGE's, a property with direct implications for CBN's explainability expectations. We conclude that architecture choice for AML systems should weigh detection performance against auditability and false-positive burden jointly, not accuracy alone, and we flag the financial-inclusion implications of that trade-off as an open problem for future work.</jats:p>",
+    "url": "https://doi.org/10.2139/ssrn.7318358",
+    "relevance_score": 0.7600000000000001,
+    "impact_score": 0.0,
+    "sources": [
+      "crossref"
+    ],
+    "paper_id": "10_2139_ssrn_7318358"
+  },
+  {
+    "id": "paper_1788942605.678494",
+    "title": "BalancerGNN: Balancer Graph Neural Networks for imbalanced datasets: A case study on fraud detection",
+    "authors": [
+      "Mallika Boyapati",
+      "Ramazan Aygun"
+    ],
+    "year": 2025,
+    "venue": "Neural Networks",
+    "doi": "10.1016/j.neunet.2024.106926",
+    "arxiv_id": null,
+    "abstract": "Fraud detection for imbalanced datasets is challenging due to machine learning models inclination to learn the majority class. Imbalance in fraud detection datasets affects how graphs are built, an important step in many Graph Neural Networks (GNNs). In this paper, we introduce our BalancerGNN framework to tackle with imbalanced datasets and show its effectiveness on fraud detection. Our framework has three major components: (i) node construction with feature representations, (ii) graph construction using balanced neighbor sampling, and (iii) GNN training using balanced training batches leveraging a custom loss function with multiple components. For node construction, we have introduced (i) Graph-based Variable Clustering (GVC) to optimize feature selection and remove redundancies by analyzing multi-collinearity and (ii) Encoder-Decoder based Dimensionality Reduction (EDDR) using transformer-based techniques to reduce feature dimensions while keeping important information intact about textual embeddings. Our experiments on Medicare, Equifax, IEEE, and auto insurance fraud datasets highlight the importance of node construction with features representations. BalancerGNN trained with balanced batches consistently outperforms other methods, showing strong abilities in identifying fraud cases, with sensitivity rates ranging from 72.87% to 81.23% across datasets while balancing specificity. Additionally, BalancerGNN achieves impressive accuracy rates, ranging from 73.99% to 94.28%. These outcomes underscore the crucial role of graph representation and neighbor sampling techniques in optimizing BalancerGNN for fraud detection models in real-world applications.",
+    "url": "https://doi.org/10.1016/j.neunet.2024.106926",
+    "relevance_score": 0.6,
+    "impact_score": 0.0,
+    "sources": [
+      "crossref"
+    ],
+    "paper_id": "10_1016_j_neunet_2024_106926"
+  }
+]

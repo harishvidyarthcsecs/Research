@@ -1,0 +1,127 @@
+{
+  "claims": [
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "AI has profoundly transformed the pharmaceutical landscape by significantly accelerating the identification of potential drug candidates.",
+      "confidence": 0.9900000000000001
+    },
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "Graph Neural Networks (GNNs) have proven to be particularly effective in modeling molecular structures, optimizing drug-target interactions, and enhancing prediction accuracy.",
+      "confidence": 0.85
+    }
+  ],
+  "contradictions": [],
+  "gaps": [
+    {
+      "description": "The corpus lacks any use of datasets such as ChEMBL, DrugBank, and ZINC, which are critical for validating GNN models in drug discovery.",
+      "gap_type": "dataset",
+      "rank": 1,
+      "priority": 0.96,
+      "evidence": [
+        "Datasets used in claims: none detected",
+        "Expected datasets never used: ChEMBL, DrugBank, ZINC",
+        "Low-evidence: derived from only 2 extracted claims"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "There is a complete absence of research on the application of Graph Neural Networks (GNNs) in molecular property prediction, drug design, drug-target interaction, drug-drug interaction analysis, and virtual screening.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 2,
+      "priority": 0.92,
+      "evidence": [
+        "Graph Neural Networks for Molecular Property Prediction=0",
+        "Graph Convolutional Networks in Drug Design=0",
+        "Graph Attention Networks for Drug Target Interaction=0",
+        "Graph Neural Networks for Drug-Drug Interaction Analysis=0",
+        "Graph Neural Networks in Virtual Screening=0",
+        "Low-evidence: derived from only 2 extracted claims"
+      ],
+      "detection_method": "llm"
+    }
+  ],
+  "usage": {
+    "calls": 13,
+    "prompt_tokens": 2957,
+    "completion_tokens": 1785,
+    "estimated_cost_usd": 0.0,
+    "parse_failures": 0,
+    "by_purpose": {
+      "topic_expansion": {
+        "calls": 1,
+        "prompt_tokens": 156,
+        "completion_tokens": 256,
+        "estimated_cost_usd": 0.0,
+        "parse_failures": 0
+      },
+      "claim_extraction": {
+        "calls": 10,
+        "prompt_tokens": 1502,
+        "completion_tokens": 239,
+        "estimated_cost_usd": 0.0,
+        "parse_failures": 0
+      },
+      "gap_detection": {
+        "calls": 1,
+        "prompt_tokens": 494,
+        "completion_tokens": 572,
+        "estimated_cost_usd": 0.0,
+        "parse_failures": 0
+      },
+      "recommendations": {
+        "calls": 1,
+        "prompt_tokens": 805,
+        "completion_tokens": 718,
+        "estimated_cost_usd": 0.0,
+        "parse_failures": 0
+      }
+    }
+  },
+  "run_metadata": {
+    "provider": "ollama",
+    "model": "qwen2.5:7b",
+    "temperature": 0.0,
+    "duration_s": 72.21,
+    "frozen_corpus": true
+  },
+  "narrative": {
+    "grounding_mode": "reject",
+    "build_failed": false,
+    "error": null,
+    "total_sentences": 4,
+    "unsupported_sentences": 0,
+    "evidence_rows": 1,
+    "evidence_rows_no_verbatim": 0,
+    "sentences": [
+      {
+        "text": "The application of Graph Neural Networks (GNNs) in investigating complex systems has shown promise, though specific results and metrics are not detailed in the available literature \\cite{Unknown25}.",
+        "verified": true,
+        "cite_keys": [
+          "Unknown25"
+        ]
+      },
+      {
+        "text": "This approach leverages the inherent structure of the data, making it suitable for scenarios where relationships between entities are crucial \\cite{Unknown25}.",
+        "verified": true,
+        "cite_keys": [
+          "Unknown25"
+        ]
+      },
+      {
+        "text": "The application of Graph Neural Networks (GNNs) in graph investigation has been explored, though specific details such as population, dataset, and performance metrics are not provided \\cite{Unknown25}.",
+        "verified": true,
+        "cite_keys": [
+          "Unknown25"
+        ]
+      },
+      {
+        "text": "This approach suggests potential for handling complex graph structures, yet the lack of concrete results and limitations hinders a comprehensive evaluation of its effectiveness \\cite{Unknown25}.",
+        "verified": true,
+        "cite_keys": [
+          "Unknown25"
+        ]
+      }
+    ]
+  }
+}

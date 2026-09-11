@@ -1,0 +1,25 @@
+{
+  "paperId": "bdf8b434c9ad88a29f7b0a30ce63d5d91672936c",
+  "title": "Network Traffic Anomaly Detection Techniques and Systems",
+  "openAccessPdf": {
+    "url": "",
+    "status": "CLOSED",
+    "license": null,
+    "disclaimer": "Notice: The following paper fields have been elided by the publisher: {'abstract'}. Paper or abstract available at https://api.unpaywall.org/v2/10.1007/978-3-319-65188-0_4?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1007/978-3-319-65188-0_4, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+  },
+  "authors": [
+    {
+      "authorId": "143947129",
+      "name": "M. Bhuyan"
+    },
+    {
+      "authorId": "50573679",
+      "name": "D. Bhattacharyya"
+    },
+    {
+      "authorId": "34694214",
+      "name": "J. Kalita"
+    }
+  ],
+  "abstract": null
+}

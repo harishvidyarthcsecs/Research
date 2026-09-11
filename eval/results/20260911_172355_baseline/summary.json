@@ -1,0 +1,62 @@
+{
+  "mode": "baseline",
+  "generated_at": "2026-09-11T17:25:57.398179",
+  "topics": [
+    {
+      "topic": "dl-malware-detection",
+      "claim_f1": 0.0,
+      "con_precision": null,
+      "con_recall": null,
+      "con_fp_rate_neg": null,
+      "gap_p_at_3": 0.0,
+      "gap_recall": 0.0,
+      "unsup_sents": 0,
+      "retained_fp_contra": 0,
+      "nar_build_fail": false,
+      "cost_usd": 0.0,
+      "parse_failures": 0
+    },
+    {
+      "topic": "gnn-drug-discovery",
+      "claim_f1": 0.3333333333333333,
+      "con_precision": null,
+      "con_recall": null,
+      "con_fp_rate_neg": 0.0,
+      "gap_p_at_3": 0.0,
+      "gap_recall": 0.0,
+      "unsup_sents": 0,
+      "retained_fp_contra": 0,
+      "nar_build_fail": false,
+      "cost_usd": 0.0,
+      "parse_failures": 0
+    },
+    {
+      "topic": "gnn-fraud-detection",
+      "claim_f1": 0.0,
+      "con_precision": null,
+      "con_recall": null,
+      "con_fp_rate_neg": null,
+      "gap_p_at_3": 0.0,
+      "gap_recall": 0.0,
+      "unsup_sents": 0,
+      "retained_fp_contra": 0,
+      "nar_build_fail": false,
+      "cost_usd": 0.0,
+      "parse_failures": 0
+    },
+    {
+      "topic": "net-anomaly-detection",
+      "claim_f1": 0.15384615384615385,
+      "con_precision": null,
+      "con_recall": null,
+      "con_fp_rate_neg": null,
+      "gap_p_at_3": 0.0,
+      "gap_recall": 0.0,
+      "unsup_sents": 0,
+      "retained_fp_contra": 0,
+      "nar_build_fail": false,
+      "cost_usd": 0.0,
+      "parse_failures": 0
+    }
+  ]
+}

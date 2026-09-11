@@ -1,0 +1,21 @@
+{
+  "paperId": "9c4fc3bb52d3920d23be1f5f78fd540958210b59",
+  "title": "Hybrid Graph Neural Networks for Scalable and Explainable Fraud Detection in Dynamic Networks",
+  "openAccessPdf": {
+    "url": "",
+    "status": null,
+    "license": null,
+    "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.1109/TENSYMP63728.2025.11270230?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1109/TENSYMP63728.2025.11270230, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+  },
+  "authors": [
+    {
+      "authorId": "68990454",
+      "name": "Golnar Behzadi"
+    },
+    {
+      "authorId": "92520011",
+      "name": "Aadil Dowlut"
+    }
+  ],
+  "abstract": "Fraud detection in dynamic networks is inherently complex due to the constantly evolving nature of fraudulent behaviour. At the same time, effective prevention requires models that are both scalable and interpretable. To address this, we propose a hybrid Graph Neural Network (GNN) architecture that balances expressive modelling with computational efficiency and interpretability. Our framework integrates multiple GNN layers with heterogeneous convolutions to capture both structural and temporal dynamics, while maintaining a lightweight design with only 6.5 million parameters. Key components of the framework include: (1) a heterogeneous graph that models interactions among orders, customers, and transactions over time; (2) a feature engineering pipeline that extracts behavioural and network-based attributes; (3) an imbalance-aware training strategy using focal loss and class weighting to improve detection of rare fraudulent cases; (4) time-aware learning that captures the sequential progression of fraud patterns; and (5) a hybrid GNN combining GATv2, TransformerConv, and SAGEConv layers, enhanced with Jumping Knowledge for improved multi-hop message passing. Experiments on both real-world data from a major telecommunications provider and public transactional datasets validate the framework\u2019s effectiveness and practical utility in near real-time fraud detection scenarios."
+}

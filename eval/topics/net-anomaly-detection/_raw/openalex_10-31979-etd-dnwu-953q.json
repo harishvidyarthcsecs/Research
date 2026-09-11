@@ -1,0 +1,919 @@
+{
+  "id": "https://openalex.org/W4250002186",
+  "doi": "https://doi.org/10.31979/etd.dnwu-953q",
+  "title": "Network Traffic Anomaly-Detection Framework Using GPUs",
+  "display_name": "Network Traffic Anomaly-Detection Framework Using GPUs",
+  "publication_year": 2017,
+  "publication_date": "2017-06-30",
+  "ids": {
+    "openalex": "https://openalex.org/W4250002186",
+    "doi": "https://doi.org/10.31979/etd.dnwu-953q"
+  },
+  "language": "en",
+  "primary_location": {
+    "id": "doi:10.31979/etd.dnwu-953q",
+    "is_oa": true,
+    "landing_page_url": "https://doi.org/10.31979/etd.dnwu-953q",
+    "pdf_url": "https://scholarworks.sjsu.edu/cgi/viewcontent.cgi?article=8367&context=etd_theses",
+    "source": null,
+    "license": null,
+    "license_id": null,
+    "version": "publishedVersion",
+    "is_accepted": true,
+    "is_published": true,
+    "raw_source_name": "San Jose State University",
+    "raw_type": "dissertation"
+  },
+  "type": "dissertation",
+  "indexed_in": [
+    "crossref"
+  ],
+  "open_access": {
+    "is_oa": true,
+    "oa_status": "gold",
+    "oa_url": "https://scholarworks.sjsu.edu/cgi/viewcontent.cgi?article=8367&context=etd_theses",
+    "any_repository_has_fulltext": null
+  },
+  "authorships": [
+    {
+      "author_position": "first",
+      "author": {
+        "id": "https://openalex.org/A5059705925",
+        "display_name": "Meera Ramesh",
+        "orcid": null
+      },
+      "institutions": [
+        {
+          "id": "https://openalex.org/I51504820",
+          "display_name": "San Jose State University",
+          "ror": "https://ror.org/04qyvz380",
+          "country_code": "US",
+          "type": "education",
+          "lineage": [
+            "https://openalex.org/I51504820"
+          ]
+        }
+      ],
+      "countries": [
+        "US"
+      ],
+      "is_corresponding": true,
+      "raw_author_name": "Meera Ramesh",
+      "raw_affiliation_strings": [
+        "San Jose State University"
+      ],
+      "raw_orcid": null,
+      "affiliations": [
+        {
+          "raw_affiliation_string": "San Jose State University",
+          "institution_ids": [
+            "https://openalex.org/I51504820"
+          ]
+        }
+      ]
+    }
+  ],
+  "institutions": [],
+  "countries_distinct_count": 1,
+  "institutions_distinct_count": 1,
+  "corresponding_author_ids": [
+    "https://openalex.org/A5059705925"
+  ],
+  "corresponding_institution_ids": [
+    "https://openalex.org/I51504820"
+  ],
+  "apc_list": null,
+  "apc_paid": null,
+  "fwci": null,
+  "has_fulltext": true,
+  "cited_by_count": 0,
+  "citation_normalized_percentile": null,
+  "cited_by_percentile_year": null,
+  "biblio": {
+    "volume": null,
+    "issue": null,
+    "first_page": null,
+    "last_page": null
+  },
+  "is_retracted": false,
+  "is_paratext": false,
+  "is_xpac": false,
+  "primary_topic": {
+    "id": "https://openalex.org/T12326",
+    "display_name": "Network Packet Processing and Optimization",
+    "score": 1.0,
+    "subfield": {
+      "id": "https://openalex.org/subfields/1708",
+      "display_name": "Hardware and Architecture"
+    },
+    "field": {
+      "id": "https://openalex.org/fields/17",
+      "display_name": "Computer Science"
+    },
+    "domain": {
+      "id": "https://openalex.org/domains/3",
+      "display_name": "Physical Sciences"
+    }
+  },
+  "topics": [
+    {
+      "id": "https://openalex.org/T12326",
+      "display_name": "Network Packet Processing and Optimization",
+      "score": 1.0,
+      "subfield": {
+        "id": "https://openalex.org/subfields/1708",
+        "display_name": "Hardware and Architecture"
+      },
+      "field": {
+        "id": "https://openalex.org/fields/17",
+        "display_name": "Computer Science"
+      },
+      "domain": {
+        "id": "https://openalex.org/domains/3",
+        "display_name": "Physical Sciences"
+      }
+    },
+    {
+      "id": "https://openalex.org/T10400",
+      "display_name": "Network Security and Intrusion Detection",
+      "score": 0.9998000264167786,
+      "subfield": {
+        "id": "https://openalex.org/subfields/1705",
+        "display_name": "Computer Networks and Communications"
+      },
+      "field": {
+        "id": "https://openalex.org/fields/17",
+        "display_name": "Computer Science"
+      },
+      "domain": {
+        "id": "https://openalex.org/domains/3",
+        "display_name": "Physical Sciences"
+      }
+    },
+    {
+      "id": "https://openalex.org/T11598",
+      "display_name": "Internet Traffic Analysis and Secure E-voting",
+      "score": 0.9994999766349792,
+      "subfield": {
+        "id": "https://openalex.org/subfields/1702",
+        "display_name": "Artificial Intelligence"
+      },
+      "field": {
+        "id": "https://openalex.org/fields/17",
+        "display_name": "Computer Science"
+      },
+      "domain": {
+        "id": "https://openalex.org/domains/3",
+        "display_name": "Physical Sciences"
+      }
+    }
+  ],
+  "keywords": [
+    {
+      "id": "https://openalex.org/keywords/computer-science",
+      "display_name": "Computer science",
+      "score": 0.8408552408218384
+    },
+    {
+      "id": "https://openalex.org/keywords/deep-packet-inspection",
+      "display_name": "Deep packet inspection",
+      "score": 0.7305236458778381
+    },
+    {
+      "id": "https://openalex.org/keywords/cuda",
+      "display_name": "CUDA",
+      "score": 0.6243512034416199
+    },
+    {
+      "id": "https://openalex.org/keywords/parallel-computing",
+      "display_name": "Parallel computing",
+      "score": 0.615950882434845
+    },
+    {
+      "id": "https://openalex.org/keywords/network-packet",
+      "display_name": "Network packet",
+      "score": 0.5388052463531494
+    },
+    {
+      "id": "https://openalex.org/keywords/general-purpose-computing-on-graphics-processing-units",
+      "display_name": "General-purpose computing on graphics processing units",
+      "score": 0.4850413203239441
+    },
+    {
+      "id": "https://openalex.org/keywords/network-processor",
+      "display_name": "Network processor",
+      "score": 0.4229796230792999
+    },
+    {
+      "id": "https://openalex.org/keywords/graphics",
+      "display_name": "Graphics",
+      "score": 0.2906331419944763
+    },
+    {
+      "id": "https://openalex.org/keywords/operating-system",
+      "display_name": "Operating system",
+      "score": 0.17001166939735413
+    },
+    {
+      "id": "https://openalex.org/keywords/computer-network",
+      "display_name": "Computer network",
+      "score": 0.13269996643066406
+    }
+  ],
+  "concepts": [
+    {
+      "id": "https://openalex.org/C41008148",
+      "wikidata": "https://www.wikidata.org/wiki/Q21198",
+      "display_name": "Computer science",
+      "level": 0,
+      "score": 0.8408552408218384
+    },
+    {
+      "id": "https://openalex.org/C204679922",
+      "wikidata": "https://www.wikidata.org/wiki/Q734252",
+      "display_name": "Deep packet inspection",
+      "level": 3,
+      "score": 0.7305236458778381
+    },
+    {
+      "id": "https://openalex.org/C2778119891",
+      "wikidata": "https://www.wikidata.org/wiki/Q477690",
+      "display_name": "CUDA",
+      "level": 2,
+      "score": 0.6243512034416199
+    },
+    {
+      "id": "https://openalex.org/C173608175",
+      "wikidata": "https://www.wikidata.org/wiki/Q232661",
+      "display_name": "Parallel computing",
+      "level": 1,
+      "score": 0.615950882434845
+    },
+    {
+      "id": "https://openalex.org/C158379750",
+      "wikidata": "https://www.wikidata.org/wiki/Q214111",
+      "display_name": "Network packet",
+      "level": 2,
+      "score": 0.5388052463531494
+    },
+    {
+      "id": "https://openalex.org/C50630238",
+      "wikidata": "https://www.wikidata.org/wiki/Q971505",
+      "display_name": "General-purpose computing on graphics processing units",
+      "level": 3,
+      "score": 0.4850413203239441
+    },
+    {
+      "id": "https://openalex.org/C74366991",
+      "wikidata": "https://www.wikidata.org/wiki/Q2755335",
+      "display_name": "Network processor",
+      "level": 3,
+      "score": 0.4229796230792999
+    },
+    {
+      "id": "https://openalex.org/C21442007",
+      "wikidata": "https://www.wikidata.org/wiki/Q1027879",
+      "display_name": "Graphics",
+      "level": 2,
+      "score": 0.2906331419944763
+    },
+    {
+      "id": "https://openalex.org/C111919701",
+      "wikidata": "https://www.wikidata.org/wiki/Q9135",
+      "display_name": "Operating system",
+      "level": 1,
+      "score": 0.17001166939735413
+    },
+    {
+      "id": "https://openalex.org/C31258907",
+      "wikidata": "https://www.wikidata.org/wiki/Q1301371",
+      "display_name": "Computer network",
+      "level": 1,
+      "score": 0.13269996643066406
+    }
+  ],
+  "mesh": [],
+  "locations_count": 2,
+  "locations": [
+    {
+      "id": "doi:10.31979/etd.dnwu-953q",
+      "is_oa": true,
+      "landing_page_url": "https://doi.org/10.31979/etd.dnwu-953q",
+      "pdf_url": "https://scholarworks.sjsu.edu/cgi/viewcontent.cgi?article=8367&context=etd_theses",
+      "source": null,
+      "license": null,
+      "license_id": null,
+      "version": "publishedVersion",
+      "is_accepted": true,
+      "is_published": true,
+      "raw_source_name": "San Jose State University",
+      "raw_type": "dissertation"
+    },
+    {
+      "id": "pmh:oai:scholarworks.sjsu.edu:etd_theses-8367",
+      "is_oa": false,
+      "landing_page_url": "https://scholarworks.sjsu.edu/etd_theses/4820",
+      "pdf_url": null,
+      "source": {
+        "id": "https://openalex.org/S4377196389",
+        "display_name": "San Jos\u00e9 State University ScholarWorks (San Jose State University)",
+        "issn_l": null,
+        "issn": null,
+        "is_oa": false,
+        "is_in_doaj": false,
+        "is_core": false,
+        "host_organization": "https://openalex.org/I51504820",
+        "host_organization_name": "San Jose State University",
+        "host_organization_lineage": [
+          "https://openalex.org/I51504820"
+        ],
+        "host_organization_lineage_names": [],
+        "type": "repository"
+      },
+      "license": null,
+      "license_id": null,
+      "version": "submittedVersion",
+      "is_accepted": false,
+      "is_published": false,
+      "raw_source_name": "Master's Theses",
+      "raw_type": "text"
+    }
+  ],
+  "best_oa_location": {
+    "id": "doi:10.31979/etd.dnwu-953q",
+    "is_oa": true,
+    "landing_page_url": "https://doi.org/10.31979/etd.dnwu-953q",
+    "pdf_url": "https://scholarworks.sjsu.edu/cgi/viewcontent.cgi?article=8367&context=etd_theses",
+    "source": null,
+    "license": null,
+    "license_id": null,
+    "version": "publishedVersion",
+    "is_accepted": true,
+    "is_published": true,
+    "raw_source_name": "San Jose State University",
+    "raw_type": "dissertation"
+  },
+  "sustainable_development_goals": [],
+  "awards": [],
+  "funders": [],
+  "has_content": {
+    "pdf": true,
+    "grobid_xml": true
+  },
+  "content_urls": {
+    "pdf": "https://content.openalex.org/works/W4250002186.pdf",
+    "grobid_xml": "https://content.openalex.org/works/W4250002186.grobid-xml"
+  },
+  "referenced_works_count": 27,
+  "referenced_works": [
+    "https://openalex.org/W103634144",
+    "https://openalex.org/W124244495",
+    "https://openalex.org/W156906641",
+    "https://openalex.org/W1435010830",
+    "https://openalex.org/W1674877186",
+    "https://openalex.org/W1972418517",
+    "https://openalex.org/W1988888548",
+    "https://openalex.org/W1992851788",
+    "https://openalex.org/W2020145470",
+    "https://openalex.org/W2042265653",
+    "https://openalex.org/W2042514343",
+    "https://openalex.org/W2051152124",
+    "https://openalex.org/W2061023772",
+    "https://openalex.org/W2093572521",
+    "https://openalex.org/W2116079772",
+    "https://openalex.org/W2124284448",
+    "https://openalex.org/W2134826720",
+    "https://openalex.org/W2156084981",
+    "https://openalex.org/W2182858096",
+    "https://openalex.org/W2221264131",
+    "https://openalex.org/W2489096828",
+    "https://openalex.org/W3048716914",
+    "https://openalex.org/W4254095453",
+    "https://openalex.org/W6605045863",
+    "https://openalex.org/W6663560589",
+    "https://openalex.org/W6665602128",
+    "https://openalex.org/W6679840533"
+  ],
+  "related_works": [
+    "https://openalex.org/W1963859303",
+    "https://openalex.org/W2364044215",
+    "https://openalex.org/W2389600408",
+    "https://openalex.org/W240129890",
+    "https://openalex.org/W3048701459",
+    "https://openalex.org/W2149078538",
+    "https://openalex.org/W2080146221",
+    "https://openalex.org/W2370314112",
+    "https://openalex.org/W1912958759",
+    "https://openalex.org/W2792081825"
+  ],
+  "abstract_inverted_index": {
+    "Network": [
+      0
+    ],
+    "security": [
+      1
+    ],
+    "has": [
+      2
+    ],
+    "been": [
+      3
+    ],
+    "very": [
+      4
+    ],
+    "crucial": [
+      5
+    ],
+    "for": [
+      6,
+      40,
+      102,
+      186
+    ],
+    "the": [
+      7,
+      17,
+      27,
+      98,
+      132,
+      135,
+      139,
+      148,
+      151,
+      154,
+      161,
+      164,
+      168,
+      172,
+      176,
+      179,
+      191,
+      195,
+      209
+    ],
+    "software": [
+      8
+    ],
+    "industry.": [
+      9
+    ],
+    "Deep": [
+      10
+    ],
+    "packet": [
+      11,
+      56,
+      73,
+      80,
+      211
+    ],
+    "inspection": [
+      12,
+      61
+    ],
+    "(DPI)": [
+      13
+    ],
+    "is": [
+      14,
+      34,
+      52
+    ],
+    "one": [
+      15
+    ],
+    "of": [
+      16,
+      30,
+      97,
+      111,
+      131,
+      157
+    ],
+    "widely": [
+      18
+    ],
+    "used": [
+      19,
+      101
+    ],
+    "approaches": [
+      20
+    ],
+    "in": [
+      21,
+      42
+    ],
+    "enforcing": [
+      22
+    ],
+    "network": [
+      23,
+      31
+    ],
+    "security.": [
+      24
+    ],
+    "Due": [
+      25
+    ],
+    "to": [
+      26,
+      36,
+      71,
+      201
+    ],
+    "high": [
+      28,
+      38
+    ],
+    "volume": [
+      29
+    ],
+    "traffic,": [
+      32
+    ],
+    "it": [
+      33
+    ],
+    "challenging": [
+      35
+    ],
+    "achieve": [
+      37
+    ],
+    "performance": [
+      39,
+      96,
+      140,
+      219
+    ],
+    "DPI": [
+      41,
+      50,
+      103
+    ],
+    "real": [
+      43
+    ],
+    "time.": [
+      44
+    ],
+    "In": [
+      45
+    ],
+    "this": [
+      46,
+      158
+    ],
+    "thesis,": [
+      47
+    ],
+    "a": [
+      48,
+      205
+    ],
+    "new": [
+      49
+    ],
+    "framework": [
+      51
+    ],
+    "presented": [
+      53
+    ],
+    "that": [
+      54
+    ],
+    "accelerates": [
+      55
+    ],
+    "header": [
+      57
+    ],
+    "checking": [
+      58
+    ],
+    "and": [
+      59,
+      78,
+      85,
+      92,
+      125,
+      138,
+      150,
+      167,
+      178
+    ],
+    "payload": [
+      60
+    ],
+    "on": [
+      62,
+      134,
+      146,
+      204
+    ],
+    "graphics": [
+      63
+    ],
+    "processing": [
+      64,
+      212
+    ],
+    "units": [
+      65
+    ],
+    "(GPUs).": [
+      66
+    ],
+    "Various": [
+      67
+    ],
+    "optimizations": [
+      68
+    ],
+    "were": [
+      69,
+      182
+    ],
+    "applied": [
+      70
+    ],
+    "GPU-version": [
+      72,
+      162
+    ],
+    "inspection,": [
+      74
+    ],
+    "such": [
+      75,
+      113
+    ],
+    "as": [
+      76,
+      114
+    ],
+    "thread-level": [
+      77
+    ],
+    "block-level": [
+      79
+    ],
+    "assignment,": [
+      81
+    ],
+    "warp": [
+      82,
+      120
+    ],
+    "divergence": [
+      83
+    ],
+    "elimination,": [
+      84
+    ],
+    "memory": [
+      86,
+      91,
+      118
+    ],
+    "transfer": [
+      87
+    ],
+    "optimization": [
+      88
+    ],
+    "using": [
+      89,
+      107,
+      190
+    ],
+    "pinned": [
+      90
+    ],
+    "shared": [
+      93,
+      117
+    ],
+    "memory.": [
+      94
+    ],
+    "The": [
+      95,
+      128
+    ],
+    "pattern-matching": [
+      99,
+      144
+    ],
+    "algorithms": [
+      100,
+      133,
+      145,
+      181
+    ],
+    "was": [
+      104,
+      198
+    ],
+    "analyzed": [
+      105
+    ],
+    "by": [
+      106,
+      189
+    ],
+    "an": [
+      108
+    ],
+    "assorted": [
+      109
+    ],
+    "set": [
+      110
+    ],
+    "characteristics": [
+      112
+    ],
+    "pipeline": [
+      115
+    ],
+    "stalls,": [
+      116
+    ],
+    "efficiency,": [
+      119,
+      121
+    ],
+    "issue": [
+      122
+    ],
+    "slot": [
+      123
+    ],
+    "utilization,": [
+      124
+    ],
+    "cache": [
+      126
+    ],
+    "hits.": [
+      127
+    ],
+    "extensive": [
+      129
+    ],
+    "characterization": [
+      130
+    ],
+    "GPU": [
+      136,
+      149
+    ],
+    "architecture": [
+      137
+    ],
+    "comparison": [
+      141
+    ],
+    "among": [
+      142
+    ],
+    "parallel": [
+      143
+    ],
+    "both": [
+      147
+    ],
+    "CPU": [
+      152
+    ],
+    "are": [
+      153
+    ],
+    "unique": [
+      155
+    ],
+    "contributions": [
+      156
+    ],
+    "thesis.": [
+      159
+    ],
+    "Among": [
+      160
+    ],
+    "algorithms,": [
+      163
+    ],
+    "Aho-Corasick": [
+      165,
+      177
+    ],
+    "algorithm": [
+      166,
+      170,
+      174
+    ],
+    "Wu-Manber": [
+      169,
+      180
+    ],
+    "outperformed": [
+      171
+    ],
+    "Rabin-Karp": [
+      173
+    ],
+    "because": [
+      175
+    ],
+    "executed": [
+      183
+    ],
+    "only": [
+      184
+    ],
+    "once": [
+      185
+    ],
+    "multiple": [
+      187
+    ],
+    "signatures": [
+      188
+    ],
+    "tables": [
+      192
+    ],
+    "generated": [
+      193
+    ],
+    "before": [
+      194
+    ],
+    "searching": [
+      196
+    ],
+    "phase": [
+      197
+    ],
+    "begun.": [
+      199
+    ],
+    "According": [
+      200
+    ],
+    "my": [
+      202
+    ],
+    "evaluation": [
+      203
+    ],
+    "NVIDIA": [
+      206
+    ],
+    "K80": [
+      207
+    ],
+    "GPU,": [
+      208
+    ],
+    "GPU-accelerated": [
+      210
+    ],
+    "achieved": [
+      213
+    ],
+    "at": [
+      214
+    ],
+    "least": [
+      215
+    ],
+    "60": [
+      216
+    ],
+    "times": [
+      217
+    ],
+    "better": [
+      218
+    ],
+    "than": [
+      220
+    ],
+    "CPU-version": [
+      221
+    ],
+    "processing.": [
+      222
+    ]
+  },
+  "counts_by_year": [],
+  "updated_date": "2026-09-05T08:02:43.246662",
+  "created_date": "2025-10-10T00:00:00"
+}

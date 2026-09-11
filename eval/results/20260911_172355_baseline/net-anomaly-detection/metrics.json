@@ -1,0 +1,74 @@
+{
+  "claims": {
+    "tp": 1,
+    "fp": 5,
+    "fn": 6,
+    "precision": 0.16666666666666666,
+    "recall": 0.14285714285714285,
+    "f1": 0.15384615384615385,
+    "matches": [
+      {
+        "pred_index": 2,
+        "gold_index": 3,
+        "similarity": 0.767
+      }
+    ],
+    "missed_gold_indices": [
+      0,
+      1,
+      2,
+      4,
+      5,
+      6
+    ]
+  },
+  "gaps": {
+    "recall": 0.0,
+    "per_prediction": [
+      {
+        "description": "There is a lack of real-world, comprehensive datasets for evaluating the performance of anomaly detection algorithms in network traffic, especially for behavior-level attacks.",
+        "gap_type": "dataset",
+        "matched_gold_index": null
+      },
+      {
+        "description": "The evaluation of anomaly detection methods often relies on synthetic or limited real-world datasets, which may not fully capture the complexity and variability of real network traffic.",
+        "gap_type": "evaluation",
+        "matched_gold_index": null
+      },
+      {
+        "description": "While several methods are proposed for anomaly detection, there is a need for more research on the integration of quantum computing techniques for anomaly detection in network traffic.",
+        "gap_type": "methodological",
+        "matched_gold_index": null
+      },
+      {
+        "description": "The detection of behavior-level attacks, which are more subtle and harder to identify, remains an unexplored subtopic in the field of network traffic anomaly detection.",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      }
+    ],
+    "missed_gold_indices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "precision_at_3": 0.0,
+    "precision_at_5": 0.0
+  },
+  "cost": {
+    "estimated_cost_usd": 0.0,
+    "llm_calls": 1,
+    "parse_failures": 0
+  },
+  "downstream_errors": {
+    "unsupported_sentences_in_narrative": 0,
+    "retained_fp_contradictions": 0,
+    "narrative_build_failed": false,
+    "narrative_total_sentences": 0,
+    "evidence_rows_no_verbatim": 0,
+    "narrative_error": null
+  }
+}

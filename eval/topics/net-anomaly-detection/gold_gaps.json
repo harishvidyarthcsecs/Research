@@ -1,0 +1,44 @@
+[
+  {
+    "description": "Limited use of cross-validation in research",
+    "gap_type": "methodological",
+    "keywords": [],
+    "source": "bootstrapped, not adjudicated"
+  },
+  {
+    "description": "Limited use of ablation study in research",
+    "gap_type": "methodological",
+    "keywords": [],
+    "source": "bootstrapped, not adjudicated"
+  },
+  {
+    "description": "Limited use of statistical significance in research",
+    "gap_type": "methodological",
+    "keywords": [],
+    "source": "bootstrapped, not adjudicated"
+  },
+  {
+    "description": "Limited use of baseline comparison in research",
+    "gap_type": "methodological",
+    "keywords": [],
+    "source": "bootstrapped, not adjudicated"
+  },
+  {
+    "description": "Limited use of error analysis in research",
+    "gap_type": "methodological",
+    "keywords": [],
+    "source": "bootstrapped, not adjudicated"
+  },
+  {
+    "description": "Limited use of hyperparameter tuning in research",
+    "gap_type": "methodological",
+    "keywords": [],
+    "source": "bootstrapped, not adjudicated"
+  },
+  {
+    "description": "Lack of real-world evaluation in research",
+    "gap_type": "evaluation",
+    "keywords": [],
+    "source": "bootstrapped, not adjudicated"
+  }
+]

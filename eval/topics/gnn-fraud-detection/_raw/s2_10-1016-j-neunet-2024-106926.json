@@ -1,0 +1,21 @@
+{
+  "paperId": "7bede3c92e5f3d35fff3b4812b5da302ffd99a67",
+  "title": "BalancerGNN: Balancer Graph Neural Networks for imbalanced datasets: A case study on fraud detection",
+  "openAccessPdf": {
+    "url": "",
+    "status": "CLOSED",
+    "license": null,
+    "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.1016/j.neunet.2024.106926?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1016/j.neunet.2024.106926, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+  },
+  "authors": [
+    {
+      "authorId": "2165360367",
+      "name": "Mallika Boyapati"
+    },
+    {
+      "authorId": "3867127",
+      "name": "Ramazan S. Aygun"
+    }
+  ],
+  "abstract": "Fraud detection for imbalanced datasets is challenging due to machine learning models inclination to learn the majority class. Imbalance in fraud detection datasets affects how graphs are built, an important step in many Graph Neural Networks (GNNs). In this paper, we introduce our BalancerGNN framework to tackle with imbalanced datasets and show its effectiveness on fraud detection. Our framework has three major components: (i) node construction with feature representations, (ii) graph construction using balanced neighbor sampling, and (iii) GNN training using balanced training batches leveraging a custom loss function with multiple components. For node construction, we have introduced (i) Graph-based Variable Clustering (GVC) to optimize feature selection and remove redundancies by analyzing multi-collinearity and (ii) Encoder-Decoder based Dimensionality Reduction (EDDR) using transformer-based techniques to reduce feature dimensions while keeping important information intact about textual embeddings. Our experiments on Medicare, Equifax, IEEE, and auto insurance fraud datasets highlight the importance of node construction with features representations. BalancerGNN trained with balanced batches consistently outperforms other methods, showing strong abilities in identifying fraud cases, with sensitivity rates ranging from 72.87% to 81.23% across datasets while balancing specificity. Additionally, BalancerGNN achieves impressive accuracy rates, ranging from 73.99% to 94.28%. These outcomes underscore the crucial role of graph representation and neighbor sampling techniques in optimizing BalancerGNN for fraud detection models in real-world applications."
+}

@@ -1,0 +1,77 @@
+{
+  "claims": {
+    "tp": 2,
+    "fp": 0,
+    "fn": 1,
+    "precision": 1.0,
+    "recall": 0.6666666666666666,
+    "f1": 0.8,
+    "matches": [
+      {
+        "pred_index": 1,
+        "gold_index": 1,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 0,
+        "gold_index": 0,
+        "similarity": 0.817
+      }
+    ],
+    "missed_gold_indices": [
+      2
+    ]
+  },
+  "contradictions": {
+    "pair_level": {
+      "tp": 0,
+      "fp_on_negatives": 0,
+      "fn": 0,
+      "precision_on_labeled": null,
+      "recall": null,
+      "false_positive_rate_on_negatives": 0.0
+    },
+    "claim_level_strict": {
+      "tp": 0,
+      "recall": null
+    },
+    "unlabeled_prediction_volume": 0,
+    "missed_gold": [],
+    "false_positives_on_negatives": [],
+    "unlabeled_predictions": []
+  },
+  "gaps": {
+    "recall": 0.0,
+    "per_prediction": [
+      {
+        "description": "The corpus lacks any use of datasets such as ChEMBL, DrugBank, and ZINC, which are critical for validating GNN models in drug discovery.",
+        "gap_type": "dataset",
+        "matched_gold_index": null
+      },
+      {
+        "description": "There is a complete absence of research on the application of Graph Neural Networks (GNNs) in molecular property prediction, drug design, drug-target interaction, drug-drug interaction analysis, and virtual screening.",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      }
+    ],
+    "missed_gold_indices": [
+      0,
+      1
+    ],
+    "precision_at_3": 0.0,
+    "precision_at_5": 0.0
+  },
+  "cost": {
+    "estimated_cost_usd": 0.0,
+    "llm_calls": 13,
+    "parse_failures": 0
+  },
+  "downstream_errors": {
+    "unsupported_sentences_in_narrative": 1,
+    "retained_fp_contradictions": 0,
+    "narrative_build_failed": false,
+    "narrative_total_sentences": 5,
+    "evidence_rows_no_verbatim": 9,
+    "narrative_error": null
+  }
+}

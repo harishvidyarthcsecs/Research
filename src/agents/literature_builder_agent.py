@@ -945,8 +945,11 @@ and identifying trends in the evolution of research approaches over time.
             for r in rows
         )
         correction_note = (
-            "\nYour previous answer stated something not present in the rows below — "
-            "restate using only facts from these rows.\n" if correction else ""
+            "\nYour previous answer FAILED verification: at least one sentence had no "
+            "\\cite{} key (an opening or framing sentence with no citation also fails). "
+            "Rewrite so that EVERY sentence — including the first — ends with at least "
+            "one \\cite{key} drawn from the bracketed keys above, and states only facts "
+            "present in these rows.\n" if correction else ""
         )
         prompt = (
             "Write ONE flowing academic literature-review paragraph (120-220 words) "

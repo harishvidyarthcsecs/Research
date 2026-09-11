@@ -1,0 +1,37 @@
+[
+  {
+    "paper_id": "arxiv_2603.28654",
+    "statement": "Our experimental results demonstrate that ensemble methods achieve superior performance, with Random Forest attaining 90 percentage accuracy and an auc of 0.617 on validation data",
+    "source": "bootstrapped, not adjudicated"
+  },
+  {
+    "paper_id": "arxiv_1810.07796",
+    "statement": "Firstly, based on proposed multivariate flow similarity method on temporal locality, a complex network model (MFS-TL) is constructed to describe the interactive behaviors of traffic flows",
+    "source": "bootstrapped, not adjudicated"
+  },
+  {
+    "paper_id": "arxiv_1810.07796",
+    "statement": "Finally, we carried out extensive experiments on several network traffic datasets for anomaly detection, and the results demonstrate the superiority of IFSE-AD to state-of-the-art approaches, validating the effectiveness of our method",
+    "source": "bootstrapped, not adjudicated"
+  },
+  {
+    "paper_id": "arxiv_2511.05193",
+    "statement": "To transcend this limitation, we propose a novel unsupervised traffic anomaly detection system, BLADE, capable of detecting not only flow-level but also behavior-level attacks in web services",
+    "source": "bootstrapped, not adjudicated"
+  },
+  {
+    "paper_id": "arxiv_2511.05193",
+    "statement": "BLADE first exploits a flow autoencoder to learn a latent feature representation and calculates its reconstruction losses per flow",
+    "source": "bootstrapped, not adjudicated"
+  },
+  {
+    "paper_id": "arxiv_2511.05193",
+    "statement": "The experimental results demonstrate BLADE's superior performance, achieving high f1_score scores of 0.9732 and 0.9801, respectively, on the two datasets, and outperforming traditional single-flow anomaly detection baselines",
+    "source": "bootstrapped, not adjudicated"
+  },
+  {
+    "paper_id": "10_1049_pbpc032e_ch9",
+    "statement": "This chapter discusses a novel semi-supervised approach, called SemTra, which automatically alleviates the shortage of labeled flows for ML by exploiting the advantages of both supervised and unsupervised models",
+    "source": "bootstrapped, not adjudicated"
+  }
+]

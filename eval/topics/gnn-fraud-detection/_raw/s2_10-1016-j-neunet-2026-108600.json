@@ -1,0 +1,21 @@
+{
+  "paperId": "476751e572d40fff4b93f8097cdeb54eba423208",
+  "title": "Learning frequency-aware graph fraud detection",
+  "openAccessPdf": {
+    "url": "https://doi.org/10.1016/j.neunet.2026.108600",
+    "status": "HYBRID",
+    "license": "CCBY",
+    "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.1016/j.neunet.2026.108600?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1016/j.neunet.2026.108600, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+  },
+  "authors": [
+    {
+      "authorId": "2401550070",
+      "name": "Wei Zhao"
+    },
+    {
+      "authorId": "2260840310",
+      "name": "Hao Chen"
+    }
+  ],
+  "abstract": "Graph Fraud Detection (GFD) has become a critical task in online systems such as financial networks, review platforms, and social media, where fraudulent behaviors are inherently rare and often embedded within benign communities. Graph Neural Networks (GNNs) have shown promise for GFD by modeling relational dependencies; however, their effectiveness is severely limited by two persistent challenges: extreme label imbalance and the coexistence of homophilic and heterophilic connections. Most existing approaches attempt to mitigate these issues by modifying graph structures or suppressing heterophilic neighbors, which may introduce bias and scalability limitations. In this work, we address GFD from a frequency-domain perspective and propose a Frequency-aware Graph Neural Network (F-GNN). The core insight is that heterophilic interactions often manifest as high-frequency signals that are diluted by dominant low-frequency homophilic patterns in conventional message passing. F-GNN explicitly decouples node representations in the graph frequency domain and employs node-adaptive spectral gating to selectively emphasize informative high-frequency components. In addition, a fraud-aware representation fusion mechanism is introduced to counteract label imbalance during neighborhood aggregation. Extensive experiments on four benchmark datasets-Yelp, Amazon, T-Finance, and T-Social-demonstrate that F-GNN consistently outperforms state-of-the-art GNN-based fraud detection methods under both supervised and semi-supervised settings, achieving up to 99.81% AUC and 96.65% F1-Macro. These results highlight the effectiveness of frequency-aware modeling as a principled alternative to structure-based heuristics for graph fraud detection."
+}

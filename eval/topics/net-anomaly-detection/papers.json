@@ -1,0 +1,168 @@
+[
+  {
+    "id": "paper_1788942440.573527",
+    "title": "Interpretable Ensemble Learning for Network Traffic Anomaly Detection: A SHAP-based Explainable AI Framework for Embedded Systems Security",
+    "authors": [
+      "Wanru Shao"
+    ],
+    "year": 2026,
+    "venue": "arXiv",
+    "doi": null,
+    "arxiv_id": "2603.28654",
+    "abstract": "Network security threats in embedded systems pose significant challenges to critical infrastructure protection. This paper presents a comprehensive framework combining ensemble learning methods with explainable artificial intelligence (XAI) techniques for robust anomaly detection in network traffic. We evaluate multiple machine learning models including Random Forest, Gradient Boosting, Support Vector Machines, and ensemble methods on a real-world network traffic dataset containing 19 features derived from packet-level and frequency domain characteristics. Our experimental results demonstrate that ensemble methods achieve superior performance, with Random Forest attaining 90% accuracy and an AUC of 0.617 on validation data. Furthermore, we employ SHAP (SHapley Additive exPlanations) analysis to provide interpretable insights into model predictions, revealing that packet_count_5s,inter_arrival_time, and spectral_entropy are the most influential features for anomaly detection. The integration of XAI techniques enhances model trustworthiness and facilitates deployment in security-critical embedded systems where interpretability is paramount.",
+    "url": "http://arxiv.org/abs/2603.28654v1",
+    "relevance_score": 0.9200000000000002,
+    "impact_score": 0.0,
+    "sources": [
+      "arxiv"
+    ],
+    "paper_id": "arxiv_2603.28654"
+  },
+  {
+    "id": "paper_1788942440.573049",
+    "title": "Using Intuitionistic Fuzzy Set for Anomaly Detection of Network Traffic from Flow Interaction",
+    "authors": [
+      "Jinfa Wang",
+      "Hai Zhao",
+      "Jiuqiang Xu",
+      "Hequn Li",
+      "Shuai Chao",
+      "Chuangyang Zheng"
+    ],
+    "year": 2018,
+    "venue": "arXiv",
+    "doi": null,
+    "arxiv_id": "1810.07796",
+    "abstract": "We present a method to detect anomalies in a time series of flow interaction patterns. There are many existing methods for anomaly detection in network traffic, such as number of packets. However, there is non established method detecting anomalies in a time series of flow interaction patterns that can be represented as complex network. Firstly, based on proposed multivariate flow similarity method on temporal locality, a complex network model (MFS-TL) is constructed to describe the interactive behaviors of traffic flows. Having analyzed the relationships between MFS-TL characteristics, temporal locality window and multivariate flow similarity critical threshold, an approach for parameter determination is established. Having observed the evolution of MFS-TL characteristics, three non-deterministic correlations are defined for network states (i.e. normal or abnormal). Furthermore, intuitionistic fuzzy set (IFS) is introduced to quantify three non-deterministic correlations, and then a anomaly detection method is put forward for single characteristic sequence. To build an objective IFS, we design a Gaussian distribution-based membership function with a variable hesitation degree. To determine the mapping of IFS's clustering intervals to network states, a distinction index is developed. Then, an IFS ensemble method (IFSE-AD) is proposed to eliminate the impacts of the inconsistent about MFS-TL characteristic to network state and improve detection performance. Finally, we carried out extensive experiments on several network traffic datasets for anomaly detection, and the results demonstrate the superiority of IFSE-AD to state-of-the-art approaches, validating the effectiveness of our method.",
+    "url": "http://arxiv.org/abs/1810.07796v1",
+    "relevance_score": 0.8000000000000002,
+    "impact_score": 0.0,
+    "sources": [
+      "arxiv"
+    ],
+    "paper_id": "arxiv_1810.07796"
+  },
+  {
+    "id": "paper_1788942440.573383",
+    "title": "BLADE: Behavior-Level Anomaly Detection Using Network Traffic in Web Services",
+    "authors": [
+      "Zhibo Dong",
+      "Yong Huang",
+      "Shubao Sun",
+      "Wentao Cui",
+      "Zhihua Wang"
+    ],
+    "year": 2025,
+    "venue": "arXiv",
+    "doi": null,
+    "arxiv_id": "2511.05193",
+    "abstract": "With their widespread popularity, web services have become the main targets of various cyberattacks. Existing traffic anomaly detection approaches focus on flow-level attacks, yet fail to recognize behavior-level attacks, which appear benign in individual flows but reveal malicious purpose using multiple network flows. To transcend this limitation, we propose a novel unsupervised traffic anomaly detection system, BLADE, capable of detecting not only flow-level but also behavior-level attacks in web services. Our key observation is that application-layer operations of web services exhibit distinctive communication patterns at the network layer from a multi-flow perspective. BLADE first exploits a flow autoencoder to learn a latent feature representation and calculates its reconstruction losses per flow. Then, the latent representation is assigned a pseudo operation label using an unsupervised clustering method. Next, an anomaly score is computed based on the reconstruction losses. Finally, the triplets of timestamps, pseudo labels, and anomaly scores from multiple flows are aggregated and fed into a one-class classifier to characterize the behavior patterns of legitimate web operations, enabling the detection of flow-level and behavior-level anomalies. BLADE is extensively evaluated on both the custom dataset and the CIC-IDS2017 dataset. The experimental results demonstrate BLADE's superior performance, achieving high F1 scores of 0.9732 and 0.9801, respectively, on the two datasets, and outperforming traditional single-flow anomaly detection baselines.",
+    "url": "http://arxiv.org/abs/2511.05193v1",
+    "relevance_score": 0.7000000000000001,
+    "impact_score": 0.0,
+    "sources": [
+      "arxiv"
+    ],
+    "paper_id": "arxiv_2511.05193"
+  },
+  {
+    "id": "paper_1788942440.780489",
+    "title": "A semi-supervised approach for network traffic labeling",
+    "authors": [],
+    "year": 2020,
+    "venue": "Network Classification for Traffic Management: Anomaly detection, feature selection, clustering and classification",
+    "doi": "10.1049/pbpc032e_ch9",
+    "arxiv_id": null,
+    "abstract": "As discussed in the previous two chapters, the recent promising studies for network classification have relied on the analysis of the statistics of traffic flows and the use of machine learning (ML) methods. However, due to the high cost of manual labeling, it is hard to obtain sufficient, reliable, and up-to-date labeled data for effective IP traffic classification. This chapter discusses a novel semi-supervised approach, called SemTra, which automatically alleviates the shortage of labeled flows for ML by exploiting the advantages of both supervised and unsupervised models. In particular, SemTra involves the followings: (i) generating multi-view representations of the original data based on dimensionality reduction methods to have strong discrimination ability; (ii) incorporating the generated representations into the ensemble clustering model to provide a combined clustering output with better quality and stability; (iii) adapting the concept of self-training to iteratively utilize the few labeled data along with unlabeled within local and global viewpoints; and (iv) obtaining the final class decision by combining the decisions of mapping strategy of clusters, the local self-training and global self-training approaches. Extensive experiments were carried out to compare the effectiveness of SemTra over representative semi-supervised methods using 16 network traffic datasets. The results clearly show that SemTra is able to yield noticeable improvement in accuracy (as high as 94.96%) and stability (as high as 95.04%) in the labeling process.",
+    "url": "https://doi.org/10.1049/pbpc032e_ch9",
+    "relevance_score": 0.2,
+    "impact_score": 0.0,
+    "sources": [
+      "crossref"
+    ],
+    "paper_id": "10_1049_pbpc032e_ch9"
+  },
+  {
+    "id": "paper_1788942440.573688",
+    "title": "Multi-Party Private Set Intersection: A Circuit-Based Protocol with Jaccard Similarity for Secure and Efficient Anomaly Detection in Network Traffic",
+    "authors": [
+      "Jiuheng Su",
+      "Zhili Chen",
+      "Xiaomin Yang"
+    ],
+    "year": 2024,
+    "venue": "arXiv",
+    "doi": null,
+    "arxiv_id": "2401.12542",
+    "abstract": "We present a new circuit-based protocol for multi-party private set intersection (PSI) that allows m parties to compute the intersection of their datasets without revealing any additional information about the items outside the intersection. Building upon the two-party Sort-Compare-Shuffle (SCS) protocol, we seamlessly extend it to a multi-party setting. Demonstrating its practicality through implementation, our protocol exhibits acceptable performance. Specifically, with 7 parties, each possessing a set size of 2^{12}, our protocol completes in just 19 seconds. Moreover, circuit-based protocols like ours have an advantage over using custom protocols to perform more complex computation. We substantiate this advantage by incorporating a module for calculating the Jaccard similarity metric of the private sets which can be used in the application domain of network traffic analysis for anomaly detection. This extension showcases the versatility of our protocol beyond set intersection computations, demonstrating its efficacy in preserving privacy while efficiently identifying abnormal patterns in network flow.",
+    "url": "http://arxiv.org/abs/2401.12542v1",
+    "relevance_score": 0.9800000000000001,
+    "impact_score": 0.0,
+    "sources": [
+      "arxiv"
+    ],
+    "paper_id": "arxiv_2401.12542"
+  },
+  {
+    "id": "paper_1788942440.573457",
+    "title": "FGAN: Federated Generative Adversarial Networks for Anomaly Detection in Network Traffic",
+    "authors": [
+      "Sankha Das"
+    ],
+    "year": 2022,
+    "venue": "arXiv",
+    "doi": null,
+    "arxiv_id": "2203.11106",
+    "abstract": "Over the last two decades, a lot of work has been done in improving network security, particularly in intrusion detection systems (IDS) and anomaly detection. Machine learning solutions have also been employed in IDSs to detect known and plausible attacks in incoming traffic. Parameters such as packet contents, sender IP and sender port, connection duration, etc. have been previously used to train these machine learning models to learn to differentiate genuine traffic from malicious ones. Generative Adversarial Networks (GANs) have been significantly successful in detecting such anomalies, mostly attributed to the adversarial training of the generator and discriminator in an attempt to bypass each other and in turn increase their own power and accuracy. However, in large networks having a wide variety of traffic at possibly different regions of the network and susceptible to a large number of potential attacks, training these GANs for a particular kind of anomaly may make it oblivious to other anomalies and attacks. In addition, the dataset required to train these models has to be made centrally available and publicly accessible, posing the obvious question of privacy of the communications of the respective participants of the network. The solution proposed in this work aims at tackling the above two issues by using GANs in a federated architecture in networks of such scale and capacity. In such a setting, different users of the network will be able to train and customize a centrally available adversarial model according to their own frequently faced conditions. Simultaneously, the member users of the network will also able to gain from the experiences of the other users in the network.",
+    "url": "http://arxiv.org/abs/2203.11106v1",
+    "relevance_score": 0.9400000000000002,
+    "impact_score": 0.0,
+    "sources": [
+      "arxiv"
+    ],
+    "paper_id": "arxiv_2203.11106"
+  },
+  {
+    "id": "paper_1788942440.573278",
+    "title": "CESNET-TimeSeries24: Time Series Dataset for Network Traffic Anomaly Detection and Forecasting",
+    "authors": [
+      "Josef Koumar",
+      "Karel Hynek",
+      "Tom\u00e1\u0161 \u010cejka",
+      "Pavel \u0160i\u0161ka"
+    ],
+    "year": 2024,
+    "venue": "arXiv",
+    "doi": null,
+    "arxiv_id": "2409.18874",
+    "abstract": "Anomaly detection in network traffic is crucial for maintaining the security of computer networks and identifying malicious activities. One of the primary approaches to anomaly detection are methods based on forecasting. Nevertheless, extensive real-world network datasets for forecasting and anomaly detection techniques are missing, potentially causing performance overestimation of anomaly detection algorithms. This manuscript addresses this gap by introducing a dataset comprising time series data of network entities' behavior, collected from the CESNET3 network. The dataset was created from 40 weeks of network traffic of 275 thousand active IP addresses. The ISP origin of the presented data ensures a high level of variability among network entities, which forms a unique and authentic challenge for forecasting and anomaly detection models. It provides valuable insights into the practical deployment of forecast-based anomaly detection approaches.",
+    "url": "http://arxiv.org/abs/2409.18874v1",
+    "relevance_score": 0.8800000000000001,
+    "impact_score": 0.0,
+    "sources": [
+      "arxiv"
+    ],
+    "paper_id": "arxiv_2409.18874"
+  },
+  {
+    "id": "paper_1788942440.573767",
+    "title": "Enhancing Network Anomaly Detection with Quantum GANs and Successive Data Injection for Multivariate Time Series",
+    "authors": [
+      "Wajdi Hammami",
+      "Soumaya Cherkaoui",
+      "Shengrui Wang"
+    ],
+    "year": 2025,
+    "venue": "arXiv",
+    "doi": null,
+    "arxiv_id": "2505.11631",
+    "abstract": "Quantum computing may offer new approaches for advancing machine learning, including in complex tasks such as anomaly detection in network traffic. In this paper, we introduce a quantum generative adversarial network (QGAN) architecture for multivariate time-series anomaly detection that leverages variational quantum circuits (VQCs) in combination with a time-window shifting technique, data re-uploading, and successive data injection (SuDaI). The method encodes multivariate time series data as rotation angles. By integrating both data re-uploading and SuDaI, the approach maps classical data into quantum states efficiently, helping to address hardware limitations such as the restricted number of available qubits. In addition, the approach employs an anomaly scoring technique that utilizes both the generator and the discriminator output to enhance the accuracy of anomaly detection. The QGAN was trained using the parameter shift rule and benchmarked against a classical GAN. Experimental results indicate that the quantum model achieves a accuracy high along with high recall and F1-scores in anomaly detection, and attains a lower MSE compared to the classical model. Notably, the QGAN accomplishes this performance with only 80 parameters, demonstrating competitive results with a compact architecture. Tests using a noisy simulator suggest that the approach remains effective under realistic noise-prone conditions.",
+    "url": "http://arxiv.org/abs/2505.11631v1",
+    "relevance_score": 0.8000000000000002,
+    "impact_score": 0.0,
+    "sources": [
+      "arxiv"
+    ],
+    "paper_id": "arxiv_2505.11631"
+  }
+]

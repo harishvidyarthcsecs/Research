@@ -1,0 +1,44 @@
+[
+  {
+    "description": "Limited research on Graph Attention Networks",
+    "gap_type": "unexplored_subtopic",
+    "keywords": [],
+    "status": "REVIEW_NEEDED"
+  },
+  {
+    "description": "Limited research on Message Passing Neural Networks",
+    "gap_type": "unexplored_subtopic",
+    "keywords": [],
+    "status": "REVIEW_NEEDED"
+  },
+  {
+    "description": "Limited research on Spectral Graph Networks",
+    "gap_type": "unexplored_subtopic",
+    "keywords": [],
+    "status": "REVIEW_NEEDED"
+  },
+  {
+    "description": "Limited research on Graph Convolutional Networks",
+    "gap_type": "unexplored_subtopic",
+    "keywords": [],
+    "status": "REVIEW_NEEDED"
+  },
+  {
+    "description": "Limited research on Graph Transformer Networks",
+    "gap_type": "unexplored_subtopic",
+    "keywords": [],
+    "status": "REVIEW_NEEDED"
+  },
+  {
+    "description": "Insufficient evaluation of Neural Networks",
+    "gap_type": "methodological",
+    "keywords": [],
+    "status": "REVIEW_NEEDED"
+  },
+  {
+    "description": "Insufficient evaluation of Network Analysis",
+    "gap_type": "methodological",
+    "keywords": [],
+    "status": "REVIEW_NEEDED"
+  }
+]

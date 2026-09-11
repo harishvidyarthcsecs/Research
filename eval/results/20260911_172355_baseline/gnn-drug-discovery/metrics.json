@@ -1,0 +1,92 @@
+{
+  "claims": {
+    "tp": 1,
+    "fp": 2,
+    "fn": 2,
+    "precision": 0.3333333333333333,
+    "recall": 0.3333333333333333,
+    "f1": 0.3333333333333333,
+    "matches": [
+      {
+        "pred_index": 0,
+        "gold_index": 1,
+        "similarity": 1.0
+      }
+    ],
+    "missed_gold_indices": [
+      0,
+      2
+    ]
+  },
+  "contradictions": {
+    "pair_level": {
+      "tp": 0,
+      "fp_on_negatives": 0,
+      "fn": 0,
+      "precision_on_labeled": null,
+      "recall": null,
+      "false_positive_rate_on_negatives": 0.0
+    },
+    "claim_level_strict": {
+      "tp": 0,
+      "recall": null
+    },
+    "unlabeled_prediction_volume": 1,
+    "missed_gold": [],
+    "false_positives_on_negatives": [],
+    "unlabeled_predictions": [
+      {
+        "paper1_id": "10_48165_iitmjit_2025_11_1_11",
+        "paper2_id": "10_1016_j_neucom_2021_04_039",
+        "claim_text_1": "Graph Neural Networks (GNNs) have proven to be particularly effective in modeling molecular structures, optimizing drug-target interactions, and enhancing prediction accuracy.",
+        "claim_text_2": "Molecular generative Graph Neural Networks are used for drug discovery.",
+        "explanation": "While both papers highlight the effectiveness of GNNs in drug discovery, Paper 2 focuses on the optimization of existing molecules, whereas Paper 6 emphasizes the generation of new molecules.",
+        "detection_method": "baseline"
+      }
+    ]
+  },
+  "gaps": {
+    "recall": 0.0,
+    "per_prediction": [
+      {
+        "description": "There is a lack of detailed evaluation of GNNs compared to other machine learning techniques in drug discovery, which could provide a more comprehensive understanding of their relative strengths and weaknesses.",
+        "gap_type": "evaluation",
+        "matched_gold_index": null
+      },
+      {
+        "description": "The research does not extensively explore the integration of GNNs with other AI techniques, such as reinforcement learning or evolutionary algorithms, which could potentially enhance drug discovery processes.",
+        "gap_type": "methodological",
+        "matched_gold_index": null
+      },
+      {
+        "description": "The papers do not provide a comprehensive dataset comparison, which could help in understanding the performance of GNNs across different types of drug discovery tasks.",
+        "gap_type": "dataset",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Unexplored subtopics include the long-term impact of GNNs on drug discovery, such as their role in personalized medicine and the ethical considerations involved in their use.",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      }
+    ],
+    "missed_gold_indices": [
+      0,
+      1
+    ],
+    "precision_at_3": 0.0,
+    "precision_at_5": 0.0
+  },
+  "cost": {
+    "estimated_cost_usd": 0.0,
+    "llm_calls": 1,
+    "parse_failures": 0
+  },
+  "downstream_errors": {
+    "unsupported_sentences_in_narrative": 0,
+    "retained_fp_contradictions": 0,
+    "narrative_build_failed": false,
+    "narrative_total_sentences": 0,
+    "evidence_rows_no_verbatim": 0,
+    "narrative_error": null
+  }
+}
