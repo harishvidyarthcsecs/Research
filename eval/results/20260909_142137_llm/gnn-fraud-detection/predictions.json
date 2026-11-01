@@ -1,0 +1,147 @@
+{
+  "claims": [
+    {
+      "paper_id": "10_2139_ssrn_6224978",
+      "statement": "Evaluated on a real-world financial dataset containing 555,717 transactions with confirmed fraud ring ground truth, HMS-GNN achieves state-of-the-art performance with an F1-score of 0.84, detecting 33 fraud rings across varying sizes and complexities",
+      "confidence": 0.4
+    },
+    {
+      "paper_id": "10_2139_ssrn_6224978",
+      "statement": "This represents a 95 percentage improvement over the best single-scale baseline (f1_score: 0.54)",
+      "confidence": 0.66
+    },
+    {
+      "paper_id": "10_1109_icmla61862_2024_00091",
+      "statement": "In this paper, we propose a novel algorithm that employs an efficient neighborhood sampling method, effective for camouflage detection and preserving crucial feature information from non-similar nodes",
+      "confidence": 0.6
+    },
+    {
+      "paper_id": "10_1109_icmla61862_2024_00091",
+      "statement": "Additionally, we introduce a novel GNN architecture that utilizes attention mechanisms and preserves holistic neighborhood information to prevent information loss",
+      "confidence": 0.6
+    },
+    {
+      "paper_id": "10_1109_icmla61862_2024_00091",
+      "statement": "We test our algorithm on financial data to show that our method outperforms other state-of-the-art graph algorithms",
+      "confidence": 0.66
+    },
+    {
+      "paper_id": "10_2139_ssrn_6468378",
+      "statement": "The AI contribution is a novel neural architecture with differentiable memory modules that persist and evolve entity representations over time, enabling effective modeling of long-term behavioral patterns and evolving fraud strategies",
+      "confidence": 0.6
+    },
+    {
+      "paper_id": "10_2139_ssrn_6468378",
+      "statement": "Experimental evaluation on real-world financial data comprising 555,717 transactions with a 0.52 percentage fraud rate demonstrates strong performance: an f1_score-score of 0.693 (21 percentage improvement over XGBoost), auc-ROC of 0.966, and detection of 33 organized fraud rings, 20 classified as high-risk",
+      "confidence": 0.9600000000000002
+    },
+    {
+      "paper_id": "10_36227_techrxiv_176315444_45025072_v1",
+      "statement": "Evaluation on a synthetic customs benchmark at different levels of label scarcity showed that: (i) across views, performance was constrained below 20 percentage inspection and improved sharply near 40 percentage; (ii) feature-pair choice mattered, with the best pair depending on label availability; and (iii) multi-view aggregation provided the most balanced results, achieving the highest average overall f1_score while remaining competitive on auc and precision@10 percentage",
+      "confidence": 0.66
+    },
+    {
+      "paper_id": "10_1016_j_neunet_2026_108600",
+      "statement": "Extensive experiments on four benchmark datasets-Yelp, Amazon, T-Finance, and T-Social-demonstrate that F-GNN consistently outperforms state-of-the-art GNN-based fraud detection methods under both supervised and semi-supervised settings, achieving up to 99.81 percentage auc and 96.65 percentage f1_score-Macro",
+      "confidence": 0.78
+    }
+  ],
+  "contradictions": [],
+  "gaps": [
+    {
+      "description": "Limited research on Graph Convolutional Networks",
+      "gap_type": "unexplored_subtopic",
+      "rank": 1,
+      "priority": 1.0,
+      "evidence": [
+        "Only 0 of 9 claims mention this subtopic"
+      ],
+      "detection_method": "rules"
+    },
+    {
+      "description": "Limited research on Spectral Graph Networks",
+      "gap_type": "unexplored_subtopic",
+      "rank": 2,
+      "priority": 1.0,
+      "evidence": [
+        "Only 0 of 9 claims mention this subtopic"
+      ],
+      "detection_method": "rules"
+    },
+    {
+      "description": "Limited research on Graph Transformer Networks",
+      "gap_type": "unexplored_subtopic",
+      "rank": 3,
+      "priority": 1.0,
+      "evidence": [
+        "Only 0 of 9 claims mention this subtopic"
+      ],
+      "detection_method": "rules"
+    },
+    {
+      "description": "Limited research on Graph Attention Networks",
+      "gap_type": "unexplored_subtopic",
+      "rank": 4,
+      "priority": 1.0,
+      "evidence": [
+        "Only 0 of 9 claims mention this subtopic"
+      ],
+      "detection_method": "rules"
+    },
+    {
+      "description": "Limited research on Message Passing Neural Networks",
+      "gap_type": "unexplored_subtopic",
+      "rank": 5,
+      "priority": 1.0,
+      "evidence": [
+        "Only 0 of 9 claims mention this subtopic"
+      ],
+      "detection_method": "rules"
+    },
+    {
+      "description": "Insufficient evaluation of Graph Theory",
+      "gap_type": "methodological",
+      "rank": 6,
+      "priority": 1.0,
+      "evidence": [
+        "Only 0 of 9 claims mention this method"
+      ],
+      "detection_method": "rules"
+    },
+    {
+      "description": "Insufficient evaluation of Neural Networks",
+      "gap_type": "methodological",
+      "rank": 7,
+      "priority": 1.0,
+      "evidence": [
+        "Only 0 of 9 claims mention this method"
+      ],
+      "detection_method": "rules"
+    }
+  ],
+  "usage": {
+    "calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "parse_failures": 0,
+    "by_purpose": {}
+  },
+  "run_metadata": {
+    "provider": "openrouter",
+    "model": "nvidia/nemotron-3-super-120b-a12b:free",
+    "temperature": 0.0,
+    "duration_s": 96.78,
+    "frozen_corpus": true
+  },
+  "narrative": {
+    "grounding_mode": "reject",
+    "build_failed": false,
+    "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://openrouter.ai/api/v1/chat/completions",
+    "total_sentences": 0,
+    "unsupported_sentences": 0,
+    "evidence_rows": 0,
+    "evidence_rows_no_verbatim": 0,
+    "sentences": []
+  }
+}

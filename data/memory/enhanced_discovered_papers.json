@@ -1,155 +1,14 @@
 [
   {
-    "id": "paper_1788861309.04328",
-    "title": "Hybrid Drug-Drug Interaction Prediction: Combining Knowledge Graph Embeddings and Symbolic Learning",
-    "authors": [
-      "Duru Han",
-      "Romy Vos",
-      "Annette Teije"
-    ],
-    "year": 2026,
-    "venue": "Proceedings of the 19th International Joint Conference on Biomedical Engineering Systems and Technologies",
-    "doi": "10.5220/0014253100004070",
-    "arxiv_id": null,
-    "abstract": "",
-    "url": "https://doi.org/10.5220/0014253100004070",
-    "relevance_score": 0.52,
-    "impact_score": 0.0,
-    "sources": [
-      "crossref"
-    ]
-  },
-  {
-    "id": "paper_1788861309.043215",
-    "title": "A Survey on Knowledge Graph Structure and Knowledge Graph Embeddings",
-    "authors": [
-      "Jeffrey Sardina",
-      "John D. Kelleher",
-      "Declan O'Sullivan"
-    ],
+    "id": "paper_1793513297.549228",
+    "title": "AI-Enhanced Drug Discovery Using Graph Neural Networks",
+    "authors": [],
     "year": 2025,
-    "venue": "2025 19th International Conference on Semantic Computing (ICSC)",
-    "doi": "10.1109/icsc64641.2025.00008",
+    "venue": "IITM Journal of Information Technology",
+    "doi": "10.48165/iitmjit.2025.11.1.11",
     "arxiv_id": null,
-    "abstract": "",
-    "url": "https://doi.org/10.1109/icsc64641.2025.00008",
-    "relevance_score": 0.5,
-    "impact_score": 0.0,
-    "sources": [
-      "crossref"
-    ]
-  },
-  {
-    "id": "paper_1788861309.043256",
-    "title": "Integrated machine learning architectures for a knowledge graph embeddings (KGEs) approach",
-    "authors": [
-      "Mamta Punjabi",
-      "Ratnalata Gupta",
-      "Arti Patle"
-    ],
-    "year": 2025,
-    "venue": "Knowledge Graph-Based Methods for Automated Driving",
-    "doi": "10.1016/b978-0-443-30040-0.00008-4",
-    "arxiv_id": null,
-    "abstract": "",
-    "url": "https://doi.org/10.1016/b978-0-443-30040-0.00008-4",
-    "relevance_score": 0.5,
-    "impact_score": 0.0,
-    "sources": [
-      "crossref"
-    ]
-  },
-  {
-    "id": "paper_1788861309.043083",
-    "title": "Multidimensional Knowledge Graph Embeddings for International Trade Flow Analysis",
-    "authors": [
-      "Durgesh Nandini",
-      "Simon Bl\u00f6thner",
-      "Mirco Schoenfeld",
-      "Mario Larch"
-    ],
-    "year": 2024,
-    "venue": "Proceedings of the 16th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management",
-    "doi": "10.5220/0013028500003838",
-    "arxiv_id": null,
-    "abstract": "",
-    "url": "https://doi.org/10.5220/0013028500003838",
-    "relevance_score": 0.48000000000000004,
-    "impact_score": 0.0,
-    "sources": [
-      "crossref"
-    ]
-  },
-  {
-    "id": "paper_1788861309.042935",
-    "title": "Improving Dialog Systems Using Knowledge Graph Embeddings",
-    "authors": [
-      "Brian Carignan"
-    ],
-    "year": 2023,
-    "venue": "",
-    "doi": "10.22215/etd/2018-12640",
-    "arxiv_id": null,
-    "abstract": "",
-    "url": "https://doi.org/10.22215/etd/2018-12640",
-    "relevance_score": 0.46,
-    "impact_score": 0.0,
-    "sources": [
-      "crossref"
-    ]
-  },
-  {
-    "id": "paper_1788861309.04319",
-    "title": "From Word Embeddings to Knowledge Graph Embeddings",
-    "authors": [
-      "Heiko Paulheim",
-      "Petar Ristoski",
-      "Jan Portisch"
-    ],
-    "year": 2023,
-    "venue": "Synthesis Lectures on Data, Semantics, and Knowledge",
-    "doi": "10.1007/978-3-031-30387-6_2",
-    "arxiv_id": null,
-    "abstract": "",
-    "url": "https://doi.org/10.1007/978-3-031-30387-6_2",
-    "relevance_score": 0.46,
-    "impact_score": 0.0,
-    "sources": [
-      "crossref"
-    ]
-  },
-  {
-    "id": "paper_1788861309.043118",
-    "title": "An Evaluation of Hubness Reduction Methods for Entity Alignment with Knowledge Graph Embeddings",
-    "authors": [
-      "Daniel Obraczka",
-      "Erhard Rahm"
-    ],
-    "year": 2021,
-    "venue": "Proceedings of the 13th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management",
-    "doi": "10.5220/0010646400003064",
-    "arxiv_id": null,
-    "abstract": "",
-    "url": "https://doi.org/10.5220/0010646400003064",
-    "relevance_score": 0.42000000000000004,
-    "impact_score": 0.0,
-    "sources": [
-      "crossref"
-    ]
-  },
-  {
-    "id": "paper_1788861309.043301",
-    "title": "Learning Knowledge Graph Embeddings with Type Regularizer",
-    "authors": [
-      "Bhushan Kotnis",
-      "Vivi Nastase"
-    ],
-    "year": 2017,
-    "venue": "Proceedings of the Knowledge Capture Conference",
-    "doi": "10.1145/3148011.3154466",
-    "arxiv_id": null,
-    "abstract": "",
-    "url": "https://doi.org/10.1145/3148011.3154466",
+    "abstract": "<jats:p>The integration of artificial intelligence (AI) in drug discovery has profoundly transformed the pharmaceutical landscape by significantly accelerating the identification of potential drug candidates. Among the various AI techniques, Graph Neural Networks (GNNs) have proven to be particularly effective in modeling molecular structures, optimizing drug-target interactions, and enhancing prediction accuracy. This paper aims to explore the application of GNNs in the field of drug discovery, emphasizing their advantages in comparison to traditional molecular representations. Furthermore, the paper delves into real-world applications, case studies, and a comparative analysis of existing methodologies to offer a comprehensive overview of the current advancements in AI-driven drug discovery</jats:p>",
+    "url": "https://doi.org/10.48165/iitmjit.2025.11.1.11",
     "relevance_score": 0.4,
     "impact_score": 0.0,
     "sources": [
@@ -157,34 +16,182 @@
     ]
   },
   {
-    "id": "paper_1788861309.043166",
-    "title": "HyperKGRec",
+    "id": "paper_1793513297.549291",
+    "title": "From matrix factorization to graph neural networks: Advances in computational drug repositioning",
     "authors": [
-      "Sahil Atul Mhatre"
+      "Yangyang Wang",
+      "Jihan Wang",
+      "Yanning Yang",
+      "Yufei Ren",
+      "Haotian Bai",
+      "Hui Li"
     ],
-    "year": 2023,
-    "venue": "",
-    "doi": "10.31979/etd.547g-wpfg",
+    "year": 2025,
+    "venue": "Drug Discovery Today",
+    "doi": "10.1016/j.drudis.2025.104499",
     "arxiv_id": null,
     "abstract": "",
-    "url": "https://doi.org/10.31979/etd.547g-wpfg",
-    "relevance_score": 0.06000000000000001,
+    "url": "https://doi.org/10.1016/j.drudis.2025.104499",
+    "relevance_score": 0.4,
     "impact_score": 0.0,
     "sources": [
       "crossref"
     ]
   },
   {
-    "id": "paper_1788861309.043234",
-    "title": "Review for \"The Microsoft Academic Knowledge Graph Enhanced: Author Name Disambiguation, Publication Classification, and Embeddings\"",
-    "authors": [],
-    "year": 2021,
-    "venue": "",
-    "doi": "10.1162/qss_a_00183/v1/review2",
+    "id": "paper_1793513297.549275",
+    "title": "Graph neural networks for drug discovery: protocols and applications",
+    "authors": [
+      "Yu Sun",
+      "Xiyue Zhao",
+      "Baocan Pang",
+      "Wenxuan Yang",
+      "Zixuan shao",
+      "Yonghui Lv",
+      "Qifeng Bai"
+    ],
+    "year": 2026,
+    "venue": "Revolutionizing Drug Development",
+    "doi": "10.1016/b978-0-443-34059-8.00015-4",
     "arxiv_id": null,
     "abstract": "",
-    "url": "https://doi.org/10.1162/qss_a_00183/v1/review2",
-    "relevance_score": 0.02,
+    "url": "https://doi.org/10.1016/b978-0-443-34059-8.00015-4",
+    "relevance_score": 0.32000000000000006,
+    "impact_score": 0.0,
+    "sources": [
+      "crossref"
+    ]
+  },
+  {
+    "id": "paper_1793513297.549244",
+    "title": "Molecular Graph Neural Networks in Drug Discovery: A Narrative Review",
+    "authors": [
+      "George Papadopoulos",
+      "Eleni Georgiou"
+    ],
+    "year": 2025,
+    "venue": "Pharmacophore",
+    "doi": "10.51847/8w12ouixi5",
+    "arxiv_id": null,
+    "abstract": "",
+    "url": "https://doi.org/10.51847/8w12ouixi5",
+    "relevance_score": 0.30000000000000004,
+    "impact_score": 0.0,
+    "sources": [
+      "crossref"
+    ]
+  },
+  {
+    "id": "paper_1793513297.549176",
+    "title": "Graph Neural Networks in Modern AI-Aided Drug Discovery",
+    "authors": [],
+    "year": 2023,
+    "venue": "",
+    "doi": "10.1021/acs.chemrev.5c00461.s001",
+    "arxiv_id": null,
+    "abstract": "",
+    "url": "https://doi.org/10.1021/acs.chemrev.5c00461.s001",
+    "relevance_score": 0.26,
+    "impact_score": 0.0,
+    "sources": [
+      "crossref"
+    ]
+  },
+  {
+    "id": "paper_1793513297.549267",
+    "title": "Graph Neural Networks for Drug Discovery: An Integrated Decision Support Pipeline",
+    "authors": [
+      "Pietro Bongini"
+    ],
+    "year": 2023,
+    "venue": "2023 IEEE International Conference on Metrology for eXtended Reality, Artificial Intelligence and Neural Engineering (MetroXRAINE)",
+    "doi": "10.1109/metroxraine58569.2023.10405789",
+    "arxiv_id": null,
+    "abstract": "",
+    "url": "https://doi.org/10.1109/metroxraine58569.2023.10405789",
+    "relevance_score": 0.26,
+    "impact_score": 0.0,
+    "sources": [
+      "crossref"
+    ]
+  },
+  {
+    "id": "paper_1793513297.549251",
+    "title": "Molecular generative Graph Neural Networks for Drug Discovery",
+    "authors": [
+      "Pietro Bongini",
+      "Monica Bianchini",
+      "Franco Scarselli"
+    ],
+    "year": 2021,
+    "venue": "Neurocomputing",
+    "doi": "10.1016/j.neucom.2021.04.039",
+    "arxiv_id": null,
+    "abstract": "",
+    "url": "https://doi.org/10.1016/j.neucom.2021.04.039",
+    "relevance_score": 0.22,
+    "impact_score": 0.0,
+    "sources": [
+      "crossref"
+    ]
+  },
+  {
+    "id": "paper_1793513297.549261",
+    "title": "Graph neural networks for automated de novo drug design",
+    "authors": [
+      "Jiacheng Xiong",
+      "Zhaoping Xiong",
+      "Kaixian Chen",
+      "Hualiang Jiang",
+      "Mingyue Zheng"
+    ],
+    "year": 2021,
+    "venue": "Drug Discovery Today",
+    "doi": "10.1016/j.drudis.2021.02.011",
+    "arxiv_id": null,
+    "abstract": "",
+    "url": "https://doi.org/10.1016/j.drudis.2021.02.011",
+    "relevance_score": 0.12000000000000001,
+    "impact_score": 0.0,
+    "sources": [
+      "crossref"
+    ]
+  },
+  {
+    "id": "paper_1793513297.549283",
+    "title": "A compact review of molecular property prediction with graph neural networks",
+    "authors": [
+      "Oliver Wieder",
+      "Stefan Kohlbacher",
+      "M\u00e9laine Kuenemann",
+      "Arthur Garon",
+      "Pierre Ducrot",
+      "Thomas Seidel",
+      "Thierry Langer"
+    ],
+    "year": 2020,
+    "venue": "Drug Discovery Today: Technologies",
+    "doi": "10.1016/j.ddtec.2020.11.009",
+    "arxiv_id": null,
+    "abstract": "",
+    "url": "https://doi.org/10.1016/j.ddtec.2020.11.009",
+    "relevance_score": 0.1,
+    "impact_score": 0.0,
+    "sources": [
+      "crossref"
+    ]
+  },
+  {
+    "id": "paper_1793513297.549236",
+    "title": "",
+    "authors": [],
+    "year": 2023,
+    "venue": "",
+    "doi": "10.3030/800578",
+    "arxiv_id": null,
+    "abstract": "",
+    "url": "https://doi.org/10.3030/800578",
+    "relevance_score": 0.06000000000000001,
     "impact_score": 0.0,
     "sources": [
       "crossref"

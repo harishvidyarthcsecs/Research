@@ -1,0 +1,111 @@
+{
+  "claims": [
+    {
+      "paper_id": "10_1016_b978-0-443-34059-8_00015-4",
+      "statement": "Graph neural networks can be applied to drug discovery.",
+      "confidence": 0.78
+    },
+    {
+      "paper_id": "10_1016_b978-0-443-34059-8_00015-4",
+      "statement": "There are established protocols and applications for using graph neural networks in drug discovery.",
+      "confidence": 0.73
+    },
+    {
+      "paper_id": "10_1021_acs_chemrev_5c00461_s001",
+      "statement": "Graph Neural Networks are used in modern AI-aided drug discovery.",
+      "confidence": 0.9
+    },
+    {
+      "paper_id": "10_1016_j_drudis_2021_02_011",
+      "statement": "Graph neural networks can be used for automated de novo drug design.",
+      "confidence": 0.8
+    }
+  ],
+  "contradictions": [],
+  "gaps": [
+    {
+      "description": "Standard benchmark datasets (ChEMBL, MoleculeNet, PDBbind, PubChem BioAssay, ZINC15) are never used, preventing reproducible comparison.",
+      "gap_type": "dataset",
+      "rank": 1,
+      "priority": 0.918,
+      "evidence": [
+        "Datasets used in claims: none detected",
+        "Expected datasets never used: ChEMBL, MoleculeNet, PDBbind, PubChem BioAssay, ZINC15",
+        "Low-evidence: derived from only 4 extracted claims"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "The literature contains no studies on molecular property prediction (e.g., solubility, toxicity, binding affinity) using graph neural networks.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 2,
+      "priority": 0.91,
+      "evidence": [
+        "Molecular property prediction ... =0",
+        "Low-evidence: derived from only 4 extracted claims"
+      ],
+      "detection_method": "llm"
+    }
+  ],
+  "usage": {
+    "calls": 9,
+    "prompt_tokens": 3046,
+    "completion_tokens": 6473,
+    "estimated_cost_usd": 0.005312,
+    "parse_failures": 0,
+    "by_purpose": {
+      "topic_expansion": {
+        "calls": 1,
+        "prompt_tokens": 198,
+        "completion_tokens": 544,
+        "estimated_cost_usd": 0.000438,
+        "parse_failures": 0
+      },
+      "claim_extraction": {
+        "calls": 5,
+        "prompt_tokens": 895,
+        "completion_tokens": 1279,
+        "estimated_cost_usd": 0.001094,
+        "parse_failures": 0
+      },
+      "contradiction_judge": {
+        "calls": 1,
+        "prompt_tokens": 628,
+        "completion_tokens": 1039,
+        "estimated_cost_usd": 0.000873,
+        "parse_failures": 0
+      },
+      "gap_detection": {
+        "calls": 1,
+        "prompt_tokens": 642,
+        "completion_tokens": 1796,
+        "estimated_cost_usd": 0.001443,
+        "parse_failures": 0
+      },
+      "recommendations": {
+        "calls": 1,
+        "prompt_tokens": 683,
+        "completion_tokens": 1815,
+        "estimated_cost_usd": 0.001464,
+        "parse_failures": 0
+      }
+    }
+  },
+  "run_metadata": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.0,
+    "duration_s": 16818.82,
+    "frozen_corpus": true
+  },
+  "narrative": {
+    "grounding_mode": "scored",
+    "build_failed": false,
+    "error": null,
+    "total_sentences": 0,
+    "unsupported_sentences": 0,
+    "evidence_rows": 10,
+    "evidence_rows_no_verbatim": 10,
+    "sentences": []
+  }
+}

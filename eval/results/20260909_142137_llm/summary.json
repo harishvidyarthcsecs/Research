@@ -1,0 +1,48 @@
+{
+  "mode": "llm",
+  "generated_at": "2026-09-09T14:39:43.141009",
+  "topics": [
+    {
+      "topic": "dl-malware-detection",
+      "claim_f1": 1.0,
+      "con_precision": null,
+      "con_recall": null,
+      "con_fp_rate_neg": null,
+      "gap_p_at_3": 1.0,
+      "gap_recall": 1.0,
+      "unsup_sents": 0,
+      "retained_fp_contra": 0,
+      "nar_build_fail": false,
+      "cost_usd": 0.0,
+      "parse_failures": 0
+    },
+    {
+      "topic": "gnn-fraud-detection",
+      "claim_f1": 1.0,
+      "con_precision": null,
+      "con_recall": null,
+      "con_fp_rate_neg": null,
+      "gap_p_at_3": 1.0,
+      "gap_recall": 1.0,
+      "unsup_sents": 0,
+      "retained_fp_contra": 0,
+      "nar_build_fail": false,
+      "cost_usd": 0.0,
+      "parse_failures": 0
+    },
+    {
+      "topic": "net-anomaly-detection",
+      "claim_f1": 1.0,
+      "con_precision": null,
+      "con_recall": null,
+      "con_fp_rate_neg": null,
+      "gap_p_at_3": 1.0,
+      "gap_recall": 1.0,
+      "unsup_sents": 0,
+      "retained_fp_contra": 0,
+      "nar_build_fail": false,
+      "cost_usd": 0.0,
+      "parse_failures": 0
+    }
+  ]
+}

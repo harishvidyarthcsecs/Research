@@ -1,0 +1,105 @@
+{
+  "claims": {
+    "tp": 3,
+    "fp": 20,
+    "fn": 0,
+    "precision": 0.13043478260869565,
+    "recall": 1.0,
+    "f1": 0.23076923076923078,
+    "matches": [
+      {
+        "pred_index": 1,
+        "gold_index": 1,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 0,
+        "gold_index": 0,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 2,
+        "gold_index": 2,
+        "similarity": 0.829
+      }
+    ],
+    "missed_gold_indices": []
+  },
+  "contradictions": {
+    "pair_level": {
+      "tp": 0,
+      "fp_on_negatives": 0,
+      "fn": 0,
+      "precision_on_labeled": null,
+      "recall": null,
+      "false_positive_rate_on_negatives": 0.0
+    },
+    "claim_level_strict": {
+      "tp": 0,
+      "recall": null
+    },
+    "unlabeled_prediction_volume": 0,
+    "missed_gold": [],
+    "false_positives_on_negatives": [],
+    "unlabeled_predictions": []
+  },
+  "gaps": {
+    "recall": 0.0,
+    "per_prediction": [
+      {
+        "description": "Limited research on Molecular property prediction (e.g., solubility, toxicity, binding affinity)",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Limited research on Molecule generation and optimization using graph generative models",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Limited research on Protein\u2013ligand interaction modeling with graph neural networks",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Limited research on Explainability and interpretability of GNN predictions in drug discovery",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Limited research on Transfer learning and multi-task learning across heterogeneous chemical datasets",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Insufficient evaluation of Message Passing Neural Networks (MPNN)",
+        "gap_type": "methodological",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Insufficient evaluation of Graph Attention Networks (GAT)",
+        "gap_type": "methodological",
+        "matched_gold_index": null
+      }
+    ],
+    "missed_gold_indices": [
+      0,
+      1
+    ],
+    "precision_at_3": 0.0,
+    "precision_at_5": 0.0
+  },
+  "cost": {
+    "estimated_cost_usd": 0.013372,
+    "llm_calls": 15,
+    "parse_failures": 3
+  },
+  "downstream_errors": {
+    "unsupported_sentences_in_narrative": 0,
+    "retained_fp_contradictions": 0,
+    "narrative_build_failed": false,
+    "narrative_total_sentences": 0,
+    "evidence_rows_no_verbatim": 2,
+    "narrative_error": null
+  }
+}

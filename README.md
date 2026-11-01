@@ -210,6 +210,12 @@ order (xAI Grok → Anthropic Claude → Groq → local Ollama → OpenRouter).
 Without any key configured, every LLM-backed agent runs in its rule-based
 fallback mode instead.
 
+Set `ADMIN_TOKEN` to a long random value before using the journal administration
+APIs under `/api/admin/*`, and send the same value in the `X-Admin-Token` header.
+Those endpoints return 403 while the token is unset. The Flask development
+server binds to `127.0.0.1` with debug disabled by default; set `HOST` explicitly
+to change the bind address and `FLASK_DEBUG=1` only for local debugging.
+
 ## Usage
 
 ### Web app

@@ -1,0 +1,305 @@
+{
+  "claims": [
+    {
+      "paper_id": "10_51847_8w12ouixi5",
+      "statement": "Molecules are naturally represented as graphs, with atoms as nodes and bonds as edges.",
+      "confidence": 0.96
+    },
+    {
+      "paper_id": "10_51847_8w12ouixi5",
+      "statement": "Graph neural networks constitute an intuitive computational framework for medicinal chemistry.",
+      "confidence": 0.94
+    },
+    {
+      "paper_id": "10_51847_8w12ouixi5",
+      "statement": "Message-passing neural networks demonstrated that molecular representations could be learned directly from graph structures rather than relying on handcrafted features.",
+      "confidence": 0.8370000000000001
+    },
+    {
+      "paper_id": "10_51847_8w12ouixi5",
+      "statement": "The advent of message-passing neural networks marked a conceptual shift from encoding chemistry to enabling models to discover tasks.",
+      "confidence": 0.9
+    },
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "The integration of artificial intelligence (AI) in drug discovery has profoundly transformed the pharmaceutical landscape by significantly accelerating the identification of potential drug candidates.",
+      "confidence": 0.935
+    },
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "Graph Neural Networks (GNNs) have proven to be particularly effective in modeling molecular structures, optimizing drug-target interactions, and enhancing prediction accuracy.",
+      "confidence": 0.425
+    },
+    {
+      "paper_id": "10_1016_b978-0-443-34059-8_00015-4",
+      "statement": "Graph neural networks can be applied to drug discovery.",
+      "confidence": 0.78
+    },
+    {
+      "paper_id": "10_1016_b978-0-443-34059-8_00015-4",
+      "statement": "There are established protocols and applications for using graph neural networks in drug discovery.",
+      "confidence": 0.73
+    },
+    {
+      "paper_id": "10_1021_acs_chemrev_5c00461_s001",
+      "statement": "Graph neural networks have emerged as powerful tools for AI-aided drug discovery.",
+      "confidence": 0.96
+    },
+    {
+      "paper_id": "10_1021_acs_chemrev_5c00461_s001",
+      "statement": "GNNs offer an intuitive and expressive framework for learning complex topological and geometric features of drug-like molecules, cementing their role in modern molecular modeling.",
+      "confidence": 0.94
+    },
+    {
+      "paper_id": "10_1021_acs_chemrev_5c00461_s001",
+      "statement": "There are practical challenges and methodological bottlenecks when applying GNNs to real-world drug discovery pipelines.",
+      "confidence": 0.93
+    },
+    {
+      "paper_id": "10_1109_metroxraine58569_2023_10405789",
+      "statement": "Graph Neural Networks are deep learning models and have been demonstrated to be universal approximators on graphs, a characteristic which represents a great advantage with respect to other deep learning methods when dealing with molecular graphs.",
+      "confidence": 0.9
+    },
+    {
+      "paper_id": "10_1109_metroxraine58569_2023_10405789",
+      "statement": "Graph Neural Networks have been successfully employed in molecular graph generation, drug side-effect and polypharmacy prediction, and in many chemical classification and regression tasks.",
+      "confidence": 0.425
+    },
+    {
+      "paper_id": "10_1109_metroxraine58569_2023_10405789",
+      "statement": "Graph Neural Networks are the ideal model to build a drug\u2011discovery support pipeline which can assist in the first stages of the drug discovery process: designing the molecular structure of candidate drugs, evaluating their chemical characteristics, predicting their probable side\u2011effects.",
+      "confidence": 0.7
+    },
+    {
+      "paper_id": "10_1109_metroxraine58569_2023_10405789",
+      "statement": "In recent years, many proposals of support systems based on deep learning have been devised, in order to integrate the traditional methods and cut down the costs, in terms of time and money, to obtain a new approved drug.",
+      "confidence": 0.75
+    },
+    {
+      "paper_id": "10_1109_metroxraine58569_2023_10405789",
+      "statement": "These deep learning based methods can help in different stages of the process, from the proposal of drug candidates to the evaluation of how to deploy them on the market.",
+      "confidence": 0.6
+    },
+    {
+      "paper_id": "10_1109_metroxraine58569_2023_10405789",
+      "statement": "In the first stages of the process, where the molecule gets designed and undergoes several chemical evaluations, many support tools based on Graph Neural Networks have been proposed.",
+      "confidence": 0.8
+    },
+    {
+      "paper_id": "10_1016_j_neucom_2021_04_039",
+      "statement": "We introduce a sequential molecular graph generator based on a set of graph neural network modules, which we call MG^2N^2.",
+      "confidence": 1.0
+    },
+    {
+      "paper_id": "10_1016_j_neucom_2021_04_039",
+      "statement": "The modular architecture simplifies the training procedure, also allowing an independent retraining of a single module.",
+      "confidence": 0.9
+    },
+    {
+      "paper_id": "10_1016_j_neucom_2021_04_039",
+      "statement": "Sequentiality and modularity make the generation process interpretable.",
+      "confidence": 0.9
+    },
+    {
+      "paper_id": "10_1016_j_neucom_2021_04_039",
+      "statement": "The use of graph neural networks maximizes the information in input at each generative step, which consists of the subgraph produced during the previous steps.",
+      "confidence": 0.88
+    },
+    {
+      "paper_id": "10_1016_j_neucom_2021_04_039",
+      "statement": "Experiments of unconditional generation on the QM9 and Zinc datasets show that our model is capable of generalizing molecular patterns seen during the training phase, without overfitting.",
+      "confidence": 1.0
+    },
+    {
+      "paper_id": "10_1016_j_neucom_2021_04_039",
+      "statement": "The results indicate that our method is competitive, and outperforms challenging baselines for unconditional generation.",
+      "confidence": 1.0
+    },
+    {
+      "paper_id": "10_1016_j_drudis_2021_02_011",
+      "statement": "The goal of de novo drug design is to create novel chemical entities with desired biological activities and pharmacokinetics (PK) properties.",
+      "confidence": 0.97
+    },
+    {
+      "paper_id": "10_1016_j_drudis_2021_02_011",
+      "statement": "Over recent years, with the development of artificial intelligence (AI) technologies, data-driven methods have rapidly gained in popularity in this field.",
+      "confidence": 0.95
+    },
+    {
+      "paper_id": "10_1016_j_drudis_2021_02_011",
+      "statement": "Graph neural networks (GNNs), a type of neural network directly operating on the graph structure data, have received extensive attention.",
+      "confidence": 0.96
+    },
+    {
+      "paper_id": "10_1016_j_drudis_2021_02_011",
+      "statement": "This review introduces the applications of GNNs in de novo drug design from three aspects: molecule scoring, molecule generation and optimization, and synthesis planning.",
+      "confidence": 0.98
+    },
+    {
+      "paper_id": "10_1016_j_drudis_2021_02_011",
+      "statement": "This review also discusses the current challenges and future directions of GNNs in de novo drug design.",
+      "confidence": 0.94
+    },
+    {
+      "paper_id": "10_1016_j_ddtec_2020_11_009",
+      "statement": "Graph neural networks are becoming more and more powerful and useful in the field of drug discovery.",
+      "confidence": 0.9
+    },
+    {
+      "paper_id": "10_1016_j_ddtec_2020_11_009",
+      "statement": "Many pharmaceutical companies are getting interested in utilizing these methods for their own in-house frameworks.",
+      "confidence": 0.425
+    },
+    {
+      "paper_id": "10_1016_j_ddtec_2020_11_009",
+      "statement": "Prediction of molecular properties is often one of the most crucial tasks in computer-aided drug discovery workflows.",
+      "confidence": 0.8
+    },
+    {
+      "paper_id": "10_1016_j_ddtec_2020_11_009",
+      "statement": "The immense hype surrounding these kinds of algorithms has led to the development of many different types of promising architectures.",
+      "confidence": 0.75
+    },
+    {
+      "paper_id": "10_1016_j_ddtec_2020_11_009",
+      "statement": "The review collects and classifies 80 GNNs that have been used to predict more than 20 molecular properties using 48 different datasets.",
+      "confidence": 1.0
+    }
+  ],
+  "contradictions": [],
+  "gaps": [
+    {
+      "description": "Research relies on only two benchmark datasets (QM9 and ZINC), ignoring a wide range of established drug\u2011discovery datasets.",
+      "gap_type": "dataset",
+      "rank": 1,
+      "priority": 0.868,
+      "evidence": [
+        "Datasets used in claims: QM9(1), Zinc(1)",
+        "Expected datasets never used: ChEMBL, MoleculeNet suite, PDBbind, PubChem BioAssay, ZINC15"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "The literature lacks any reported work on molecular property prediction (e.g., solubility, toxicity, bioactivity) using GNNs.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 2,
+      "priority": 0.864,
+      "evidence": [
+        "Molecular property prediction using GNNs=0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "No studies have applied variational autoencoders (VAE) or generative adversarial networks (GAN) on graph structures for de novo molecular generation and optimization.",
+      "gap_type": "methodological",
+      "rank": 3,
+      "priority": 0.812,
+      "evidence": [
+        "Variational Autoencoders (VAE) and Generative Adversarial Networks (GAN) on graph structures=0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Self\u2011supervised pretraining on large molecular graphs is absent from the surveyed literature.",
+      "gap_type": "methodological",
+      "rank": 4,
+      "priority": 0.782,
+      "evidence": [
+        "Self-supervised pretraining on large molecular graphs=0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Explainability and interpretability of GNN predictions in drug design are completely absent from the surveyed claims.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 5,
+      "priority": 0.772,
+      "evidence": [
+        "Explainability and interpretability of GNN predictions in drug design=0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Graph representation learning for protein\u2013ligand interaction prediction has received no attention in the current corpus.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 6,
+      "priority": 0.77,
+      "evidence": [
+        "Graph representation learning for protein\u2013ligand interaction prediction=0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Message Passing Neural Networks (MPNN) are mentioned only conceptually, with no empirical comparisons to newer architectures such as GCN or GAT in drug\u2011discovery tasks.",
+      "gap_type": "methodological",
+      "rank": 7,
+      "priority": 0.754,
+      "evidence": [
+        "Message Passing Neural Networks (MPNN)=0",
+        "Graph Convolutional Networks (GCN) and Graph Attention Networks (GAT)=0"
+      ],
+      "detection_method": "llm"
+    }
+  ],
+  "usage": {
+    "calls": 18,
+    "prompt_tokens": 9113,
+    "completion_tokens": 19890,
+    "estimated_cost_usd": 0.016284,
+    "parse_failures": 2,
+    "by_purpose": {
+      "topic_expansion": {
+        "calls": 1,
+        "prompt_tokens": 198,
+        "completion_tokens": 553,
+        "estimated_cost_usd": 0.000444,
+        "parse_failures": 0
+      },
+      "claim_extraction": {
+        "calls": 10,
+        "prompt_tokens": 3022,
+        "completion_tokens": 8539,
+        "estimated_cost_usd": 0.006858,
+        "parse_failures": 0
+      },
+      "contradiction_judge": {
+        "calls": 4,
+        "prompt_tokens": 2779,
+        "completion_tokens": 4879,
+        "estimated_cost_usd": 0.004076,
+        "parse_failures": 0
+      },
+      "gap_detection": {
+        "calls": 2,
+        "prompt_tokens": 1988,
+        "completion_tokens": 3919,
+        "estimated_cost_usd": 0.003237,
+        "parse_failures": 1
+      },
+      "recommendations": {
+        "calls": 1,
+        "prompt_tokens": 1126,
+        "completion_tokens": 2000,
+        "estimated_cost_usd": 0.001669,
+        "parse_failures": 1
+      }
+    }
+  },
+  "run_metadata": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.0,
+    "duration_s": 150.45,
+    "frozen_corpus": true
+  },
+  "narrative": {
+    "grounding_mode": "reject",
+    "build_failed": false,
+    "error": null,
+    "total_sentences": 0,
+    "unsupported_sentences": 0,
+    "evidence_rows": 5,
+    "evidence_rows_no_verbatim": 4,
+    "sentences": []
+  }
+}

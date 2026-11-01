@@ -1,0 +1,114 @@
+{
+  "claims": {
+    "tp": 9,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "matches": [
+      {
+        "pred_index": 8,
+        "gold_index": 8,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 7,
+        "gold_index": 7,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 6,
+        "gold_index": 6,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 5,
+        "gold_index": 5,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 4,
+        "gold_index": 4,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 3,
+        "gold_index": 3,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 2,
+        "gold_index": 2,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 1,
+        "gold_index": 1,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 0,
+        "gold_index": 0,
+        "similarity": 1.0
+      }
+    ],
+    "missed_gold_indices": []
+  },
+  "gaps": {
+    "recall": 1.0,
+    "per_prediction": [
+      {
+        "description": "Limited research on Graph Convolutional Networks",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": 0
+      },
+      {
+        "description": "Limited research on Spectral Graph Networks",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": 1
+      },
+      {
+        "description": "Limited research on Graph Transformer Networks",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": 2
+      },
+      {
+        "description": "Limited research on Graph Attention Networks",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": 3
+      },
+      {
+        "description": "Limited research on Message Passing Neural Networks",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": 4
+      },
+      {
+        "description": "Insufficient evaluation of Graph Theory",
+        "gap_type": "methodological",
+        "matched_gold_index": 5
+      },
+      {
+        "description": "Insufficient evaluation of Neural Networks",
+        "gap_type": "methodological",
+        "matched_gold_index": 6
+      }
+    ],
+    "missed_gold_indices": [],
+    "precision_at_3": 1.0,
+    "precision_at_5": 1.0
+  },
+  "cost": {
+    "estimated_cost_usd": 0.0,
+    "llm_calls": 0,
+    "parse_failures": 0
+  },
+  "downstream_errors": {
+    "unsupported_sentences_in_narrative": 0,
+    "retained_fp_contradictions": 0,
+    "narrative_build_failed": false,
+    "narrative_total_sentences": 0,
+    "evidence_rows_no_verbatim": 0,
+    "narrative_error": "HTTPError: 429 Client Error: Too Many Requests for url: https://openrouter.ai/api/v1/chat/completions"
+  }
+}

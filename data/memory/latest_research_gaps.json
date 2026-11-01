@@ -1,49 +1,95 @@
 [
   {
-    "id": "gap_1788861331.41067",
-    "description": "No standard benchmark datasets (FB15k, FB15k\u2011237, NELL\u2011995, WN18, WN18RR, YAGO3\u201110) are used in any claim.",
-    "gap_type": "dataset",
+    "id": "gap_1793513410.111597",
+    "description": "There is a lack of empirical evidence and real-world applications in drug discovery using graph neural networks.",
+    "gap_type": "evaluation",
     "related_topics": [
-      "knowledge graph embeddings"
+      "graph neural networks drug discovery"
     ],
     "potential_questions": [
-      "How do current KG embedding methods rank on the full suite of standard benchmarks?",
-      "What dataset characteristics (size, relation diversity) drive performance differences among embedding families?"
+      "What are the real-world impacts and outcomes of using graph neural networks in drug discovery?",
+      "How can we validate the effectiveness of graph neural networks in drug discovery through controlled experiments?"
     ],
-    "priority": 0.916,
+    "priority": 0.72,
     "evidence": [
-      "Datasets used in claims: none detected",
-      "Expected datasets never used: FB15k, FB15k-237, NELL-995, WN18, WN18RR, YAGO3-10",
-      "Low-evidence: derived from only 4 extracted claims"
+      "Drug discovery using graph neural networks=1",
+      "No papers per year mentioning real-world applications or case studies."
     ],
     "score_components": {
-      "importance": 0.96,
-      "tractability": 0.85
+      "importance": 0.8,
+      "tractability": 0.6
     },
     "rank": 1,
     "detection_method": "llm"
   },
   {
-    "id": "gap_1788861331.410685",
-    "description": "Evaluation and benchmarking for KG completion and link prediction are absent, limiting comparative insight.",
-    "gap_type": "evaluation",
+    "id": "gap_1793513410.111618",
+    "description": "There is a lack of diversity in the datasets used for drug discovery with graph neural networks.",
+    "gap_type": "dataset",
     "related_topics": [
-      "knowledge graph embeddings"
+      "graph neural networks drug discovery"
     ],
     "potential_questions": [
-      "What is the effect of using hubness\u2011reduction metrics versus traditional MRR/Hit@K on reported performance?",
-      "Can a unified benchmarking suite that includes both static and temporal tasks be established for KG embeddings?"
+      "What are the most suitable datasets for training graph neural networks in drug discovery?",
+      "How can we create or identify new datasets for improving the performance of graph neural networks in drug discovery?"
     ],
-    "priority": 0.878,
+    "priority": 0.62,
     "evidence": [
-      "Evaluation and benchmarking for KG completion and link prediction=0",
-      "Low-evidence: derived from only 4 extracted claims"
+      "Graph-based representation learning for drugs=0",
+      "Drug toxicity prediction using graph neural networks=0",
+      "Drug repositioning with graph neural networks=0",
+      "Drug metabolism prediction with graph neural networks=0"
     ],
     "score_components": {
-      "importance": 0.93,
-      "tractability": 0.8
+      "importance": 0.7,
+      "tractability": 0.5
     },
     "rank": 2,
+    "detection_method": "llm"
+  },
+  {
+    "id": "gap_1793513410.111624",
+    "description": "There is a lack of exploration of specific subtopics within graph neural networks for drug discovery.",
+    "gap_type": "unexplored_subtopic",
+    "related_topics": [
+      "graph neural networks drug discovery"
+    ],
+    "potential_questions": [
+      "What are the potential applications of graph neural networks in drug repositioning?",
+      "How can graph neural networks be improved for predicting drug metabolism?"
+    ],
+    "priority": 0.52,
+    "evidence": [
+      "Drug repositioning with graph neural networks=0",
+      "Drug metabolism prediction with graph neural networks=0"
+    ],
+    "score_components": {
+      "importance": 0.6,
+      "tractability": 0.4
+    },
+    "rank": 3,
+    "detection_method": "llm"
+  },
+  {
+    "id": "gap_1793513410.111629",
+    "description": "There is a lack of research on the contradiction or resolution of findings related to graph neural networks in drug discovery.",
+    "gap_type": "contradiction_driven",
+    "related_topics": [
+      "graph neural networks drug discovery"
+    ],
+    "potential_questions": [
+      "What are the conflicting findings regarding the effectiveness of graph neural networks in drug discovery?",
+      "How can we resolve the contradictions in findings related to graph neural networks in drug discovery?"
+    ],
+    "priority": 0.42,
+    "evidence": [
+      "Both claims mention GNNs in drug discovery, but one states they are effective while the other states they have promise, implying potential contradictions."
+    ],
+    "score_components": {
+      "importance": 0.5,
+      "tractability": 0.3
+    },
+    "rank": 4,
     "detection_method": "llm"
   }
 ]

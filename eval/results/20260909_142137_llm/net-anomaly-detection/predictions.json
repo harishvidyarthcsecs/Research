@@ -1,0 +1,137 @@
+{
+  "claims": [
+    {
+      "paper_id": "arxiv_2603.28654",
+      "statement": "Our experimental results demonstrate that ensemble methods achieve superior performance, with Random Forest attaining 90 percentage accuracy and an auc of 0.617 on validation data",
+      "confidence": 0.8800000000000001
+    },
+    {
+      "paper_id": "arxiv_1810.07796",
+      "statement": "Firstly, based on proposed multivariate flow similarity method on temporal locality, a complex network model (MFS-TL) is constructed to describe the interactive behaviors of traffic flows",
+      "confidence": 0.6
+    },
+    {
+      "paper_id": "arxiv_1810.07796",
+      "statement": "Finally, we carried out extensive experiments on several network traffic datasets for anomaly detection, and the results demonstrate the superiority of IFSE-AD to state-of-the-art approaches, validating the effectiveness of our method",
+      "confidence": 0.6
+    },
+    {
+      "paper_id": "arxiv_2511.05193",
+      "statement": "To transcend this limitation, we propose a novel unsupervised traffic anomaly detection system, BLADE, capable of detecting not only flow-level but also behavior-level attacks in web services",
+      "confidence": 0.6
+    },
+    {
+      "paper_id": "arxiv_2511.05193",
+      "statement": "BLADE first exploits a flow autoencoder to learn a latent feature representation and calculates its reconstruction losses per flow",
+      "confidence": 0.6
+    },
+    {
+      "paper_id": "arxiv_2511.05193",
+      "statement": "The experimental results demonstrate BLADE's superior performance, achieving high f1_score scores of 0.9732 and 0.9801, respectively, on the two datasets, and outperforming traditional single-flow anomaly detection baselines",
+      "confidence": 0.66
+    },
+    {
+      "paper_id": "10_1049_pbpc032e_ch9",
+      "statement": "This chapter discusses a novel semi-supervised approach, called SemTra, which automatically alleviates the shortage of labeled flows for ML by exploiting the advantages of both supervised and unsupervised models",
+      "confidence": 0.6
+    }
+  ],
+  "contradictions": [],
+  "gaps": [
+    {
+      "description": "Limited use of cross-validation in research",
+      "gap_type": "methodological",
+      "rank": 1,
+      "priority": 0.8,
+      "evidence": [
+        "0 of 7 claims mention cross-validation"
+      ],
+      "detection_method": "rules"
+    },
+    {
+      "description": "Limited use of ablation study in research",
+      "gap_type": "methodological",
+      "rank": 2,
+      "priority": 0.8,
+      "evidence": [
+        "0 of 7 claims mention ablation study"
+      ],
+      "detection_method": "rules"
+    },
+    {
+      "description": "Limited use of statistical significance in research",
+      "gap_type": "methodological",
+      "rank": 3,
+      "priority": 0.8,
+      "evidence": [
+        "0 of 7 claims mention statistical significance"
+      ],
+      "detection_method": "rules"
+    },
+    {
+      "description": "Limited use of baseline comparison in research",
+      "gap_type": "methodological",
+      "rank": 4,
+      "priority": 0.8,
+      "evidence": [
+        "0 of 7 claims mention baseline comparison"
+      ],
+      "detection_method": "rules"
+    },
+    {
+      "description": "Limited use of error analysis in research",
+      "gap_type": "methodological",
+      "rank": 5,
+      "priority": 0.8,
+      "evidence": [
+        "0 of 7 claims mention error analysis"
+      ],
+      "detection_method": "rules"
+    },
+    {
+      "description": "Limited use of hyperparameter tuning in research",
+      "gap_type": "methodological",
+      "rank": 6,
+      "priority": 0.8,
+      "evidence": [
+        "0 of 7 claims mention hyperparameter tuning"
+      ],
+      "detection_method": "rules"
+    },
+    {
+      "description": "Lack of real-world evaluation in research",
+      "gap_type": "evaluation",
+      "rank": 7,
+      "priority": 0.7,
+      "evidence": [
+        "0 of 7 claims mention real-world evaluation"
+      ],
+      "detection_method": "rules"
+    }
+  ],
+  "usage": {
+    "calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "estimated_cost_usd": 0.0,
+    "parse_failures": 0,
+    "by_purpose": {}
+  },
+  "run_metadata": {
+    "provider": "openrouter",
+    "model": "nvidia/nemotron-3-super-120b-a12b:free",
+    "temperature": 0.0,
+    "duration_s": 132.89,
+    "frozen_corpus": true
+  },
+  "narrative": {
+    "grounding_mode": "reject",
+    "build_failed": false,
+    "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://openrouter.ai/api/v1/chat/completions",
+    "total_sentences": 0,
+    "unsupported_sentences": 0,
+    "evidence_rows": 0,
+    "evidence_rows_no_verbatim": 0,
+    "sentences": []
+  }
+}

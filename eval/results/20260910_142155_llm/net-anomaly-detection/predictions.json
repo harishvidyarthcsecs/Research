@@ -1,0 +1,273 @@
+{
+  "claims": [
+    {
+      "paper_id": "arxiv_2603.28654",
+      "statement": "Our experimental results demonstrate that ensemble methods achieve superior performance, with Random Forest attaining 90 percentage accuracy and an auc of 0.617 on validation data",
+      "confidence": 0.8800000000000001
+    },
+    {
+      "paper_id": "arxiv_1810.07796",
+      "statement": "There is no established method for detecting anomalies in a time series of flow interaction patterns that can be represented as complex network.",
+      "confidence": 0.9
+    },
+    {
+      "paper_id": "arxiv_1810.07796",
+      "statement": "An IFS ensemble method (IFSE-AD) is proposed to eliminate the impacts of the inconsistent about MFS-TL characteristic to network state and improve detection performance.",
+      "confidence": 0.95
+    },
+    {
+      "paper_id": "arxiv_1810.07796",
+      "statement": "The results demonstrate the superiority of IFSE-AD to state-of-the-art approaches, validating the effectiveness of our method.",
+      "confidence": 0.95
+    },
+    {
+      "paper_id": "arxiv_2511.05193",
+      "statement": "Existing traffic anomaly detection approaches focus on flow-level attacks, yet fail to recognize behavior-level attacks.",
+      "confidence": 0.9
+    },
+    {
+      "paper_id": "arxiv_2511.05193",
+      "statement": "BLADE is capable of detecting both flow-level and behavior-level attacks in web services.",
+      "confidence": 0.95
+    },
+    {
+      "paper_id": "arxiv_2511.05193",
+      "statement": "BLADE achieves high f1_score scores of 0.9732 and 0.9801 on the two datasets, and outperforms traditional single-flow anomaly detection baselines.",
+      "confidence": 1.0
+    },
+    {
+      "paper_id": "10_1049_pbpc032e_ch9",
+      "statement": "Due to the high cost of manual labeling, it is hard to obtain sufficient, reliable, and up-to-date labeled data for effective IP traffic classification.",
+      "confidence": 0.9
+    },
+    {
+      "paper_id": "10_1049_pbpc032e_ch9",
+      "statement": "SemTra is able to yield noticeable improvement in accuracy (as high as 94.96 percentage) and stability (as high as 95.04 percentage) in the labeling process.",
+      "confidence": 1.0
+    },
+    {
+      "paper_id": "arxiv_2401.12542",
+      "statement": "A new circuit-based protocol for multi-party private set intersection (PSI) allows m parties to compute the intersection of their datasets without revealing any additional information about the items outside the intersection.",
+      "confidence": 0.9025
+    },
+    {
+      "paper_id": "arxiv_2401.12542",
+      "statement": "The protocol is built upon the two-party Sort-Compare-Shuffle (SCS) protocol and extended to a multi-party setting.",
+      "confidence": 0.95
+    },
+    {
+      "paper_id": "arxiv_2401.12542",
+      "statement": "The protocol exhibits acceptable performance with 7 parties, each possessing a set size of 2^{12}, completing in just 19 seconds.",
+      "confidence": 1.0
+    },
+    {
+      "paper_id": "arxiv_2401.12542",
+      "statement": "Circuit-based protocols like ours have an advantage over using custom protocols to perform more complex computation.",
+      "confidence": 0.8
+    },
+    {
+      "paper_id": "arxiv_2401.12542",
+      "statement": "The protocol includes a module for calculating the Jaccard similarity metric of the private sets.",
+      "confidence": 0.95
+    },
+    {
+      "paper_id": "arxiv_2401.12542",
+      "statement": "The protocol's Jaccard similarity module can be used for anomaly detection in network traffic analysis.",
+      "confidence": 0.95
+    },
+    {
+      "paper_id": "arxiv_2203.11106",
+      "statement": "Generative Adversarial Networks (GANs) have been significantly successful in detecting such anomalies.",
+      "confidence": 0.9900000000000001
+    },
+    {
+      "paper_id": "arxiv_2203.11106",
+      "statement": "Training these GANs for a particular kind of anomaly may make it oblivious to other anomalies and attacks.",
+      "confidence": 0.8
+    },
+    {
+      "paper_id": "arxiv_2203.11106",
+      "statement": "The dataset required to train these models has to be made centrally available and publicly accessible, posing the obvious question of privacy of the communications of the respective participants of the network.",
+      "confidence": 0.8
+    },
+    {
+      "paper_id": "arxiv_2203.11106",
+      "statement": "The solution proposed in this work aims at tackling the above two issues by using GANs in a federated architecture in networks of such scale and capacity.",
+      "confidence": 1.0
+    },
+    {
+      "paper_id": "arxiv_2203.11106",
+      "statement": "In such a setting, different users of the network will be able to train and customize a centrally available adversarial model according to their own frequently faced conditions.",
+      "confidence": 0.9
+    },
+    {
+      "paper_id": "arxiv_2203.11106",
+      "statement": "Simultaneously, the member users of the network will also able to gain from the experiences of the other users in the network.",
+      "confidence": 0.9
+    },
+    {
+      "paper_id": "arxiv_2409.18874",
+      "statement": "Anomaly detection in network traffic is crucial for maintaining the security of computer networks and identifying malicious activities.",
+      "confidence": 0.9
+    },
+    {
+      "paper_id": "arxiv_2409.18874",
+      "statement": "One of the primary approaches to anomaly detection are methods based on forecasting.",
+      "confidence": 0.8
+    },
+    {
+      "paper_id": "arxiv_2409.18874",
+      "statement": "Extensive real-world network datasets for forecasting and anomaly detection techniques are missing, potentially causing performance overestimation of anomaly detection algorithms.",
+      "confidence": 0.765
+    },
+    {
+      "paper_id": "arxiv_2409.18874",
+      "statement": "The dataset was created from 40 weeks of network traffic of 275 thousand active IP addresses.",
+      "confidence": 1.0
+    },
+    {
+      "paper_id": "arxiv_2409.18874",
+      "statement": "The ISP origin of the presented data ensures a high level of variability among network entities, which forms a unique and authentic challenge for forecasting and anomaly detection models.",
+      "confidence": 0.9
+    },
+    {
+      "paper_id": "arxiv_2505.11631",
+      "statement": "Quantum computing may offer new approaches for advancing machine learning, including in complex tasks such as anomaly detection in network traffic.",
+      "confidence": 0.8
+    },
+    {
+      "paper_id": "arxiv_2505.11631",
+      "statement": "The QGAN was trained using the parameter shift rule and benchmarked against a classical GAN.",
+      "confidence": 1.0
+    },
+    {
+      "paper_id": "arxiv_2505.11631",
+      "statement": "Experimental results indicate that the quantum model achieves a high accuracy along with high recall and f1_score-scores in anomaly detection, and attains a lower MSE compared to the classical model.",
+      "confidence": 1.0
+    },
+    {
+      "paper_id": "arxiv_2505.11631",
+      "statement": "The QGAN accomplishes this performance with only 80 parameters, demonstrating competitive results with a compact architecture.",
+      "confidence": 0.9900000000000001
+    },
+    {
+      "paper_id": "arxiv_2505.11631",
+      "statement": "Tests using a noisy simulator suggest that the approach remains effective under realistic noise-prone conditions.",
+      "confidence": 0.8
+    }
+  ],
+  "contradictions": [],
+  "gaps": [
+    {
+      "description": "There is a lack of research on anomaly detection in network traffic using machine learning techniques.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 1,
+      "priority": 0.86,
+      "evidence": [
+        "Network Traffic Anomaly Detection Using Machine Learning=0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Real-time anomaly detection in network traffic has not been adequately explored.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 2,
+      "priority": 0.81,
+      "evidence": [
+        "Real-Time Anomaly Detection in Network Traffic=0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Anomaly detection in network traffic for intrusion detection has not been sufficiently covered.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 3,
+      "priority": 0.76,
+      "evidence": [
+        "Anomaly Detection in Network Traffic for Intrusion Detection=0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Anomaly detection in network traffic using deep learning has not been explored.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 4,
+      "priority": 0.76,
+      "evidence": [
+        "Anomaly Detection in Network Traffic Using Deep Learning=0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Anomaly detection in network traffic for network monitoring has not been sufficiently covered.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 5,
+      "priority": 0.76,
+      "evidence": [
+        "Anomaly Detection in Network Traffic for Network Monitoring=0"
+      ],
+      "detection_method": "llm"
+    }
+  ],
+  "usage": {
+    "calls": 13,
+    "prompt_tokens": 7042,
+    "completion_tokens": 7529,
+    "estimated_cost_usd": 0.0,
+    "parse_failures": 1,
+    "by_purpose": {
+      "topic_expansion": {
+        "calls": 1,
+        "prompt_tokens": 155,
+        "completion_tokens": 276,
+        "estimated_cost_usd": 0.0,
+        "parse_failures": 0
+      },
+      "claim_extraction": {
+        "calls": 8,
+        "prompt_tokens": 3162,
+        "completion_tokens": 3950,
+        "estimated_cost_usd": 0.0,
+        "parse_failures": 1
+      },
+      "contradiction_judge": {
+        "calls": 2,
+        "prompt_tokens": 1689,
+        "completion_tokens": 1191,
+        "estimated_cost_usd": 0.0,
+        "parse_failures": 0
+      },
+      "gap_detection": {
+        "calls": 1,
+        "prompt_tokens": 927,
+        "completion_tokens": 685,
+        "estimated_cost_usd": 0.0,
+        "parse_failures": 0
+      },
+      "recommendations": {
+        "calls": 1,
+        "prompt_tokens": 1109,
+        "completion_tokens": 1427,
+        "estimated_cost_usd": 0.0,
+        "parse_failures": 0
+      }
+    }
+  },
+  "run_metadata": {
+    "provider": "ollama",
+    "model": "qwen2.5:7b",
+    "temperature": 0.0,
+    "duration_s": 351.66,
+    "frozen_corpus": true
+  },
+  "narrative": {
+    "grounding_mode": "reject",
+    "build_failed": true,
+    "error": "No \\cite{} key found: 'The investigation into federated generative adversarial networks (GANs) as a solution for anomaly detection in network traffic highlighted several limitations.'",
+    "total_sentences": 0,
+    "unsupported_sentences": 0,
+    "evidence_rows": 0,
+    "evidence_rows_no_verbatim": 0,
+    "sentences": []
+  }
+}

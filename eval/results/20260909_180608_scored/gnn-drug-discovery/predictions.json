@@ -1,0 +1,183 @@
+{
+  "claims": [
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "The integration of artificial intelligence (AI) in drug discovery has profoundly transformed the pharmaceutical landscape by significantly accelerating the identification of potential drug candidates.",
+      "confidence": 1.0
+    },
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "Graph Neural Networks (GNNs) have proven to be particularly effective in modeling molecular structures, optimizing drug\u2011target interactions, and enhancing prediction accuracy.",
+      "confidence": 0.94
+    },
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "GNNs offer advantages over traditional molecular representations in drug discovery.",
+      "confidence": 0.88
+    },
+    {
+      "paper_id": "10_1016_b978-0-443-34059-8_00015-4",
+      "statement": "Graph neural networks can be applied to drug discovery.",
+      "confidence": 0.78
+    },
+    {
+      "paper_id": "10_1016_b978-0-443-34059-8_00015-4",
+      "statement": "There are established protocols and applications for using graph neural networks in drug discovery.",
+      "confidence": 0.73
+    },
+    {
+      "paper_id": "10_1021_acs_chemrev_5c00461_s001",
+      "statement": "Graph Neural Networks are used in modern AI-aided drug discovery.",
+      "confidence": 0.7
+    },
+    {
+      "paper_id": "10_1109_metroxraine58569_2023_10405789",
+      "statement": "Graph Neural Networks can be used for drug discovery through an integrated decision support pipeline.",
+      "confidence": 0.7
+    },
+    {
+      "paper_id": "10_1016_j_neucom_2021_04_039",
+      "statement": "Molecular generative Graph Neural Networks can be used for drug discovery.",
+      "confidence": 0.6
+    },
+    {
+      "paper_id": "10_1016_j_drudis_2021_02_011",
+      "statement": "Graph neural networks can be used for automated de novo drug design.",
+      "confidence": 0.8
+    }
+  ],
+  "contradictions": [],
+  "gaps": [
+    {
+      "description": "Limited research on Molecular property prediction using GNNs (e.g., solubility, toxicity, bioactivity)",
+      "gap_type": "unexplored_subtopic",
+      "rank": 1,
+      "priority": 1.0,
+      "evidence": [
+        "Only 0 of 9 claims mention this subtopic"
+      ],
+      "detection_method": "rules"
+    },
+    {
+      "description": "Limited research on GNN-based de novo molecular generation and optimization",
+      "gap_type": "unexplored_subtopic",
+      "rank": 2,
+      "priority": 1.0,
+      "evidence": [
+        "Only 0 of 9 claims mention this subtopic"
+      ],
+      "detection_method": "rules"
+    },
+    {
+      "description": "Limited research on Graph representation learning for protein\u2013ligand interaction prediction",
+      "gap_type": "unexplored_subtopic",
+      "rank": 3,
+      "priority": 1.0,
+      "evidence": [
+        "Only 0 of 9 claims mention this subtopic"
+      ],
+      "detection_method": "rules"
+    },
+    {
+      "description": "Limited research on Explainability and interpretability of GNN predictions in drug design",
+      "gap_type": "unexplored_subtopic",
+      "rank": 4,
+      "priority": 1.0,
+      "evidence": [
+        "Only 0 of 9 claims mention this subtopic"
+      ],
+      "detection_method": "rules"
+    },
+    {
+      "description": "Limited research on Transfer learning and multi-task GNN models across heterogeneous drug datasets",
+      "gap_type": "unexplored_subtopic",
+      "rank": 5,
+      "priority": 1.0,
+      "evidence": [
+        "Only 0 of 9 claims mention this subtopic"
+      ],
+      "detection_method": "rules"
+    },
+    {
+      "description": "Insufficient evaluation of Message Passing Neural Networks (MPNN)",
+      "gap_type": "methodological",
+      "rank": 6,
+      "priority": 1.0,
+      "evidence": [
+        "Only 0 of 9 claims mention this method"
+      ],
+      "detection_method": "rules"
+    },
+    {
+      "description": "Insufficient evaluation of Graph Convolutional Networks (GCN) and Graph Attention Networks (GAT)",
+      "gap_type": "methodological",
+      "rank": 7,
+      "priority": 1.0,
+      "evidence": [
+        "Only 0 of 9 claims mention this method"
+      ],
+      "detection_method": "rules"
+    }
+  ],
+  "usage": {
+    "calls": 16,
+    "prompt_tokens": 5992,
+    "completion_tokens": 11587,
+    "estimated_cost_usd": 0.009589,
+    "parse_failures": 3,
+    "by_purpose": {
+      "topic_expansion": {
+        "calls": 1,
+        "prompt_tokens": 198,
+        "completion_tokens": 554,
+        "estimated_cost_usd": 0.000445,
+        "parse_failures": 0
+      },
+      "claim_extraction": {
+        "calls": 10,
+        "prompt_tokens": 1921,
+        "completion_tokens": 2756,
+        "estimated_cost_usd": 0.002355,
+        "parse_failures": 0
+      },
+      "contradiction_judge": {
+        "calls": 2,
+        "prompt_tokens": 1147,
+        "completion_tokens": 2181,
+        "estimated_cost_usd": 0.001808,
+        "parse_failures": 0
+      },
+      "gap_detection": {
+        "calls": 2,
+        "prompt_tokens": 1516,
+        "completion_tokens": 4096,
+        "estimated_cost_usd": 0.003299,
+        "parse_failures": 2
+      },
+      "recommendations": {
+        "calls": 1,
+        "prompt_tokens": 1210,
+        "completion_tokens": 2000,
+        "estimated_cost_usd": 0.001682,
+        "parse_failures": 1
+      }
+    }
+  },
+  "run_metadata": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.0,
+    "duration_s": 506.74,
+    "frozen_corpus": true
+  },
+  "narrative": {
+    "grounding_mode": "scored",
+    "build_failed": false,
+    "error": null,
+    "total_sentences": 0,
+    "unsupported_sentences": 0,
+    "evidence_rows": 10,
+    "evidence_rows_no_verbatim": 10,
+    "sentences": []
+  }
+}

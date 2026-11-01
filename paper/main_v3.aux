@@ -1,0 +1,89 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{ji2023survey,zhang2025hallucination}
+\citation{zhang2025citation}
+\citation{li2025enhancing}
+\citation{saltzer1975protection}
+\citation{li2025enhancing}
+\citation{haryanto2024llassist}
+\citation{scherbakov2025emergence,vandinter2021automation}
+\citation{lewis2020retrieval}
+\citation{yao2023react}
+\citation{asai2024selfrag}
+\citation{liu2024agentbench}
+\citation{alamri2016contradiction}
+\citation{williams2018broad}
+\citation{zheng2023judging}
+\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {II}Related Work}{1}{section.2}\protected@file@percent }
+\citation{lin2022truthfulqa}
+\citation{li2023halueval}
+\citation{manakul2023selfcheckgpt}
+\citation{rashkin2023measuring,bohnet2022attributed}
+\citation{gao2023enabling}
+\citation{press2024citeme}
+\citation{thorne2018fever}
+\citation{prismatraice2025}
+\citation{machacek2022predatory,mongeon2016journal}
+\@writefile{toc}{\contentsline {section}{\numberline {III}System Architecture}{2}{section.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Pipeline stages and their grounding discipline.}}{2}{table.1}\protected@file@percent }
+\newlabel{tab:stages}{{I}{2}{Pipeline stages and their grounding discipline}{table.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Evidence-grounded synthesis sub-pipeline. Shaded boxes are hard gates: output that cannot be verified is not produced (deterministic aggregation) or is discarded (build-error rejection), never passed through with a soft score.}}{2}{figure.1}\protected@file@percent }
+\newlabel{fig:arch}{{1}{2}{Evidence-grounded synthesis sub-pipeline. Shaded boxes are hard gates: output that cannot be verified is not produced (deterministic aggregation) or is discarded (build-error rejection), never passed through with a soft score}{figure.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Implementation}{2}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Verify-or-Reject Grounding}{3}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Definitions}{3}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Certification Algorithm}{3}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}Complexity}{3}{subsection.4.3}\protected@file@percent }
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces \textsc  {VoRG-Certify}}}{3}{algorithm.1}\protected@file@percent }
+\newlabel{alg:vorg}{{1}{3}{Certification Algorithm}{algorithm.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {V}Evaluation}{3}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Setup}{3}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Pilot Result}{3}{subsection.5.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Scored grounding versus verify-or-reject grounding.}}{4}{table.2}\protected@file@percent }
+\newlabel{tab:contrast}{{II}{4}{Scored grounding versus verify-or-reject grounding}{table.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Claim-extraction performance on the pilot topic (mean $\pm $ SD, 3 runs, 3 gold claims). Underpowered at this gold-set size; not used to compare extractor types.}}{4}{table.3}\protected@file@percent }
+\newlabel{tab:claims}{{III}{4}{Claim-extraction performance on the pilot topic (mean $\pm $ SD, 3 runs, 3 gold claims). Underpowered at this gold-set size; not used to compare extractor types}{table.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}Gap-to-Failure Correspondence}{4}{subsection.5.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Unsupported sentences reaching the final synthesis, verify-or-reject versus the matched scored ablation, one run per topic. On three of four topics verify-or-reject enforces zero leaked sentences by \emph  {failing the build outright} rather than by passing every sentence; scored mode always completes and its leak count is directly observable.}}{4}{table.4}\protected@file@percent }
+\newlabel{tab:downstream}{{IV}{4}{Unsupported sentences reaching the final synthesis, verify-or-reject versus the matched scored ablation, one run per topic. On three of four topics verify-or-reject enforces zero leaked sentences by \emph {failing the build outright} rather than by passing every sentence; scored mode always completes and its leak count is directly observable}{table.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-D}}Multi-Topic Study (preliminary)}{4}{subsection.5.4}\protected@file@percent }
+\newlabel{sec:multitopic}{{\mbox  {V-D}}{4}{Multi-Topic Study (preliminary)}{subsection.5.4}{}}
+\bibstyle{IEEEtran}
+\bibdata{references}
+\bibcite{ji2023survey}{1}
+\bibcite{zhang2025hallucination}{2}
+\bibcite{zhang2025citation}{3}
+\bibcite{li2025enhancing}{4}
+\bibcite{saltzer1975protection}{5}
+\bibcite{haryanto2024llassist}{6}
+\bibcite{scherbakov2025emergence}{7}
+\@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces Gap-to-failure correspondence per topic: research gaps from the \emph  {ungated} stage that a paper in the same corpus directly contradicts (hand-verified against corpus titles and abstracts). The gated stages produced none in any topic.}}{5}{table.5}\protected@file@percent }
+\newlabel{tab:gap2fail}{{V}{5}{Gap-to-failure correspondence per topic: research gaps from the \emph {ungated} stage that a paper in the same corpus directly contradicts (hand-verified against corpus titles and abstracts). The gated stages produced none in any topic}{table.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-E}}Discussion}{5}{subsection.5.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-F}}Reproducibility}{5}{subsection.5.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Threats to Validity}{5}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VII}Conclusion}{5}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{References}{5}{section*.1}\protected@file@percent }
+\bibcite{vandinter2021automation}{8}
+\bibcite{lewis2020retrieval}{9}
+\bibcite{yao2023react}{10}
+\bibcite{asai2024selfrag}{11}
+\bibcite{liu2024agentbench}{12}
+\bibcite{alamri2016contradiction}{13}
+\bibcite{williams2018broad}{14}
+\bibcite{zheng2023judging}{15}
+\bibcite{lin2022truthfulqa}{16}
+\bibcite{li2023halueval}{17}
+\bibcite{manakul2023selfcheckgpt}{18}
+\bibcite{rashkin2023measuring}{19}
+\bibcite{bohnet2022attributed}{20}
+\bibcite{gao2023enabling}{21}
+\bibcite{press2024citeme}{22}
+\bibcite{thorne2018fever}{23}
+\bibcite{prismatraice2025}{24}
+\bibcite{machacek2022predatory}{25}
+\bibcite{mongeon2016journal}{26}
+\gdef \@abspage@last{6}

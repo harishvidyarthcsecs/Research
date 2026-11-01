@@ -15,6 +15,7 @@ from typing import List, Dict, Any, Optional, Tuple, Set
 from collections import defaultdict
 import difflib
 from datetime import datetime
+from urllib.parse import quote
 
 # Import requests with fallback
 try:
@@ -962,7 +963,7 @@ class ReferenceValidator(BaseAgent):
                 clean_doi = clean_doi.replace('doi:', '')
             
             # Query CrossRef API
-            crossref_url = f"https://api.crossref.org/works/{clean_doi}"
+            crossref_url = f"https://api.crossref.org/works/{quote(clean_doi, safe='/')}"
             headers = {
                 'User-Agent': 'Research System/1.0 (mailto:research@example.com)',
                 'Accept': 'application/json'

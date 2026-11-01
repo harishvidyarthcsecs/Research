@@ -1,0 +1,171 @@
+{
+  "claims": [
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "The integration of artificial intelligence (AI) in drug discovery has profoundly transformed the pharmaceutical landscape by significantly accelerating the identification of potential drug candidates.",
+      "confidence": 0.935
+    },
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "Graph Neural Networks (GNNs) have proven to be particularly effective in modeling molecular structures, optimizing drug\u2011target interactions, and enhancing prediction accuracy.",
+      "confidence": 0.9
+    },
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "GNNs have advantages compared to traditional molecular representations.",
+      "confidence": 0.85
+    },
+    {
+      "paper_id": "10_1016_b978-0-443-34059-8_00015-4",
+      "statement": "Graph neural networks can be applied to drug discovery.",
+      "confidence": 0.78
+    },
+    {
+      "paper_id": "10_1016_b978-0-443-34059-8_00015-4",
+      "statement": "There are established protocols and applications for using graph neural networks in drug discovery.",
+      "confidence": 0.73
+    },
+    {
+      "paper_id": "10_1016_j_neucom_2021_04_039",
+      "statement": "Molecular generative Graph Neural Networks can be used for drug discovery.",
+      "confidence": 0.6
+    }
+  ],
+  "contradictions": [],
+  "gaps": [
+    {
+      "description": "There is virtually no empirical evaluation of GNN models on standard drug\u2011discovery benchmarks such as MoleculeNet or ChEMBL.",
+      "gap_type": "dataset",
+      "rank": 1,
+      "priority": 0.892,
+      "evidence": [
+        "Datasets used in claims: none detected",
+        "Expected datasets never used: ChEMBL, MoleculeNet benchmark suite, PDBbind, PubChem BioAssay, ZINC15"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Research on GNN\u2011based de\u202fnovo molecular generation and optimization is completely absent.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 2,
+      "priority": 0.84,
+      "evidence": [
+        "GNN-based de novo molecular generation and optimization=0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "No systematic methodological comparisons (e.g., ablations, baselines) of GNN variants (MPNN, GAT, GCN, GraphSAGE) have been reported.",
+      "gap_type": "methodological",
+      "rank": 3,
+      "priority": 0.808,
+      "evidence": [
+        "Claims per method: Message Passing Neural Networks (MPNN)=0, Graph Attention Networks (GAT)=0, Graph Convolutional Networks (GCN) and variants=0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Explainability and interpretability techniques for GNN predictions in drug design are missing.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 4,
+      "priority": 0.806,
+      "evidence": [
+        "Explainability and interpretability of GNN predictions in drug design=0",
+        "Explainable AI techniques for GNNs (e.g., Grad\u2011CAM, GNNExplainer)=0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Graph representation learning for protein\u2013ligand interaction prediction has not been addressed.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 5,
+      "priority": 0.796,
+      "evidence": [
+        "Graph representation learning for protein\u2013ligand interaction prediction=0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "Transfer learning and multi\u2011task GNN models across heterogeneous drug datasets have not been explored.",
+      "gap_type": "unexplored_subtopic",
+      "rank": 6,
+      "priority": 0.782,
+      "evidence": [
+        "Transfer learning and multi-task GNN models across heterogeneous drug datasets=0"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "The literature provides no quantitative analysis of GNN performance across diverse chemical domains (e.g., small molecules vs. peptides).",
+      "gap_type": "evaluation",
+      "rank": 7,
+      "priority": 0.708,
+      "evidence": [
+        "Datasets used in claims: none detected",
+        "Expected datasets never used: ZINC15 (drug\u2011like library), PDBbind (protein\u2011ligand complexes)"
+      ],
+      "detection_method": "llm"
+    }
+  ],
+  "usage": {
+    "calls": 10,
+    "prompt_tokens": 4053,
+    "completion_tokens": 7591,
+    "estimated_cost_usd": 0.006301,
+    "parse_failures": 1,
+    "by_purpose": {
+      "topic_expansion": {
+        "calls": 1,
+        "prompt_tokens": 198,
+        "completion_tokens": 565,
+        "estimated_cost_usd": 0.000453,
+        "parse_failures": 0
+      },
+      "claim_extraction": {
+        "calls": 6,
+        "prompt_tokens": 1199,
+        "completion_tokens": 1679,
+        "estimated_cost_usd": 0.001439,
+        "parse_failures": 0
+      },
+      "contradiction_judge": {
+        "calls": 1,
+        "prompt_tokens": 715,
+        "completion_tokens": 1521,
+        "estimated_cost_usd": 0.001248,
+        "parse_failures": 0
+      },
+      "gap_detection": {
+        "calls": 1,
+        "prompt_tokens": 722,
+        "completion_tokens": 1826,
+        "estimated_cost_usd": 0.001478,
+        "parse_failures": 0
+      },
+      "recommendations": {
+        "calls": 1,
+        "prompt_tokens": 1219,
+        "completion_tokens": 2000,
+        "estimated_cost_usd": 0.001683,
+        "parse_failures": 1
+      }
+    }
+  },
+  "run_metadata": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.0,
+    "duration_s": 2883.81,
+    "frozen_corpus": true
+  },
+  "narrative": {
+    "grounding_mode": "scored",
+    "build_failed": false,
+    "error": null,
+    "total_sentences": 0,
+    "unsupported_sentences": 0,
+    "evidence_rows": 10,
+    "evidence_rows_no_verbatim": 10,
+    "sentences": []
+  }
+}

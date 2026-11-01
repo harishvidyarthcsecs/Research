@@ -1,0 +1,116 @@
+{
+  "claims": [
+    {
+      "paper_id": "10_51847_8w12ouixi5",
+      "statement": "Graph Neural Networks (GNNs) have become the dominant paradigm for molecular property prediction, consistently outperforming traditional fingerprint\u2011based and descriptor\u2011based methods across a wide range of benchmark datasets."
+    },
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "GNNs provide superior modeling of molecular structures and drug\u2011target interactions, leading to higher prediction accuracy and faster candidate identification compared with conventional molecular representations."
+    },
+    {
+      "paper_id": "10_1016_b978-0-443-34059-8_00015-4",
+      "statement": "Standardized protocols that combine data curation, graph construction, and multi\u2011task GNN training enable reproducible drug discovery pipelines and facilitate transfer learning across related pharmacological tasks."
+    },
+    {
+      "paper_id": "10_1021_acs_chemrev_5c00461_s001",
+      "statement": "In modern AI\u2011aided drug discovery, GNNs surpass all other deep learning architectures (e.g., CNNs on SMILES strings, RNNs) for both activity prediction and virtual screening."
+    },
+    {
+      "paper_id": "10_1109_metroxraine58569_2023_10405789",
+      "statement": "An integrated decision\u2011support pipeline that couples GNN\u2011based property prediction with Bayesian optimization and retrosynthetic planning dramatically reduces the number of synthesis\u2011infeasible suggestions."
+    },
+    {
+      "paper_id": "10_1016_j_neucom_2021_04_039",
+      "statement": "Molecular generative GNNs can autonomously design novel, drug\u2011like compounds that satisfy multiple physicochemical constraints while maintaining synthetic accessibility."
+    },
+    {
+      "paper_id": "10_1016_j_drudis_2021_02_011",
+      "statement": "De novo drug design using GNNs achieves comparable novelty to reinforcement\u2011learning\u2011based SMILES generators but with higher structural validity and lower computational cost."
+    },
+    {
+      "paper_id": "10_1007_978-3-031-16174-2_7",
+      "statement": "Distilling large GNN models into compact student networks retains most of the predictive performance while enabling deployment on resource\u2011constrained platforms."
+    },
+    {
+      "paper_id": "10_1016_j_ddtec_2020_11_009",
+      "statement": "Despite recent advances, classical molecular fingerprints (e.g., ECFP) remain competitive on low\u2011resource tasks and can outperform GNNs when training data are scarce."
+    },
+    {
+      "paper_id": "10_3030_800578",
+      "statement": "Current GNN benchmarks suffer from data leakage and unrealistic train\u2011test splits, inflating reported performance and limiting real\u2011world applicability."
+    }
+  ],
+  "contradictions": [
+    {
+      "paper1_id": "10_1021_acs_chemrev_5c00461_s001",
+      "paper2_id": "10_1016_j_ddtec_2020_11_009",
+      "claim_text_1": "GNNs surpass all other deep learning architectures for both activity prediction and virtual screening.",
+      "claim_text_2": "Classical molecular fingerprints remain competitive on low\u2011resource tasks and can outperform GNNs when training data are scarce.",
+      "explanation": "Paper\u202f4 asserts universal superiority of GNNs over alternative architectures, whereas Paper\u202f9 demonstrates scenarios (limited data) where traditional fingerprints outperform GNNs, indicating a contradiction regarding the conditions under which GNNs are best.",
+      "detection_method": "baseline"
+    },
+    {
+      "paper1_id": "10_1016_j_neucom_2021_04_039",
+      "paper2_id": "10_1007_978-3-031-16174-2_7",
+      "claim_text_1": "Molecular generative GNNs can autonomously design novel, drug\u2011like compounds that satisfy multiple constraints.",
+      "claim_text_2": "Distilling large GNN models into compact student networks retains most of the predictive performance while enabling deployment on resource\u2011constrained platforms.",
+      "explanation": "Paper\u202f6 relies on large, expressive generative GNNs for high\u2011quality molecule creation, while Paper\u202f8 suggests that compressing GNNs via distillation preserves performance. The contradiction lies in whether model compression compromises the generative capacity required for de novo design; Paper\u202f6 implies full\u2011size models are necessary, whereas Paper\u202f8 claims smaller distilled models are sufficient.",
+      "detection_method": "baseline"
+    },
+    {
+      "paper1_id": "10_1109_metroxraine58569_2023_10405789",
+      "paper2_id": "10_3030_800578",
+      "claim_text_1": "Integrating GNN\u2011based prediction with retrosynthetic planning reduces synthesis\u2011infeasible suggestions.",
+      "claim_text_2": "Current GNN benchmarks suffer from data leakage and unrealistic splits, inflating reported performance.",
+      "explanation": "Paper\u202f5 assumes that reported GNN performance metrics are reliable for downstream pipeline decisions, while Paper\u202f10 argues that many benchmark results are over\u2011optimistic due to methodological flaws, contradicting the trust placed in those metrics for pipeline integration.",
+      "detection_method": "baseline"
+    }
+  ],
+  "gaps": [
+    {
+      "description": "Few studies systematically evaluate how GNN model compression (e.g., distillation, pruning) impacts the quality of generative outputs for de novo drug design.",
+      "gap_type": "methodological",
+      "detection_method": "baseline"
+    },
+    {
+      "description": "Publicly available, large\u2011scale, experimentally validated datasets that link molecular graphs to both activity and synthetic route information are scarce, limiting end\u2011to\u2011end pipeline validation.",
+      "gap_type": "dataset",
+      "detection_method": "baseline"
+    },
+    {
+      "description": "The effect of realistic, time\u2011split cross\u2011validation on GNN performance for prospective drug discovery has not been thoroughly explored.",
+      "gap_type": "evaluation",
+      "detection_method": "baseline"
+    },
+    {
+      "description": "Integration of GNN\u2011based property prediction with uncertainty quantification and active learning loops remains under\u2011studied, especially for low\u2011data therapeutic areas.",
+      "gap_type": "unexplored_subtopic",
+      "detection_method": "baseline"
+    },
+    {
+      "description": "Contradictory findings on GNN superiority versus classical fingerprints under data\u2011scarcity conditions suggest a need for systematic comparative studies that control for dataset size, diversity, and split strategy.",
+      "gap_type": "contradiction_driven",
+      "detection_method": "baseline"
+    }
+  ],
+  "usage": {
+    "calls": 1,
+    "prompt_tokens": 505,
+    "completion_tokens": 1442,
+    "estimated_cost_usd": 0.001157,
+    "parse_failures": 0,
+    "by_purpose": {
+      "baseline": {
+        "calls": 1,
+        "prompt_tokens": 505,
+        "completion_tokens": 1442,
+        "estimated_cost_usd": 0.001157,
+        "parse_failures": 0
+      }
+    }
+  },
+  "run_metadata": {
+    "system": "naive_single_llm_baseline"
+  }
+}

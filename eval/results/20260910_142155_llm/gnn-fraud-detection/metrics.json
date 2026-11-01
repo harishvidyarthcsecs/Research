@@ -1,0 +1,107 @@
+{
+  "claims": {
+    "tp": 9,
+    "fp": 28,
+    "fn": 0,
+    "precision": 0.24324324324324326,
+    "recall": 1.0,
+    "f1": 0.391304347826087,
+    "matches": [
+      {
+        "pred_index": 14,
+        "gold_index": 7,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 13,
+        "gold_index": 6,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 12,
+        "gold_index": 5,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 11,
+        "gold_index": 4,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 10,
+        "gold_index": 3,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 1,
+        "gold_index": 1,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 0,
+        "gold_index": 0,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 9,
+        "gold_index": 2,
+        "similarity": 0.963
+      },
+      {
+        "pred_index": 23,
+        "gold_index": 8,
+        "similarity": 0.932
+      }
+    ],
+    "missed_gold_indices": []
+  },
+  "gaps": {
+    "recall": 0.0,
+    "per_prediction": [
+      {
+        "description": "There is a lack of research on graph neural networks (GNNs) for transactional fraud detection.",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      },
+      {
+        "description": "No studies have explored the use of spectral graph convolutional networks (SGCNs) in fraud detection.",
+        "gap_type": "methodological",
+        "matched_gold_index": null
+      },
+      {
+        "description": "There is a lack of evaluation on real-world transactional fraud datasets.",
+        "gap_type": "evaluation",
+        "matched_gold_index": null
+      },
+      {
+        "description": "The use of synthetic datasets specific to Nigerian fintech behavior is underrepresented in the literature.",
+        "gap_type": "dataset",
+        "matched_gold_index": null
+      }
+    ],
+    "missed_gold_indices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "precision_at_3": 0.0,
+    "precision_at_5": 0.0
+  },
+  "cost": {
+    "estimated_cost_usd": 0.0,
+    "llm_calls": 11,
+    "parse_failures": 0
+  },
+  "downstream_errors": {
+    "unsupported_sentences_in_narrative": 0,
+    "retained_fp_contradictions": 0,
+    "narrative_build_failed": true,
+    "narrative_total_sentences": 0,
+    "evidence_rows_no_verbatim": 0,
+    "narrative_error": "No \\cite{} key found: 'The application of advanced graph neural networks in fraud detection has shown promising results.'"
+  }
+}

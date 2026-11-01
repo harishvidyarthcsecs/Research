@@ -1,0 +1,105 @@
+{
+  "claims": {
+    "tp": 3,
+    "fp": 3,
+    "fn": 0,
+    "precision": 0.5,
+    "recall": 1.0,
+    "f1": 0.6666666666666666,
+    "matches": [
+      {
+        "pred_index": 1,
+        "gold_index": 1,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 0,
+        "gold_index": 0,
+        "similarity": 1.0
+      },
+      {
+        "pred_index": 2,
+        "gold_index": 2,
+        "similarity": 0.829
+      }
+    ],
+    "missed_gold_indices": []
+  },
+  "contradictions": {
+    "pair_level": {
+      "tp": 0,
+      "fp_on_negatives": 0,
+      "fn": 0,
+      "precision_on_labeled": null,
+      "recall": null,
+      "false_positive_rate_on_negatives": 0.0
+    },
+    "claim_level_strict": {
+      "tp": 0,
+      "recall": null
+    },
+    "unlabeled_prediction_volume": 0,
+    "missed_gold": [],
+    "false_positives_on_negatives": [],
+    "unlabeled_predictions": []
+  },
+  "gaps": {
+    "recall": 0.0,
+    "per_prediction": [
+      {
+        "description": "There is virtually no empirical evaluation of GNN models on standard drug\u2011discovery benchmarks such as MoleculeNet or ChEMBL.",
+        "gap_type": "dataset",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Research on GNN\u2011based de\u202fnovo molecular generation and optimization is completely absent.",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      },
+      {
+        "description": "No systematic methodological comparisons (e.g., ablations, baselines) of GNN variants (MPNN, GAT, GCN, GraphSAGE) have been reported.",
+        "gap_type": "methodological",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Explainability and interpretability techniques for GNN predictions in drug design are missing.",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Graph representation learning for protein\u2013ligand interaction prediction has not been addressed.",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      },
+      {
+        "description": "Transfer learning and multi\u2011task GNN models across heterogeneous drug datasets have not been explored.",
+        "gap_type": "unexplored_subtopic",
+        "matched_gold_index": null
+      },
+      {
+        "description": "The literature provides no quantitative analysis of GNN performance across diverse chemical domains (e.g., small molecules vs. peptides).",
+        "gap_type": "evaluation",
+        "matched_gold_index": null
+      }
+    ],
+    "missed_gold_indices": [
+      0,
+      1
+    ],
+    "precision_at_3": 0.0,
+    "precision_at_5": 0.0
+  },
+  "cost": {
+    "estimated_cost_usd": 0.006301,
+    "llm_calls": 10,
+    "parse_failures": 1
+  },
+  "downstream_errors": {
+    "unsupported_sentences_in_narrative": 0,
+    "retained_fp_contradictions": 0,
+    "narrative_build_failed": false,
+    "narrative_total_sentences": 0,
+    "evidence_rows_no_verbatim": 10,
+    "narrative_error": null
+  }
+}

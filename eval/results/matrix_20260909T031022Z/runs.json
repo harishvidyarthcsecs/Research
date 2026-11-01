@@ -1,0 +1,62 @@
+[
+  {
+    "mode": "llm",
+    "repeat": 1,
+    "run_dir": "/Users/harishvidyarth/Downloads/Project - Site/research-agent/eval/results/20260909_084022_llm"
+  },
+  {
+    "mode": "llm",
+    "repeat": 2,
+    "run_dir": "/Users/harishvidyarth/Downloads/Project - Site/research-agent/eval/results/20260909_084625_llm"
+  },
+  {
+    "mode": "llm",
+    "repeat": 3,
+    "run_dir": "/Users/harishvidyarth/Downloads/Project - Site/research-agent/eval/results/20260909_085212_llm"
+  },
+  {
+    "mode": "pattern",
+    "repeat": 1,
+    "run_dir": "/Users/harishvidyarth/Downloads/Project - Site/research-agent/eval/results/20260909_085742_pattern"
+  },
+  {
+    "mode": "pattern",
+    "repeat": 2,
+    "run_dir": "/Users/harishvidyarth/Downloads/Project - Site/research-agent/eval/results/20260909_090150_pattern"
+  },
+  {
+    "mode": "pattern",
+    "repeat": 3,
+    "run_dir": "/Users/harishvidyarth/Downloads/Project - Site/research-agent/eval/results/20260909_101639_pattern"
+  },
+  {
+    "mode": "scored",
+    "repeat": 1,
+    "run_dir": "/Users/harishvidyarth/Downloads/Project - Site/research-agent/eval/results/20260909_141453_scored"
+  },
+  {
+    "mode": "scored",
+    "repeat": 2,
+    "run_dir": "/Users/harishvidyarth/Downloads/Project - Site/research-agent/eval/results/20260909_180608_scored"
+  },
+  {
+    "mode": "scored",
+    "repeat": 3,
+    "run_dir": "/Users/harishvidyarth/Downloads/Project - Site/research-agent/eval/results/20260909_191910_scored"
+  },
+  {
+    "mode": "baseline",
+    "repeat": 1,
+    "run_dir": "/Users/harishvidyarth/Downloads/Project - Site/research-agent/eval/results/20260910_000007_baseline"
+  },
+  {
+    "mode": "baseline",
+    "repeat": 2,
+    "run_dir": "/Users/harishvidyarth/Downloads/Project - Site/research-agent/eval/results/20260910_001540_baseline"
+  },
+  {
+    "mode": "baseline",
+    "repeat": 3,
+    "run_dir": "/Users/harishvidyarth/Downloads/Project - Site/research-agent/eval/results/20260910_001544_baseline"
+  }
+]

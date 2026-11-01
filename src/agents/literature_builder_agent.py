@@ -868,9 +868,9 @@ and identifying trends in the evolution of research approaches over time.
         rows_by_key: Dict[str, EvidenceRow],
     ) -> Tuple[str, List[str], List[str], List[Any]]:
         """Build a cluster's paragraph FROM the evidence table instead of raw
-        abstracts. Falls back to the legacy abstract-based paragraph (the
-        original _build_cluster_paragraph) when the cluster's papers produced
-        zero evidence rows, keeping runs resilient to partial extraction failure.
+        abstracts. If a cluster has no evidence rows, the legacy paragraph is
+        retained only sentence-by-sentence when all of its citation keys resolve
+        against the document evidence set.
 
         Every generated sentence is verified against rows_by_key before being
         accepted: an unsupported sentence (citing a key with no matching row,
@@ -888,10 +888,14 @@ and identifying trends in the evolution of research approaches over time.
         claim_ids = [getattr(claim, 'id', claim.id) for claim in cluster.claims]
 
         if not cluster_rows:
-            # No evidence rows for this cluster's papers — fall back to the
-            # legacy abstract-based paragraph builder.
-            text, citations, legacy_claim_ids = await self._build_cluster_paragraph(cluster, mode)
-            return text, citations, legacy_claim_ids, []
+            text, _citations, legacy_claim_ids = await self._build_cluster_paragraph(cluster, mode)
+            scored_sentences = narrative_verifier.verify_paragraph_scored(text, rows_by_key)
+            sentences = [sentence for sentence in scored_sentences if sentence.verified]
+            text = " ".join(sentence.text for sentence in sentences)
+            citations = list(dict.fromkeys(
+                key for sentence in sentences for key in sentence.cite_keys
+            ))
+            return text, citations, legacy_claim_ids, sentences
 
         usable_rows = [r for r in cluster_rows if r.bibitem_key]
         scored = getattr(self, "grounding_mode", "reject") == "scored"

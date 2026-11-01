@@ -1,0 +1,113 @@
+{
+  "claims": [
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "The integration of artificial intelligence (AI) in drug discovery has profoundly transformed the pharmaceutical landscape by significantly accelerating the identification of potential drug candidates.",
+      "confidence": 0.935
+    },
+    {
+      "paper_id": "10_48165_iitmjit_2025_11_1_11",
+      "statement": "Graph Neural Networks (GNNs) have proven to be particularly effective in modeling molecular structures, optimizing drug-target interactions, and enhancing prediction accuracy.",
+      "confidence": 0.8
+    }
+  ],
+  "contradictions": [],
+  "gaps": [
+    {
+      "description": "No empirical claims or evaluations are present in the corpus, indicating a complete absence of methodological validation, ablation studies, or baseline comparisons for GNNs in drug discovery.",
+      "gap_type": "methodological",
+      "rank": 1,
+      "priority": 0.89,
+      "evidence": [
+        "Total claims: 2 from 10 papers",
+        "Claims per subtopic: all zero",
+        "Claims per method: all zero",
+        "Datasets used in claims: none detected",
+        "Low-evidence: derived from only 2 extracted claims"
+      ],
+      "detection_method": "llm"
+    },
+    {
+      "description": "No datasets are used or cited in any claims, revealing a critical lack of empirical grounding in established chemical benchmarks such as ChEMBL, QM9, or ZINC.",
+      "gap_type": "dataset",
+      "rank": 2,
+      "priority": 0.88,
+      "evidence": [
+        "Datasets used in claims: none detected",
+        "Expected datasets never used: ChEMBL, HIV, PCQM4M-LSC, QM9, Tox21, ZINC",
+        "Total claims: 2 from 10 papers",
+        "Low-evidence: derived from only 2 extracted claims"
+      ],
+      "detection_method": "llm"
+    }
+  ],
+  "usage": {
+    "calls": 13,
+    "prompt_tokens": 2964,
+    "completion_tokens": 3331,
+    "estimated_cost_usd": 0.0,
+    "parse_failures": 6,
+    "by_purpose": {
+      "topic_expansion": {
+        "calls": 1,
+        "prompt_tokens": 148,
+        "completion_tokens": 364,
+        "estimated_cost_usd": 0.0,
+        "parse_failures": 0
+      },
+      "claim_extraction": {
+        "calls": 10,
+        "prompt_tokens": 1384,
+        "completion_tokens": 651,
+        "estimated_cost_usd": 0.0,
+        "parse_failures": 6
+      },
+      "gap_detection": {
+        "calls": 1,
+        "prompt_tokens": 557,
+        "completion_tokens": 975,
+        "estimated_cost_usd": 0.0,
+        "parse_failures": 0
+      },
+      "recommendations": {
+        "calls": 1,
+        "prompt_tokens": 875,
+        "completion_tokens": 1341,
+        "estimated_cost_usd": 0.0,
+        "parse_failures": 0
+      }
+    }
+  },
+  "run_metadata": {
+    "provider": "openrouter",
+    "model": "nvidia/nemotron-3-super-120b-a12b:free",
+    "temperature": 0.0,
+    "duration_s": 68.2,
+    "frozen_corpus": true
+  },
+  "narrative": {
+    "grounding_mode": "reject",
+    "build_failed": false,
+    "error": null,
+    "total_sentences": 2,
+    "unsupported_sentences": 0,
+    "evidence_rows": 1,
+    "evidence_rows_no_verbatim": 0,
+    "sentences": [
+      {
+        "text": "The application of Graph Neural Networks (GNNs) in drug investigation has been explored as a methodological approach for modeling complex relational data in pharmaceutical contexts, though specific empirical outcomes or performance metrics remain unspecified in the available evidence \\cite{Unknown25}.",
+        "verified": true,
+        "cite_keys": [
+          "Unknown25"
+        ]
+      },
+      {
+        "text": "Graph Neural Networks (GNNs) have emerged as a powerful approach for modeling complex relational data, enabling the investigation of graph-structured information across diverse domains \\cite{Unknown25}.",
+        "verified": true,
+        "cite_keys": [
+          "Unknown25"
+        ]
+      }
+    ]
+  }
+}

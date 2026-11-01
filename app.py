@@ -10,6 +10,7 @@ from flask_talisman import Talisman
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import asyncio
+import io
 import json
 import os
 import queue
@@ -54,6 +55,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', os.urandom(32).hex())
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
 
 # ── Rate limiting ────────────────────────────────────────────────────────────
 limiter = Limiter(
@@ -93,19 +95,129 @@ app.register_blueprint(journals_bp)
 
 # ── Input validation helpers ─────────────────────────────────────────────────
 _URL_RE = re.compile(r'^https?://', re.I)
+_MAX_TEXT_LENGTH = 200_000
 
-def _safe_text(value, max_len: int = 20000) -> str:
-    """Strip and truncate text input; reject if suspiciously long."""
-    if not isinstance(value, str):
+
+def _json_object():
+    """Return a JSON object, or None for malformed/non-object request bodies."""
+    data = request.get_json(silent=True)
+    return data if isinstance(data, dict) else None
+
+
+def _safe_text(value, max_len: int = _MAX_TEXT_LENGTH) -> str:
+    """Return stripped text, rejecting wrong types and oversized values."""
+    if not isinstance(value, str) or len(value) > max_len:
         return ""
-    return value.strip()[:max_len]
+    return value.strip()
+
+
+def _text_fields_are_strings(data: dict, *keys: str) -> bool:
+    return all(key not in data or isinstance(data[key], str) for key in keys)
+
+
+def _plain_data(value):
+    """Recursively convert Pydantic/dataclass-style results for jsonify."""
+    if hasattr(value, 'model_dump'):
+        return _plain_data(value.model_dump(mode='json'))
+    if hasattr(value, 'to_dict') and callable(value.to_dict):
+        return _plain_data(value.to_dict())
+    if isinstance(value, dict):
+        return {str(key): _plain_data(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple, set)):
+        return [_plain_data(item) for item in value]
+    return value
+
+
+def _safe_slug(value) -> str:
+    """Build an ASCII-only filename component from a user-supplied topic."""
+    text = value if isinstance(value, str) else 'research'
+    return re.sub(r'[^A-Za-z0-9_-]+', '_', text)[:40].strip('_') or 'research'
+
+
+def _send_generated_file(path: str, mimetype: str, filename: str):
+    """Send a generated file from memory and always remove the temp file."""
+    try:
+        with open(path, 'rb') as generated:
+            payload = generated.read()
+    finally:
+        try:
+            os.unlink(path)
+        except OSError:
+            app.logger.warning('Could not remove generated temporary file', exc_info=True)
+    return send_file(
+        io.BytesIO(payload), mimetype=mimetype, as_attachment=True,
+        download_name=filename,
+    )
+
+
+def _valid_export_payload(data) -> bool:
+    """Validate the collection shapes consumed by all export renderers."""
+    if not isinstance(data, dict):
+        return False
+    if not all(isinstance(data.get(key, ''), str)
+               for key in ('topic', 'generated_at', 'executive_summary')):
+        return False
+    if not isinstance(data.get('summary', {}), dict):
+        return False
+    for key in ('papers', 'research_gaps', 'recommendations', 'citations'):
+        value = data.get(key, [])
+        if not isinstance(value, list) or not all(isinstance(item, dict) for item in value):
+            return False
+    papers_valid = all(
+        isinstance(paper.get('authors', []), list)
+        and all(isinstance(author, str) for author in paper.get('authors', []))
+        and all(isinstance(paper.get(key, ''), str)
+                for key in ('title', 'venue', 'abstract'))
+        for paper in data.get('papers', [])
+    )
+    gaps_valid = all(isinstance(gap.get('description', ''), str)
+                     for gap in data.get('research_gaps', []))
+    recommendations_valid = all(
+        all(isinstance(item.get(key, ''), str) for key in ('title', 'rationale', 'action'))
+        and isinstance(item.get('priority', 0), (int, float))
+        and not isinstance(item.get('priority', 0), bool)
+        for item in data.get('recommendations', [])
+    )
+    citations_valid = all(
+        isinstance(item.get('custom_format', ''), str)
+        and isinstance(item.get('bibtex', ''), str)
+        for item in data.get('citations', [])
+    )
+    return papers_valid and gaps_valid and recommendations_valid and citations_valid
 
 def _validate_url(url: str) -> str:
     """Return url only if it's a plain http/https web URL, else empty string."""
-    url = (url or "").strip()
+    if not isinstance(url, str):
+        return ""
+    url = url.strip()
     if _URL_RE.match(url) and len(url) < 2048:
         return url
     return ""
+
+
+@app.errorhandler(413)
+def request_too_large(_error):
+    return jsonify({'error': 'Request body too large'}), 413
+
+
+@app.before_request
+def enforce_content_length():
+    limit = app.config['MAX_CONTENT_LENGTH']
+    if request.content_length is not None and request.content_length > limit:
+        return jsonify({'error': 'Request body too large'}), 413
+
+
+from werkzeug.serving import WSGIRequestHandler
+
+# The dev server appends its own "Server: Werkzeug/x Python/y" line; blank it too.
+WSGIRequestHandler.server_version = 'ResearchAgent'
+WSGIRequestHandler.sys_version = ''
+
+
+@app.after_request
+def hide_server_version(response):
+    response.headers['Server'] = 'ResearchAgent'
+    return response
 
 # Global system instance
 research_system = None
@@ -383,8 +495,10 @@ def research():
     The browser uses /research/start instead so it can stream progress.
     """
     try:
-        data = request.get_json()
-        topic = data.get('topic', '').strip()
+        data = _json_object()
+        if data is None:
+            return jsonify({'error': 'Invalid JSON object'}), 400
+        topic = _safe_text(data.get('topic'), max_len=500)
 
         if not topic:
             return jsonify({'error': 'Topic is required'}), 400
@@ -402,10 +516,8 @@ def research():
     except concurrent.futures.TimeoutError:
         return jsonify({'error': 'Research timed out. Please try a more specific topic.'}), 500
     except Exception as e:
-        print(f"Error in research: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        return jsonify({'error': f'Research failed: {str(e)}'}), 500
+        app.logger.exception('Research failed')
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 # ── Job-based research: start → stream progress → fetch result ───────────────
@@ -449,7 +561,9 @@ def _run_research_job(job):
 @app.route('/research/start', methods=['POST'])
 def research_start():
     """Queue a research run and return its job id immediately."""
-    data = request.get_json(silent=True) or {}
+    data = _json_object()
+    if data is None:
+        return jsonify({'error': 'Invalid JSON object'}), 400
     topic = _safe_text(data.get('topic', ''), max_len=500)
 
     if not topic:
@@ -630,12 +744,13 @@ def reference_validator_page():
 def validate_references():
     """Validate and correct uploaded reference file."""
     try:
-        data = request.get_json()
-        content = data.get('content', '').strip()
-        file_format = data.get('format', 'bibtex')
+        data = _json_object()
+        if data is None:
+            return jsonify({'error': 'Invalid JSON object'}), 400
+        content = _safe_text(data.get('content'))
+        file_format = _safe_text(data.get('format', 'bibtex'), max_len=20)
         options = data.get('options', {})
-        
-        if not content:
+        if not content or not file_format or not isinstance(options, dict):
             return jsonify({'error': 'No content provided'}), 400
         
         app.logger.info(f"Reference validation request: format={file_format}, length={len(content)}")
@@ -652,19 +767,23 @@ def validate_references():
         app.logger.error(f"Reference validation timed out")
         return jsonify({'error': 'Reference validation timed out. Please try with fewer references.'}), 500
     except Exception as e:
-        app.logger.error(f"Error in reference validation: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        return jsonify({'error': f'Reference validation failed: {str(e)}'}), 500
+        app.logger.exception('Reference validation failed')
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @app.route('/reformat-references', methods=['POST'])
 def reformat_references():
     """Reformat references to different output format."""
     try:
-        data = request.get_json()
+        data = _json_object()
+        if data is None:
+            return jsonify({'error': 'Invalid JSON object'}), 400
         references_data = data.get('references', [])
-        output_format = data.get('format', 'bibitem')
+        output_format = _safe_text(data.get('format', 'bibitem'), max_len=20)
+        if (not isinstance(references_data, list)
+                or not all(isinstance(item, dict) for item in references_data)
+                or not output_format):
+            return jsonify({'error': 'Invalid request data'}), 400
         
         # Import reference validator
         from src.agents.reference_validator import ReferenceValidator
@@ -684,8 +803,8 @@ def reformat_references():
         })
         
     except Exception as e:
-        app.logger.error(f"Error reformatting references: {str(e)}")
-        return jsonify({'error': f'Reformatting failed: {str(e)}'}), 500
+        app.logger.exception('Reference reformatting failed')
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 def run_reference_validation(content: str, file_format: str, options: dict):
@@ -976,12 +1095,15 @@ def run_literature_generation(topic: str, filters: dict, progress=None):
 def generate_literature():
     """Blocking literature generation. Kept for scripts and backwards
     compatibility. The browser uses /generate-literature/start instead."""
+    topic = ''
     try:
-        data = request.get_json()
-        topic = data.get('topic', '').strip()
+        data = _json_object()
+        if data is None:
+            return jsonify({'error': 'Invalid JSON object'}), 400
+        topic = _safe_text(data.get('topic'), max_len=500)
         filters = data.get('filters', {})
 
-        if not topic:
+        if not topic or not isinstance(filters, dict):
             return jsonify({'error': 'Topic is required'}), 400
 
         app.logger.info(f"Literature generation request for topic: {topic}")
@@ -997,10 +1119,8 @@ def generate_literature():
         app.logger.error(f"Literature generation timed out for topic: {topic}")
         return jsonify({'error': 'Literature generation timed out. Please try a more specific topic.'}), 500
     except Exception as e:
-        app.logger.error(f"Error in literature generation for topic '{topic}': {str(e)}")
-        import traceback
-        traceback.print_exc()
-        return jsonify({'error': f'Literature generation failed: {str(e)}'}), 500
+        app.logger.exception("Literature generation failed for topic %r", topic)
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 # ── Job-based literature generation: start -> stream progress -> fetch result ──
@@ -1048,14 +1168,17 @@ def _run_literature_job(job, filters: dict):
 @app.route('/generate-literature/start', methods=['POST'])
 def generate_literature_start():
     """Queue a literature generation run and return its job id immediately."""
-    data = request.get_json(silent=True) or {}
+    data = _json_object()
+    if data is None:
+        return jsonify({'error': 'Invalid JSON object'}), 400
     topic = _safe_text(data.get('topic', ''), max_len=500)
+    filters = data.get('filters', {})
 
-    if not topic:
+    if not topic or not isinstance(filters, dict):
         return jsonify({'error': 'Topic is required'}), 400
 
     job = JOBS.create(topic)
-    threading.Thread(target=_run_literature_job, args=(job, data.get('filters', {})), daemon=True).start()
+    threading.Thread(target=_run_literature_job, args=(job, filters), daemon=True).start()
 
     return jsonify({
         'job_id': job.id,
@@ -1120,8 +1243,10 @@ def export_literature(job_id, fmt):
 def generate_custom_citations():
     """Generate custom formatted citations."""
     try:
-        data = request.get_json()
-        topic = data.get('topic', '').strip()
+        data = _json_object()
+        if data is None:
+            return jsonify({'error': 'Invalid JSON object'}), 400
+        topic = _safe_text(data.get('topic'), max_len=500)
         
         if not topic:
             return jsonify({'error': 'Topic is required'}), 400
@@ -1139,10 +1264,8 @@ def generate_custom_citations():
     except concurrent.futures.TimeoutError:
         return jsonify({'error': 'Citation generation timed out. Please try a more specific topic.'}), 500
     except Exception as e:
-        print(f"Error in citation generation: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        return jsonify({'error': f'Citation generation failed: {str(e)}'}), 500
+        app.logger.exception('Citation generation failed')
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 def run_citation_generation(topic):
@@ -1164,8 +1287,8 @@ def run_citation_generation(topic):
         
         return {
             'topic': topic,
-            'citations': custom_citations,
-            'stats': stats,
+            'citations': _plain_data(custom_citations),
+            'stats': _plain_data(stats),
             'total_papers': len(results.papers)
         }
         
@@ -1175,8 +1298,8 @@ def run_citation_generation(topic):
 
 @app.route('/debug')
 def debug_form():
-    """Debug form page."""
-    return send_file('debug_form.html')
+    """The retired debug form is intentionally unavailable."""
+    abort(404)
 
 
 @app.route('/test')
@@ -1264,10 +1387,14 @@ def humanize():
 
             if not text:
                 return jsonify({'error': 'Could not extract text from the PDF'}), 422
+            if len(text) > _MAX_TEXT_LENGTH:
+                return jsonify({'error': 'Text is too long'}), 400
             method_source = 'pdf'
         else:
-            data = request.get_json(silent=True) or {}
-            text = (data.get('text') or '').strip()
+            data = _json_object()
+            if data is None:
+                return jsonify({'error': 'Invalid JSON object'}), 400
+            text = _safe_text(data.get('text'))
             if not text:
                 return jsonify({'error': 'No text provided'}), 400
             method_source = 'text'
@@ -1278,9 +1405,8 @@ def humanize():
         return jsonify(result)
 
     except Exception as e:
-        app.logger.error(f'Humanize error: {e}')
-        import traceback; traceback.print_exc()
-        return jsonify({'error': f'Humanization failed: {str(e)}'}), 500
+        app.logger.exception('Humanization failed')
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @app.route('/latex-reorder')
@@ -1313,40 +1439,39 @@ def latex_reorder():
     except UnicodeDecodeError:
         return jsonify({'error': 'File encoding not supported. Please save as UTF-8.'}), 422
     except Exception as e:
-        app.logger.error(f'LaTeX reorder error: {e}')
-        import traceback; traceback.print_exc()
-        return jsonify({'error': f'Reordering failed: {str(e)}'}), 500
+        app.logger.exception('LaTeX reorder failed')
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @app.route('/export/json', methods=['POST'])
 def export_json():
     try:
-        data = request.get_json(silent=True)
-        if not data:
-            return jsonify({'error': 'No data provided'}), 400
+        data = _json_object()
+        if not data or not _valid_export_payload(data):
+            return jsonify({'error': 'Invalid request data'}), 400
 
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        topic_slug = (data.get('topic') or 'research').replace(' ', '_')[:40]
+        topic_slug = _safe_slug(data.get('topic'))
         filename = f'research_{topic_slug}_{timestamp}.json'
-
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False, encoding='utf-8') as tmp:
-            json.dump(data, tmp, indent=2, default=str)
-            tmp_path = tmp.name
-
         return send_file(
-            tmp_path,
+            io.BytesIO(json.dumps(data, indent=2, default=str).encode('utf-8')),
             mimetype='application/json',
             as_attachment=True,
             download_name=filename
         )
     except Exception as e:
-        app.logger.error(f'JSON export error: {e}')
-        return jsonify({'error': f'Export failed: {str(e)}'}), 500
+        app.logger.exception('JSON export failed')
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @app.route('/export/pdf', methods=['POST'])
 def export_pdf():
+    tmp_path = None
     try:
+        data = _json_object()
+        if not data or not _valid_export_payload(data):
+            return jsonify({'error': 'Invalid request data'}), 400
+
         from reportlab.lib.pagesizes import A4
         from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
         from reportlab.lib.units import cm
@@ -1354,15 +1479,11 @@ def export_pdf():
         from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
         from reportlab.lib.enums import TA_LEFT, TA_CENTER
 
-        data = request.get_json(silent=True)
-        if not data:
-            return jsonify({'error': 'No data provided'}), 400
-
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        topic_slug = (data.get('topic') or 'research').replace(' ', '_')[:40]
+        topic_slug = _safe_slug(data.get('topic'))
         filename = f'research_{topic_slug}_{timestamp}.pdf'
-
-        tmp_path = os.path.join(tempfile.gettempdir(), filename)
+        fd, tmp_path = tempfile.mkstemp(suffix='.pdf')
+        os.close(fd)
 
         doc = SimpleDocTemplate(
             tmp_path,
@@ -1458,36 +1579,39 @@ def export_pdf():
 
         doc.build(story)
 
-        return send_file(
-            tmp_path,
-            mimetype='application/pdf',
-            as_attachment=True,
-            download_name=filename
-        )
+        response = _send_generated_file(tmp_path, 'application/pdf', filename)
+        tmp_path = None
+        return response
 
     except ImportError:
         return jsonify({'error': 'reportlab is not installed. Run: pip install reportlab'}), 500
     except Exception as e:
-        app.logger.error(f'PDF export error: {e}')
-        import traceback; traceback.print_exc()
-        return jsonify({'error': f'PDF export failed: {str(e)}'}), 500
+        if tmp_path:
+            try:
+                os.unlink(tmp_path)
+            except OSError:
+                pass
+        app.logger.exception('PDF export failed')
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @app.route('/export/docx', methods=['POST'])
 def export_docx():
+    tmp_path = None
     try:
+        data = _json_object()
+        if not data or not _valid_export_payload(data):
+            return jsonify({'error': 'Invalid request data'}), 400
+
         from docx import Document
         from docx.shared import Pt, RGBColor, Cm
         from docx.enum.text import WD_ALIGN_PARAGRAPH
 
-        data = request.get_json(silent=True)
-        if not data:
-            return jsonify({'error': 'No data provided'}), 400
-
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        topic_slug = (data.get('topic') or 'research').replace(' ', '_')[:40]
+        topic_slug = _safe_slug(data.get('topic'))
         filename = f'research_{topic_slug}_{timestamp}.docx'
-        tmp_path = os.path.join(tempfile.gettempdir(), filename)
+        fd, tmp_path = tempfile.mkstemp(suffix='.docx')
+        os.close(fd)
 
         doc = Document()
 
@@ -1591,19 +1715,24 @@ def export_docx():
 
         doc.save(tmp_path)
 
-        return send_file(
+        response = _send_generated_file(
             tmp_path,
-            mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            as_attachment=True,
-            download_name=filename
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            filename,
         )
+        tmp_path = None
+        return response
 
     except ImportError:
         return jsonify({'error': 'python-docx is not installed. Run: pip install python-docx'}), 500
     except Exception as e:
-        app.logger.error(f'DOCX export error: {e}')
-        import traceback; traceback.print_exc()
-        return jsonify({'error': f'Word export failed: {str(e)}'}), 500
+        if tmp_path:
+            try:
+                os.unlink(tmp_path)
+            except OSError:
+                pass
+        app.logger.exception('DOCX export failed')
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 # ─── Plagiarism / Similarity Checker ───────────────────────────────────────
@@ -1617,7 +1746,9 @@ def plagiarism_page():
 @app.route('/check-plagiarism', methods=['POST'])
 def check_plagiarism():
     try:
-        data = request.get_json(force=True)
+        data = _json_object()
+        if data is None:
+            return jsonify({'error': 'Invalid JSON object'}), 400
         text = _safe_text(data.get('text'))
         if not text:
             return jsonify({'error': 'No text provided'}), 400
@@ -1628,8 +1759,8 @@ def check_plagiarism():
         result = agent.check(text)
         return jsonify(result)
     except Exception as e:
-        app.logger.error(f'Plagiarism check error: {e}')
-        return jsonify({'error': str(e)}), 500
+        app.logger.exception('Plagiarism check failed')
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 # ─── Journal Fit Recommender ────────────────────────────────────────────────
@@ -1643,9 +1774,13 @@ def journal_fit_page():
 @app.route('/recommend-journals', methods=['POST'])
 def recommend_journals():
     try:
-        data = request.get_json(force=True)
+        data = _json_object()
+        if data is None:
+            return jsonify({'error': 'Invalid JSON object'}), 400
+        if not _text_fields_are_strings(data, 'abstract', 'field'):
+            return jsonify({'error': 'Invalid request data'}), 400
         abstract = _safe_text(data.get('abstract'))
-        field = (data.get('field') or '').strip()
+        field = _safe_text(data.get('field', ''), max_len=200)
         if not abstract:
             return jsonify({'error': 'Abstract is required'}), 400
 
@@ -1653,8 +1788,8 @@ def recommend_journals():
         result = agent.recommend(abstract, field)
         return jsonify(result)
     except Exception as e:
-        app.logger.error(f'Journal recommendation error: {e}')
-        return jsonify({'error': str(e)}), 500
+        app.logger.exception('Journal recommendation failed')
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 # ─── Abstract Screener ──────────────────────────────────────────────────────
@@ -1670,22 +1805,32 @@ def abstract_screener_page():
 @app.route('/screen-abstracts', methods=['POST'])
 def screen_abstracts():
     try:
-        data = request.get_json(force=True)
+        data = _json_object()
+        if data is None:
+            return jsonify({'error': 'Invalid JSON object'}), 400
         abstracts = data.get('abstracts') or []
         criteria = _safe_text(data.get('criteria'))
+        if (not isinstance(abstracts, list)
+                or not all(isinstance(item, dict)
+                           and isinstance(item.get('title', ''), str)
+                           and isinstance(item.get('abstract', item.get('text', '')), str)
+                           for item in abstracts)):
+            return jsonify({'error': 'Invalid request data'}), 400
         if not abstracts:
             return jsonify({'error': 'No abstracts provided'}), 400
         if not criteria:
             return jsonify({'error': 'Inclusion/exclusion criteria are required'}), 400
         if len(abstracts) > 100:
             return jsonify({'error': 'Maximum 100 abstracts per request'}), 400
+        if sum(len(item.get('abstract', item.get('text', ''))) for item in abstracts) > _MAX_TEXT_LENGTH:
+            return jsonify({'error': 'Abstract text is too long'}), 400
 
         agent = AbstractScreenerAgent()
         result = agent.screen(abstracts, criteria)
         return jsonify(result)
     except Exception as e:
-        app.logger.error(f'Abstract screening error: {e}')
-        return jsonify({'error': str(e)}), 500
+        app.logger.exception('Abstract screening failed')
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 # ─── Pre-Submission Checklist ───────────────────────────────────────────────
@@ -1701,18 +1846,25 @@ def checklist_page():
 @app.route('/generate-checklist', methods=['POST'])
 def generate_checklist():
     try:
-        data = request.get_json(force=True)
-        manuscript_type = (data.get('manuscript_type') or 'Research Article').strip()
-        journal = (data.get('journal') or '').strip()
-        field = (data.get('field') or '').strip()
+        data = _json_object()
+        if data is None:
+            return jsonify({'error': 'Invalid JSON object'}), 400
+        if not _text_fields_are_strings(
+                data, 'manuscript_type', 'journal', 'field', 'abstract'):
+            return jsonify({'error': 'Invalid request data'}), 400
+        manuscript_type = _safe_text(data.get('manuscript_type', 'Research Article'), max_len=100)
+        journal = _safe_text(data.get('journal', ''), max_len=300)
+        field = _safe_text(data.get('field', ''), max_len=200)
         abstract = _safe_text(data.get('abstract'))
+        if not manuscript_type:
+            return jsonify({'error': 'Invalid request data'}), 400
 
         agent = ChecklistAgent()
         result = agent.generate(manuscript_type, journal, field, abstract)
         return jsonify(result)
     except Exception as e:
-        app.logger.error(f'Checklist generation error: {e}')
-        return jsonify({'error': str(e)}), 500
+        app.logger.exception('Checklist generation failed')
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 # ─── Grant Writer ───────────────────────────────────────────────────────────
@@ -1729,14 +1881,20 @@ def grant_writer_page():
 @app.route('/write-grant', methods=['POST'])
 def write_grant():
     try:
-        data = request.get_json(force=True)
-        project_title = (data.get('project_title') or '').strip()
-        description = (data.get('description') or '').strip()
-        funder = (data.get('funder') or 'NSF').strip()
-        field = (data.get('field') or '').strip()
-        budget = (data.get('budget') or '').strip()
-        duration = (data.get('duration') or '').strip()
-        team = (data.get('team') or '').strip()
+        data = _json_object()
+        if data is None:
+            return jsonify({'error': 'Invalid JSON object'}), 400
+        if not _text_fields_are_strings(
+                data, 'project_title', 'description', 'funder', 'field',
+                'budget', 'duration', 'team'):
+            return jsonify({'error': 'Invalid request data'}), 400
+        project_title = _safe_text(data.get('project_title'), max_len=500)
+        description = _safe_text(data.get('description'))
+        funder = _safe_text(data.get('funder', 'NSF'), max_len=100)
+        field = _safe_text(data.get('field', ''), max_len=200)
+        budget = _safe_text(data.get('budget', ''), max_len=100)
+        duration = _safe_text(data.get('duration', ''), max_len=100)
+        team = _safe_text(data.get('team', ''), max_len=5000)
 
         if not project_title or not description:
             return jsonify({'error': 'Project title and description are required'}), 400
@@ -1745,8 +1903,8 @@ def write_grant():
         result = agent.write(project_title, description, funder, field, budget, duration, team)
         return jsonify(result)
     except Exception as e:
-        app.logger.error(f'Grant writing error: {e}')
-        return jsonify({'error': str(e)}), 500
+        app.logger.exception('Grant writing failed')
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @app.route('/funders')
@@ -1765,18 +1923,20 @@ def citation_network_page():
 @app.route('/get-citation-network', methods=['POST'])
 def get_citation_network():
     try:
-        data = request.get_json(force=True)
-        query = (data.get('query') or '').strip()
-        depth = int(data.get('depth', 1))
-        if not query:
+        data = _json_object()
+        if data is None:
+            return jsonify({'error': 'Invalid JSON object'}), 400
+        query = _safe_text(data.get('query'), max_len=500)
+        depth = data.get('depth', 1)
+        if not query or not isinstance(depth, int) or isinstance(depth, bool) or not 1 <= depth <= 3:
             return jsonify({'error': 'Paper title or ID is required'}), 400
 
         agent = CitationNetworkAgent()
         result = agent.get_network(query, depth)
         return jsonify(result)
     except Exception as e:
-        app.logger.error(f'Citation network error: {e}')
-        return jsonify({'error': str(e)}), 500
+        app.logger.exception('Citation network lookup failed')
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 # ─── Benchmark Dashboard ─────────────────────────────────────────────────────
@@ -1815,13 +1975,20 @@ def access_router_page():
 def resolve_access_route():
     """Find a legal route to the full text of one paper."""
     try:
-        data = request.get_json(silent=True) or {}
+        data = _json_object()
+        if data is None:
+            return jsonify({'error': 'Invalid JSON object'}), 400
         query = _safe_text(data.get('query', ''), max_len=500)
 
         if not query:
             return jsonify({'error': 'Enter a DOI or paper title'}), 400
 
-        institution = data.get('institution') or {}
+        institution = data.get('institution', {})
+        if not isinstance(institution, dict):
+            return jsonify({'error': 'Invalid request data'}), 400
+        if not _text_fields_are_strings(
+                institution, 'name', 'resolver_url', 'ezproxy_prefix'):
+            return jsonify({'error': 'Invalid request data'}), 400
         institution = {
             'name': _safe_text(institution.get('name', ''), max_len=200),
             'resolver_url': _validate_url(institution.get('resolver_url', '')),
@@ -1831,8 +1998,8 @@ def resolve_access_route():
         return jsonify(resolve_access(query, institution=institution))
 
     except Exception as e:
-        app.logger.error(f'Access router error: {e}')
-        return jsonify({'error': f'Access lookup failed: {e}'}), 500
+        app.logger.exception('Access lookup failed')
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 @app.route('/benchmark')
@@ -1844,8 +2011,10 @@ def benchmark_page():
 @app.route('/run-benchmark', methods=['POST'])
 def run_benchmark():
     try:
-        data = request.get_json(force=True)
-        slug = (data.get('slug') or '').strip()
+        data = _json_object()
+        if data is None:
+            return jsonify({'error': 'Invalid JSON object'}), 400
+        slug = _safe_text(data.get('slug'), max_len=200)
         topics_by_slug = {t['slug']: t for t in _list_benchmark_topics()}
         if slug not in topics_by_slug:
             return jsonify({'error': 'Unknown worked-example topic. Run eval.snapshot_topic first.'}), 400
@@ -1904,8 +2073,19 @@ def run_benchmark():
             'naive_baseline': run_naive_baseline(),
         })
     except Exception as e:
-        app.logger.error(f'Benchmark run error: {e}')
-        return jsonify({'error': str(e)}), 500
+        app.logger.exception('Benchmark run failed')
+        return jsonify({'error': 'Internal server error'}), 500
+
+
+def _server_options():
+    """Return opt-in development server settings with safe defaults."""
+    debug = os.environ.get('FLASK_DEBUG', '').strip().lower() in {'1', 'true', 'yes', 'on'}
+    return {
+        'debug': debug,
+        'host': os.environ.get('HOST') or '127.0.0.1',
+        'port': int(os.environ.get('PORT', '5050')),
+        'threaded': True,
+    }
 
 
 if __name__ == '__main__':
@@ -1917,4 +2097,4 @@ if __name__ == '__main__':
     print("🧪 Test endpoint: http://localhost:5050/test")
     print("📖 Citations page: http://localhost:5050/citations")
     
-    app.run(debug=True, host='0.0.0.0', port=5050, threaded=True)
+    app.run(**_server_options())

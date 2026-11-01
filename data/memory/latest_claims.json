@@ -1,27 +1,95 @@
 [
   {
-    "id": "10_5220_0014253100004070_llm_1788861322.448945_0",
-    "statement": "A hybrid approach that combines knowledge graph embeddings and symbolic learning can be used for drug-drug interaction prediction.",
-    "paper_id": "10_5220_0014253100004070",
+    "id": "10_48165_iitmjit_2025_11_1_11_llm_1793513328.762777_0",
+    "statement": "AI-Enhanced Drug Discovery Using Graph Neural Networks has profoundly transformed the pharmaceutical landscape by significantly accelerating the identification of potential drug candidates.",
+    "paper_id": "10_48165_iitmjit_2025_11_1_11",
     "evidence": [
-      "Hybrid Drug-Drug Interaction Prediction: Combining Knowledge Graph Embeddings and Symbolic Learning."
+      "The integration of artificial intelligence (AI) in drug discovery has profoundly transformed the pharmaceutical landscape by significantly accelerating the identification of potential drug candidates."
     ],
     "metrics": {},
     "datasets": [],
     "conditions": [],
-    "confidence": 0.6,
+    "confidence": 1.0,
     "limitations": [],
     "metadata": {
-      "verification_score": 1.0,
-      "verification_timestamp": "2026-09-08T15:25:23.582302"
+      "verification_score": 1.1,
+      "verification_timestamp": "2026-11-01T11:38:53.273782"
     }
   },
   {
-    "id": "10_1016_b978-0-443-30040-0_00008-4_llm_1788861322.439179_0",
-    "statement": "Integrated machine learning architectures can be used for a knowledge graph embeddings (KGEs) approach.",
-    "paper_id": "10_1016_b978-0-443-30040-0_00008-4",
+    "id": "10_48165_iitmjit_2025_11_1_11_llm_1793513328.762811_1",
+    "statement": "Graph Neural Networks (GNNs) have proven to be particularly effective in modeling molecular structures, optimizing drug-target interactions, and enhancing prediction accuracy.",
+    "paper_id": "10_48165_iitmjit_2025_11_1_11",
     "evidence": [
-      "Integrated machine learning architectures for a knowledge graph embeddings (KGEs) approach."
+      "Among the various AI techniques, Graph Neural Networks (GNNs) have proven to be particularly effective in modeling molecular structures, optimizing drug-target interactions, and enhancing prediction accuracy."
+    ],
+    "metrics": {},
+    "datasets": [],
+    "conditions": [],
+    "confidence": 1.0,
+    "limitations": [],
+    "metadata": {
+      "verification_score": 1.0,
+      "verification_timestamp": "2026-11-01T11:38:53.273934"
+    }
+  },
+  {
+    "id": "10_48165_iitmjit_2025_11_1_11_llm_1793513328.762819_2",
+    "statement": "This paper aims to explore the application of GNNs in the field of drug discovery, emphasizing their advantages in comparison to traditional molecular representations.",
+    "paper_id": "10_48165_iitmjit_2025_11_1_11",
+    "evidence": [
+      "This paper aims to explore the application of GNNs in the field of drug discovery, emphasizing their advantages in comparison to traditional molecular representations."
+    ],
+    "metrics": {},
+    "datasets": [],
+    "conditions": [],
+    "confidence": 1.0,
+    "limitations": [],
+    "metadata": {
+      "verification_score": 1.0,
+      "verification_timestamp": "2026-11-01T11:38:53.274077"
+    }
+  },
+  {
+    "id": "10_48165_iitmjit_2025_11_1_11_llm_1793513328.762825_3",
+    "statement": "The paper delves into real-world applications, case studies, and a comparative analysis of existing methodologies to offer a comprehensive overview of the current advancements in AI-driven drug discovery.",
+    "paper_id": "10_48165_iitmjit_2025_11_1_11",
+    "evidence": [
+      "Furthermore, the paper delves into real-world applications, case studies, and a comparative analysis of existing methodologies to offer a comprehensive overview of the current advancements in AI-driven drug discovery."
+    ],
+    "metrics": {},
+    "datasets": [],
+    "conditions": [],
+    "confidence": 1.0,
+    "limitations": [],
+    "metadata": {
+      "verification_score": 1.0,
+      "verification_timestamp": "2026-11-01T11:38:53.274239"
+    }
+  },
+  {
+    "id": "10_1016_j_drudis_2025_104499_llm_1793513315.039826_0",
+    "statement": "From matrix factorization to graph neural networks: Advances in computational drug repositioning.",
+    "paper_id": "10_1016_j_drudis_2025_104499",
+    "evidence": [
+      "From matrix factorization to graph neural networks: Advances in computational drug repositioning."
+    ],
+    "metrics": {},
+    "datasets": [],
+    "conditions": [],
+    "confidence": 1.0,
+    "limitations": [],
+    "metadata": {
+      "verification_score": 1.0,
+      "verification_timestamp": "2026-11-01T11:38:53.274341"
+    }
+  },
+  {
+    "id": "10_1016_b978-0-443-34059-8_00015-4_llm_1793513312.703668_0",
+    "statement": "Graph neural networks have shown promise in drug discovery.",
+    "paper_id": "10_1016_b978-0-443-34059-8_00015-4",
+    "evidence": [
+      "Graph neural networks have shown promise in drug discovery."
     ],
     "metrics": {},
     "datasets": [],
@@ -30,43 +98,58 @@
     "limitations": [],
     "metadata": {
       "verification_score": 1.0,
-      "verification_timestamp": "2026-09-08T15:25:23.582522"
+      "verification_timestamp": "2026-11-01T11:38:53.274427"
     }
   },
   {
-    "id": "10_5220_0013028500003838_llm_1788861322.424846_0",
-    "statement": "Multidimensional Knowledge Graph Embeddings can be used for International Trade Flow Analysis.",
-    "paper_id": "10_5220_0013028500003838",
+    "id": "10_51847_8w12ouixi5_llm_1793513317.122089_0",
+    "statement": "Molecular Graph Neural Networks have shown promise in drug discovery.",
+    "paper_id": "10_51847_8w12ouixi5",
     "evidence": [
-      "Multidimensional Knowledge Graph Embeddings for International Trade Flow Analysis."
+      "Molecular Graph Neural Networks have shown promise in drug discovery."
     ],
     "metrics": {},
     "datasets": [],
     "conditions": [],
-    "confidence": 0.6,
+    "confidence": 0.8,
     "limitations": [],
     "metadata": {
       "verification_score": 1.0,
-      "verification_timestamp": "2026-09-08T15:25:23.582707"
+      "verification_timestamp": "2026-11-01T11:38:53.274513"
     }
   },
   {
-    "id": "10_5220_0010646400003064_llm_1788861323.173988_0",
-    "statement": "The authors performed an evaluation of hubness reduction methods for entity alignment using knowledge graph embeddings.",
-    "paper_id": "10_5220_0010646400003064",
+    "id": "10_1109_metroxraine58569_2023_10405789_llm_1793513330.882239_0",
+    "statement": "Graph Neural Networks (GNNs) have shown promise in drug discovery tasks.",
+    "paper_id": "10_1109_metroxraine58569_2023_10405789",
     "evidence": [
-      "An Evaluation of Hubness Reduction Methods for Entity Alignment with Knowledge Graph Embeddings."
+      "Graph Neural Networks have shown promise in drug discovery tasks."
     ],
     "metrics": {},
     "datasets": [],
-    "conditions": [
-      "using knowledge graph embeddings"
-    ],
-    "confidence": 0.95,
+    "conditions": [],
+    "confidence": 0.8,
     "limitations": [],
     "metadata": {
       "verification_score": 1.0,
-      "verification_timestamp": "2026-09-08T15:25:23.586754"
+      "verification_timestamp": "2026-11-01T11:38:53.274603"
+    }
+  },
+  {
+    "id": "10_1016_j_ddtec_2020_11_009_llm_1793513333.109542_0",
+    "statement": "A compact review of molecular property prediction with graph neural networks.",
+    "paper_id": "10_1016_j_ddtec_2020_11_009",
+    "evidence": [
+      "A compact review of molecular property prediction with graph neural networks."
+    ],
+    "metrics": {},
+    "datasets": [],
+    "conditions": [],
+    "confidence": 1.0,
+    "limitations": [],
+    "metadata": {
+      "verification_score": 1.0,
+      "verification_timestamp": "2026-11-01T11:38:53.274695"
     }
   }
 ]

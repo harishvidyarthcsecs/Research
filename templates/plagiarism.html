@@ -54,15 +54,15 @@
 .text-input-big:focus { border-color: var(--accent-red); box-shadow: 0 0 0 3px rgba(247,129,102,0.1); }
 .text-input-big::placeholder { color: var(--text-muted); }
 
-.btn-check {
+.btn-similarity {
     background: linear-gradient(135deg, var(--accent-red), var(--accent-orange));
     color: #fff; border: none; border-radius: 8px;
     font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 600;
     padding: 11px 24px; cursor: pointer; transition: opacity 0.15s, transform 0.15s;
     display: inline-flex; align-items: center; gap: 8px;
 }
-.btn-check:hover { opacity: 0.88; transform: translateY(-1px); }
-.btn-check:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn-similarity:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-similarity:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 {% endblock %}
 
 {% block content %}
@@ -74,7 +74,7 @@
     <textarea class="text-input-big" id="textInput" oninput="updateWordCount()"
         placeholder="Paste your abstract, introduction, or any section you want to check for similarity against published literature (minimum 30 words)..."></textarea>
     <div class="mt-3">
-        <button class="btn-check" id="checkBtn" onclick="runCheck()">
+        <button class="btn-similarity" id="checkBtn" onclick="runCheck()">
             <i class="fas fa-fingerprint"></i> Check Similarity
         </button>
     </div>

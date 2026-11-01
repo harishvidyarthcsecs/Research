@@ -15,6 +15,8 @@ from typing import Dict, List
 from ..models.data_models import EvidenceRow, NarrativeSentence
 
 _CITE_RE = re.compile(r"\\cite[a-z]*\*?\s*(?:\[[^\]]*\])?\s*\{([^}]+)\}")
+_ABBREVIATION_RE = re.compile(r"\b(?:et al|Fig|e\.g|i\.e|vs)\.", re.IGNORECASE)
+_PERIOD_SENTINEL = "\ue000"
 
 
 class UnsupportedSentenceError(Exception):
@@ -23,8 +25,13 @@ class UnsupportedSentenceError(Exception):
 
 def split_sentences(paragraph: str) -> List[str]:
     """Split on sentence-ending punctuation, keeping \\cite{} keys intact."""
-    raw = re.split(r"(?<=[.!?])\s+", paragraph.strip())
-    return [s.strip() for s in raw if s.strip()]
+    protected = _ABBREVIATION_RE.sub(
+        lambda match: match.group(0).replace(".", _PERIOD_SENTINEL), paragraph.strip()
+    )
+    protected = re.sub(r"(?m)^[ \t]*(?:[-*•]|\d+[.)])[ \t]+", "", protected)
+    protected = re.sub(r"[ \t]+•[ \t]*", "\n", protected)
+    raw = re.split(r"(?:\r?\n)+|(?<=[.!?])[ \t]+", protected)
+    return [s.replace(_PERIOD_SENTINEL, ".").strip() for s in raw if s.strip()]
 
 
 def extract_cite_keys(sentence: str) -> List[str]:

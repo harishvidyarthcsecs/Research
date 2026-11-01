@@ -9,6 +9,8 @@ instead of flat JSON.
 """
 from __future__ import annotations
 
+from functools import wraps
+import hmac
 import os
 import sys
 import threading
@@ -30,6 +32,20 @@ journals_bp = Blueprint("journals", __name__)
 _FRONTEND_DIST = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "..", "frontend-journals", "dist")
 )
+
+
+def _require_admin(view):
+    """Require the configured admin token; an unset token fails closed."""
+    @wraps(view)
+    def wrapped(*args, **kwargs):
+        expected = os.environ.get("ADMIN_TOKEN")
+        provided = request.headers.get("X-Admin-Token", "")
+        if not expected or not provided or not hmac.compare_digest(provided, expected):
+            return jsonify({"error": "forbidden"}), 403
+        if request.method == "POST" and not (request.is_json or provided):
+            return jsonify({"error": "JSON content type or admin header required"}), 415
+        return view(*args, **kwargs)
+    return wrapped
 
 
 def _apc_status(apc, doaj) -> str:
@@ -220,6 +236,7 @@ def api_journal_detail(issn: str):
 
 
 @journals_bp.route("/api/admin/coverage")
+@_require_admin
 def api_coverage():
     """Live-computed data-completeness table - how many journals actually
     have each field populated right now, not a hardcoded snapshot. Some
@@ -270,6 +287,7 @@ def api_coverage():
 
 
 @journals_bp.route("/api/admin/etl/status")
+@_require_admin
 def api_etl_status():
     with session_scope() as session:
         latest_ids = (
@@ -295,6 +313,7 @@ _ETL_SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "scripts"
 
 
 @journals_bp.route("/api/admin/etl/run/<source>", methods=["POST"])
+@_require_admin
 def api_etl_run(source: str):
     def _run_in_background():
         if _ETL_SCRIPTS_DIR not in sys.path:

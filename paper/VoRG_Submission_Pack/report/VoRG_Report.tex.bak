@@ -1,0 +1,606 @@
+\documentclass[12pt,a4paper]{report}
+% ============================================================================
+%  RAJALAKSHMI ENGINEERING COLLEGE - MINI PROJECT / RESEARCH REPORT
+%  Verify-or-Reject Grounding (VoRG)
+%  House style adapted from the FundTrail internship report.
+% ============================================================================
+\usepackage[a4paper,top=2.5cm,bottom=2.5cm,left=3cm,right=2.5cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext,newtxmath}
+\newcommand{\Usefont}[1]{\fontfamily{#1}\selectfont}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{titletoc}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,backgrounds}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{microtype}
+\usepackage{mdframed}
+\usepackage[hidelinks]{hyperref}
+
+\setlength{\headheight}{16.14995pt}
+\addtolength{\topmargin}{-4.14995pt}
+
+\definecolor{navy}{RGB}{0,0,0}
+\definecolor{navysoft}{RGB}{60,60,60}
+\definecolor{steel}{RGB}{95,95,95}
+\definecolor{rulegray}{RGB}{150,150,150}
+\definecolor{rowgray}{RGB}{240,240,240}
+\definecolor{rowblue}{RGB}{232,232,232}
+\definecolor{accentline}{RGB}{80,80,80}
+
+\onehalfspacing
+\setlength{\parindent}{1.5em}
+\setlist{itemsep=2pt,parsep=0pt,topsep=4pt,leftmargin=1.6em}
+\captionsetup{font=small,labelfont={bf,color=navy},labelsep=period}
+\captionsetup[figure]{name=Fig.}
+\captionsetup[table]{name=Table}
+
+\titleformat{\chapter}[display]
+  {\flushright\normalfont}
+  {\color{rulegray}\fontsize{54}{54}\selectfont\bfseries Chapter~\thechapter}
+  {8pt}
+  {\color{navy}\Huge\bfseries\filright\MakeUppercase}
+  [\vspace{4pt}{\color{accentline}\titlerule[2pt]}\vspace{-5pt}{\color{navy}\titlerule[0.6pt]}]
+\titlespacing*{\chapter}{0pt}{-46pt}{22pt}
+\titleformat{\section}{\normalfont\large\bfseries\color{navy}}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries\color{navysoft}}{\thesubsection}{0.6em}{}
+\titlecontents{chapter}[0pt]
+  {\addvspace{6pt}\bfseries}
+  {Chapter~\thecontentslabel\quad}{}{\hfill\contentspage}
+\titlespacing*{\section}{0pt}{13pt}{4pt}
+\titlespacing*{\subsection}{0pt}{9pt}{3pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyhead[L]{\small\color{steel}\itshape 241901035 / 241901089}
+\fancyhead[R]{\small\color{steel}\itshape VoRG Project Report}
+\fancyhead[C]{\color{navy}\rule[-6pt]{\textwidth}{0.4pt}}
+\fancyfoot[C]{\small\color{navy}\textbf{\thepage}}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\small\color{navy}\textbf{\thepage}}%
+  \renewcommand{\headrulewidth}{0pt}}
+
+\renewcommand{\arraystretch}{1.25}
+\newcommand{\headrow}{\rowcolor{navy}}
+\newcommand{\hd}[1]{{\color{white}\bfseries #1}}
+
+\newmdenv[backgroundcolor=rowgray,linecolor=navy,linewidth=1pt,
+  innerleftmargin=12pt,innerrightmargin=10pt,innertopmargin=8pt,innerbottommargin=8pt,
+  skipabove=8pt,skipbelow=8pt]{keybox}
+
+\newcommand{\fig}[4]{%
+  \begin{figure}[H]\centering
+  \includegraphics[width=#3\linewidth,height=0.34\textheight,keepaspectratio]{assets/#1}%
+  \caption{#2}\label{#4}
+  \end{figure}}
+
+\begin{document}
+
+% ==================== TITLE PAGE ======================
+\thispagestyle{empty}
+\begin{titlepage}
+\begin{center}
+{\Usefont{ppl}\Large\bfseries RAJALAKSHMI ENGINEERING COLLEGE}\\[2pt]
+\normalsize THANDALAM, CHENNAI -- 602105\\[26pt]
+{\Usefont{ppl}\Large\bfseries MINI PROJECT / RESEARCH REPORT}\\[2pt]
+(COMPUTER SCIENCE AND ENGINEERING -- CYBER SECURITY)\\[18pt]
+\normalsize on\\[8pt]
+{\Usefont{ppl}\large\bfseries Verify-or-Reject Grounding: Build-Time Citation Gates\\ for Agentic Literature-Synthesis Pipelines}\\[24pt]
+\normalsize Submitted by\\[6pt]
+{\Usefont{ppl}\large\bfseries N. HARISH VIDYARTH}\\
+241901035\\[10pt]
+{\Usefont{ppl}\large\bfseries A. L. RESHMA}\\
+241901089\\[24pt]
+\normalsize \textit{in partial fulfillment of the requirements for the award of the degree of}\\[12pt]
+{\Usefont{ppl}\large\bfseries BACHELOR OF ENGINEERING}\\
+\normalsize \textit{in}\\
+{\Usefont{ppl}\large\bfseries COMPUTER SCIENCE AND ENGINEERING (CYBER SECURITY)}\\[18pt]
+\normalsize\bfseries ACADEMIC YEAR: 2026 -- 2027\\[8pt]
+\bfseries October 2026\\[\stretch{1}]
+\includegraphics[width=0.62\linewidth,keepaspectratio]{logo.jpg}\\[\stretch{1}]
+\footnotesize\bfseries DEPARTMENT OF COMPUTER SCIENCE AND ENGINEERING (CYBER SECURITY)\\
+\bfseries RAJALAKSHMI ENGINEERING COLLEGE, CHENNAI
+\end{center}
+\end{titlepage}
+\clearpage
+
+% ==================== BONAFIDE CERTIFICATE ======================
+\thispagestyle{empty}
+\begin{center}
+{\Usefont{ppl}\large\bfseries RAJALAKSHMI ENGINEERING COLLEGE}\\
+\normalsize (An Autonomous Institution Affiliated to Anna University, Chennai)\\[24pt]
+{\Usefont{ppl}\Large\bfseries Bonafide Certificate}
+\end{center}
+\vspace{20pt}
+\begin{spacing}{1.6}
+\noindent This is to certify that \textbf{N. Harish Vidyarth} (Register Number:
+\textbf{241901035}) and \textbf{A. L. Reshma} (Register Number:
+\textbf{241901089}), Department of Computer Science and Engineering (Cyber
+Security), Rajalakshmi Engineering College, have carried out the project work
+titled \textbf{``Verify-or-Reject Grounding: Build-Time Citation Gates for
+Agentic Literature-Synthesis Pipelines''} during the academic year
+\textbf{2026 -- 2027}, as a part of the academic curriculum requirement.
+\end{spacing}
+\par\vspace{16pt}
+\begin{spacing}{1.6}
+\noindent This report is submitted in partial fulfillment of the requirements
+for the award of the degree of Bachelor of Engineering in Computer Science and
+Engineering (Cyber Security).
+\end{spacing}
+
+\vspace{55pt}
+\noindent
+\begin{tabular}{@{}>{\centering\arraybackslash}p{5.2cm}>{\centering\arraybackslash}p{5.2cm}@{}}
+\rule{3.6cm}{0.4pt} & \rule{3.6cm}{0.4pt} \\[4pt]
+\bfseries Project Guide & \bfseries Dr. P. TAMILSELVI \\[4pt]
+Department of CSE (Cyber Security) & HEAD OF THE DEPARTMENT \\
+\end{tabular}
+
+\vspace{45pt}
+\noindent Submitted to the project viva-voce examination held on
+\underline{\hspace{4.5cm}}
+\vspace{40pt}
+
+\noindent
+\begin{tabular}{@{}>{\centering\arraybackslash}p{7cm}>{\centering\arraybackslash}p{7cm}@{}}
+\rule{4cm}{0.4pt} & \rule{4cm}{0.4pt} \\[4pt]
+INTERNAL EXAMINER & EXTERNAL EXAMINER \\
+\end{tabular}
+\clearpage
+
+% ==================== ACKNOWLEDGEMENT ======================
+\chapter*{ACKNOWLEDGEMENT}
+\addcontentsline{toc}{chapter}{Acknowledgement}
+\thispagestyle{plain}
+\begin{spacing}{1.6}
+I thank the almighty for the successful completion of this project. My sincere
+thanks to our Chairman Mr. S. Meganathan B.E., F.I.E., our Chairperson
+Dr. Thangam Meganathan Ph.D., and our Vice Chairman Mr. Abhay Shankar Meganathan
+B.E., M.S., for the infrastructure and encouragement provided in this premier
+institution. I express my gratitude to our Principal Dr. S.N. Murugesan M.E.,
+Ph.D., and to Dr. P. Tamilselvi, Professor and Head, Department of Computer
+Science and Engineering (Cyber Security), for her guidance and support. I also
+thank my project guide and the faculty of the department for their continuous
+help and valuable feedback throughout the work.
+\end{spacing}
+\clearpage
+
+% ==================== ABSTRACT ======================
+\chapter*{ABSTRACT}
+\addcontentsline{toc}{chapter}{Abstract}
+\thispagestyle{plain}
+\begin{spacing}{1.45}
+Large language model pipelines for automated literature review chain several
+generative stages whose output is consumed downstream and, finally, by people
+making real decisions. In current systems citation grounding is treated as a
+\emph{scored} property: a generated statement is checked against retrieved
+evidence and assigned a confidence value, flagged, or routed for human review,
+yet it is not structurally prevented from reaching the final output when that
+check fails.
+\par\vspace{6pt}
+This project describes \textbf{Verify-or-Reject Grounding (VoRG)}, an
+architectural pattern that treats citation grounding as a \emph{build-time
+invariant}. Each pipeline stage either produces output whose type excludes
+unverifiable content, because the stage is deterministic over verified inputs or
+because an explicit check discards non-conforming output before it propagates, or
+it raises a build error. The work contributes a formal statement of the pattern,
+a linear-time certification algorithm, a reference implementation across three
+subsystems of an eight-stage research-assistant pipeline, and a reproducible
+evaluation. The most robust result is diagnostic: the stages protected by a
+verify-or-reject gate produce no output contradicted by the reviewed corpus,
+while research-gap detection, the one major unprotected stage, produces a
+confirmed false claim that a corpus paper directly contradicts. This
+gap-to-failure correspondence motivates extending the same discipline to every
+generative stage of an agentic scientific-NLP pipeline.
+\end{spacing}
+\clearpage
+
+\tableofcontents
+\clearpage
+
+% ============================================================================
+\chapter{Introduction}
+
+\section{Background}
+\begin{itemize}
+  \item Large language models are increasingly used to accelerate literature
+        review by extracting claims from papers, detecting disagreements, and
+        drafting synthesis narratives.
+  \item A well documented failure mode is \emph{hallucination}, where a generated
+        statement looks well supported but corresponds to nothing in the source.
+  \item A closely related failure is citation level: the cited source may not say
+        what the model claims, or may not exist at all.
+  \item Existing mitigations rely on \emph{post-hoc verification}: a statement is
+        checked against retrieved evidence and given a score, a flag, or a review
+        queue entry.
+\end{itemize}
+
+\section{Problem With Scored Grounding}
+\begin{itemize}
+  \item The validation signal is appended to the output, not made a gate that
+        controls it.
+  \item A downstream stage, or a human, can ignore the score.
+  \item An unverified or contradictory statement can therefore still reach the
+        user, and the cost of a hallucinated citation is high when the output
+        feeds a real submission.
+\end{itemize}
+
+\section{Contributions}
+\begin{enumerate}
+  \item A formal statement of Verify-or-Reject Grounding as a reusable
+        architectural pattern, distinguished from scored grounding by its
+        build-time rejection semantics.
+  \item \textsc{VoRG-Certify}, a linear-time $O(n+M)$ narrative certification
+        algorithm that removes the $O(n \cdot m)$ term implicit in a naive
+        per-sentence evidence scan.
+  \item A reference implementation applying the pattern to three subsystems of an
+        eight-stage research-assistant pipeline, released with its evaluation
+        harness.
+  \item A reproducible evaluation that reports a gap-to-failure correspondence
+        between which stages are gated and where empirical failures occur.
+\end{enumerate}
+
+% ============================================================================
+\chapter{Problem Statement and Objectives}
+
+\section{Problem Statement}
+\begin{itemize}
+  \item Build an automated literature-synthesis pipeline in which no unverifiable
+        citation-bearing statement can reach the final output.
+  \item Do this structurally, as a property of the pipeline, not as a score a
+        later stage may skip.
+\end{itemize}
+
+\section{Objectives}
+\begin{enumerate}
+  \item Define, precisely, the difference between scored grounding and
+        verify-or-reject grounding.
+  \item Design a certification step whose cost scales linearly with the size of
+        the evidence table and the narrative, not with their product.
+  \item Implement the pattern in three independent subsystems: evidence-grounded
+        synthesis, contradiction detection, and journal-metadata reconciliation.
+  \item Evaluate the gated pipeline against a matched scored-grounding variant
+        and a naive single-prompt baseline on a reproducible, gold-annotated
+        corpus.
+  \item Identify, from the evaluation, where the pattern is load bearing and
+        where its absence causes a concrete failure.
+\end{enumerate}
+
+% ============================================================================
+\chapter{System Architecture}
+
+\section{Pipeline Overview}
+The reference system is a research-assistant pipeline with eight sequential
+stages.
+\begin{enumerate}
+  \item Topic expansion (LLM decomposes the topic into subtopics, methods,
+        datasets, keywords).
+  \item Multi-source paper discovery (arXiv, Semantic Scholar, CrossRef; DOI and
+        fuzzy-title deduplication).
+  \item Claim extraction (per paper, per claim).
+  \item Claim normalisation (metric-name and unit canonicalisation; rule-based
+        confidence adjustment).
+  \item Contradiction detection (LLM judge on an 11-point Likert scale).
+  \item Research-gap detection.
+  \item Citation building (BibTeX, APA, IEEE, MLA).
+  \item Persistence (JSON run state; a relational journal-quality schema).
+\end{enumerate}
+
+\section{The Three Verify-or-Reject Subsystems}
+\begin{itemize}
+  \item \textbf{Evidence-grounded synthesis.} Every extracted field is checked
+        as a verbatim or near-verbatim substring of the source before entering
+        the evidence table. A deterministic synthesis matrix aggregates the
+        table with no LLM call. A narrative verifier rejects any generated
+        sentence whose citation key does not resolve to a verified row.
+  \item \textbf{Contradiction detection.} Judgments below a likelihood threshold
+        are discarded, not reported with low confidence.
+  \item \textbf{Journal-metadata reconciliation.} A metric is reported only when
+        a source explicitly provides it; conflicting sources are surfaced in a
+        discrepancy field, never silently averaged.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+ node distance=9mm and 12mm,
+ box/.style={draw, rounded corners, minimum width=3.0cm, minimum height=9mm, align=center, font=\small},
+ gate/.style={draw, rounded corners, minimum width=3.0cm, minimum height=9mm, align=center, font=\small, fill=gray!14, thick},
+ arr/.style={-{Stealth[length=2mm]}, thick}]
+\node[box] (evi) {Evidence Extraction\\ \footnotesize verbatim-checked};
+\node[gate, right=of evi] (mat) {Synthesis Matrix\\ \footnotesize deterministic, no LLM};
+\node[box, below=of mat] (nar) {Narrative Generation\\ \footnotesize LLM drafts prose};
+\node[gate, left=of nar] (ver) {Narrative Verifier\\ \footnotesize reject if \texttt{cite} unresolved};
+\draw[arr] (evi) to (mat);
+\draw[arr] (mat) to (nar);
+\draw[arr] (nar) to (ver);
+\end{tikzpicture}
+\caption{The evidence-grounded synthesis sub-pipeline. Shaded boxes are hard
+gates: output that cannot be verified is not produced (deterministic
+aggregation) or is discarded (build-error rejection), never passed through with a
+soft score.}
+\label{fig:arch}
+\end{figure}
+
+\fig{14-literature-builder.png}{Literature-builder view of the reference
+implementation, which drives the evidence table, synthesis matrix, and verified
+narrative.}{0.92}{fig:lit}
+
+\fig{03-reference-validator.png}{Reference-validator view. Citation-level checks
+are enforced as gates rather than surfaced as advisory warnings.}{0.92}{fig:ref}
+
+% ============================================================================
+\chapter{Proposed Method: Verify-or-Reject Grounding}
+
+\section{Definitions}
+\begin{itemize}
+  \item A stage is \textbf{scored-grounded} if it emits output alongside a
+        confidence signal that a downstream consumer may act on or ignore.
+  \item A stage is \textbf{verify-or-reject grounded} if its output type itself
+        excludes unverifiable content, either because the stage is deterministic
+        over verified inputs, or because an explicit step discards non-conforming
+        output before it can propagate.
+  \item Scored grounding is a property of the output, inspectable but skippable.
+        Verify-or-reject grounding is a property of the pipeline, which a
+        downstream stage cannot bypass by ignoring a score it was never given.
+  \item This is the reject-by-default logic of the fail-safe-defaults principle
+        in classical protection-system design, applied to citation grounding
+        instead of access control.
+\end{itemize}
+
+\section{The Certification Algorithm}
+\textsc{VoRG-Certify} compiles the evidence table into a hash index once, then
+certifies the whole narrative in a single pass. Certification cost then scales
+with the size of the narrative and the evidence table separately, not with their
+product.
+
+\begin{algorithm}[H]
+\caption{\textsc{VoRG-Certify}: linear-time verify-or-reject narrative certification}
+\begin{algorithmic}[1]
+\Require Evidence table $E=\{e_1,\dots,e_n\}$, each row keyed by a unique citation key $\kappa(e_i)$; narrative $N=(s_1,\dots,s_m)$
+\Ensure Certified narrative $N'$ with only sentences whose citations resolve to $E$; rejection log $R$
+\Function{BuildIndex}{$E$}
+  \State $H \gets$ empty hash map
+  \For{each $e_i \in E$} \State $H[\kappa(e_i)] \gets e_i$ \Comment{expected $O(1)$ insert} \EndFor
+  \State \Return $H$
+\EndFunction
+\Function{Certify}{$N$, $H$}
+  \State $N' \gets \emptyset$;\ \ $R \gets \emptyset$
+  \For{each sentence $s_j \in N$} \Comment{single pass}
+    \State $K_j \gets \Call{ExtractKeys}{s_j}$ \Comment{one regex scan}
+    \If{$K_j = \emptyset$} \State $R \gets R \cup \{(s_j, \textsc{NoClaim})\}$
+    \ElsIf{$\exists\,k \in K_j$ with $k \notin H$} \State $R \gets R \cup \{(s_j, \textsc{Unresolved})\}$ \Comment{build error}
+    \Else \State $N' \gets N' \cup \{s_j\}$
+    \EndIf
+  \EndFor
+  \State \Return $(N', R)$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\section{Complexity}
+Let $n=|E|$, let $m$ be the number of generated sentences, and let
+$M=\sum_{j=1}^{m}|s_j|$ be the total narrative length.
+\[
+T(n,M) = O(n + M) \quad \text{expected time}, \qquad S(n,m) = O(n + m) \quad \text{auxiliary space}.
+\]
+\begin{itemize}
+  \item \textsc{BuildIndex} performs $n$ hash insertions.
+  \item \textsc{Certify} makes one linear pass; key extraction contributes
+        $O(M)$ across all sentences and each lookup is expected $O(1)$.
+  \item The naive linear-scan alternative, checking every sentence against every
+        evidence row, costs $O(n \cdot m)$. The hash-indexed design removes this
+        quadratic term.
+  \item The same index-then-certify structure applies to contradiction judgments
+        (indexed by claim-pair key) and journal-metadata fields (indexed by
+        source), so the bound extends to those subsystems.
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\caption{Scored grounding versus verify-or-reject grounding.}
+\label{tab:contrast}
+\begin{tabular}{@{}p{3.4cm}p{5.0cm}p{5.0cm}@{}}
+\toprule
+\headrow \hd{} & \hd{Scored grounding} & \hd{Verify-or-reject grounding} \\
+\midrule
+Unverifiable output & Emitted with a low score or flag & Not emitted; build error raised \\
+Downstream dependence & Consumer must check the score & Consumer receives only verified output \\
+Aggregation steps & Often LLM-driven, itself a hallucination source & Deterministic where possible, no new LLM surface \\
+Failure visibility & Silent unless the score is inspected & Explicit, logged rejection \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================================
+\chapter{Implementation}
+
+\section{Stack}
+\begin{itemize}
+  \item Language and framework: Python, Flask web interface.
+  \item Model provider: Groq, model \texttt{openai/gpt-oss-120b}, temperature
+        0.0 by default and 0.3 where a synthesis call sets its own.
+  \item Storage: JSON for run state; a relational schema per external
+        journal-quality source, joined on ISSN.
+\end{itemize}
+
+\section{Verify-or-Reject Mechanics}
+\begin{itemize}
+  \item \textbf{Evidence extraction.} An LLM proposes a structured row plus a
+        supporting sentence. The sentence is trusted only if it is a normalised
+        substring of the abstract. In reject mode a paraphrase-only row is not
+        admitted; a deterministic rule extractor is used instead.
+  \item \textbf{Synthesis matrix.} A methods-by-datasets grid built with no LLM
+        call, classifying each cell as agreement, conflict, or blank.
+  \item \textbf{Narrative verifier.} Every generated sentence must carry a
+        citation key that resolves to a verified row. An unresolved sentence is
+        a build error, not a warning.
+\end{itemize}
+
+\section{Evaluation Harness}
+\begin{itemize}
+  \item \texttt{run\_eval} runs the frozen corpus in three modes: \texttt{llm}
+        (gate on), \texttt{pattern} (rule-based extraction, gate on), and
+        \texttt{scored} (the matched ablation, gate replaced by a grounding
+        score, nothing dropped).
+  \item Downstream-error metrics: unsupported sentences reaching the final
+        narrative, retained false-positive contradictions, and narrative build
+        failed.
+  \item \texttt{snapshot\_topic} freezes a corpus and backfills missing
+        abstracts from Semantic Scholar and OpenAlex, then records abstract
+        coverage.
+  \item \texttt{run\_matrix} runs every topic-by-mode-by-repeat cell and
+        aggregates per-topic mean and standard deviation with the repository
+        commit hash.
+\end{itemize}
+
+\fig{13-benchmark.png}{Benchmark and evaluation view of the reference
+implementation.}{0.92}{fig:bench}
+
+\fig{15-research-progress.png}{Stage-by-stage progress of a single pipeline run,
+which is the unit the evaluation scores.}{0.92}{fig:prog}
+
+% ============================================================================
+\chapter{Evaluation and Results}
+
+\section{Setup}
+\begin{itemize}
+  \item Pilot topic: \emph{graph neural networks in drug discovery}. Frozen
+        corpus of 10 papers from CrossRef; in the pilot snapshot only one paper
+        carried a non-empty abstract, which is reported as a first-class
+        limitation.
+  \item Configurations: full pipeline (gate on), rule-based pattern-mode
+        ablation, and a naive single-prompt baseline. Three repeated runs each.
+  \item Gold annotations authored by independently correcting pipeline output,
+        not by rubber-stamping it.
+\end{itemize}
+
+\section{Claim Extraction}
+\begin{table}[H]
+\centering
+\caption{Claim-extraction performance on the pilot topic, mean and standard
+deviation over three runs, against three gold claims. Numbers are underpowered at
+this gold-set size and are not used to draw conclusions about extractor type.}
+\label{tab:claims}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\headrow \hd{Configuration} & \hd{Precision} & \hd{Recall} & \hd{F1} \\
+\midrule
+Full pipeline (verify-or-reject) & 0.294 $\pm$ 0.042 & 0.889 $\pm$ 0.192 & 0.442 $\pm$ 0.070 \\
+Pattern-mode ablation & 0.439 $\pm$ 0.211 & 0.667 $\pm$ 0.000 & 0.510 $\pm$ 0.152 \\
+Naive single-LLM baseline & 0.104 $\pm$ 0.006 & 0.333 $\pm$ 0.000 & 0.158 $\pm$ 0.007 \\
+\bottomrule
+\end{tabular}
+\end{table}
+\begin{itemize}
+  \item Both the full pipeline and the pattern-mode ablation clearly beat the
+        naive baseline, so decomposing extraction into per-paper, per-claim
+        stages helps regardless of the extractor.
+  \item The pattern-mode point estimate is nominally higher, which is attributed
+        to the small gold set of near-verbatim sentences and to the much higher
+        pattern-mode variance.
+\end{itemize}
+
+\section{Contradiction Detection}
+\begin{itemize}
+  \item Across all nine runs the false-positive rate on the two hand-labelled
+        negative pairs was 0.0.
+  \item No gold-positive contradictions exist in this small corpus, so recall is
+        undefined; this is a precision-only sanity check.
+\end{itemize}
+
+\section{Research-Gap Detection: A Negative Result}
+\begin{itemize}
+  \item Gap recall against two gold gaps was 0.0 in two of three full-pipeline
+        runs and 0.5 in the third, mean 0.17. Precision at 3 was 0.0 in every
+        run.
+  \item One run's top-ranked gap claimed that ``no studies have applied
+        graph-based generative models for de novo molecular generation'', which
+        is directly contradicted by the corpus's own sixth paper, ``Molecular
+        generative Graph Neural Networks for Drug Discovery''.
+  \item The gap-detection stage is the one component that does not apply
+        verify-or-reject grounding: a candidate gap is generated and ranked but
+        never checked against the corpus it is judging.
+\end{itemize}
+
+\begin{keybox}
+\textbf{Central finding.} The gated stages produced no output contradicted by
+the reviewed corpus. The single ungated stage produced exactly one confirmed
+false claim, contradicted by a paper already in that corpus. The location of the
+failure lines up with the one architectural gap in the reference system. This
+gap-to-failure correspondence, not the F1 numbers, is the strongest evidence for
+build-time rejection over post-hoc scoring.
+\end{keybox}
+
+\section{Cost}
+\begin{itemize}
+  \item Mean cost per full-pipeline run was USD 0.008, about 16 LLM calls.
+  \item The matched scored-grounding ablation issues the same calls, so it costs
+        the same; the difference is in what the output type permits.
+\end{itemize}
+
+\section{Work in Progress}
+\begin{itemize}
+  \item A matched scored-grounding ablation on identical output, and a
+        multi-topic corpus with an independent annotator, are implemented in the
+        harness and pending gold annotation.
+\end{itemize}
+
+% ============================================================================
+\chapter{Conclusion and Future Work}
+
+\section{Conclusion}
+\begin{itemize}
+  \item Verify-or-Reject Grounding treats citation grounding as a build-time
+        invariant rather than a scored property.
+  \item It was implemented across three subsystems of an eight-stage pipeline and
+        given a linear-time certification algorithm.
+  \item The evaluation shows a clean correspondence between architectural
+        coverage and failure location: gated stages did not fail against the
+        corpus, the ungated stage did.
+\end{itemize}
+
+\section{Future Work}
+\begin{itemize}
+  \item Apply the verify-or-reject mechanism to research-gap detection, closing
+        the one architectural gap identified here.
+  \item Run the matched scored-grounding ablation and broaden the evaluation to
+        three to five gold-annotated topics with an independent annotator.
+  \item Submit the full paper to an IEEE Xplore indexed venue; the current
+        primary target is ICACCS 2027.
+\end{itemize}
+
+% ============================================================================
+\chapter*{REFERENCES}
+\addcontentsline{toc}{chapter}{References}
+\thispagestyle{plain}
+\begin{enumerate}[label={[\arabic*]},leftmargin=2.2em]
+  \item W. Zhang and J. Zhang, ``Hallucination mitigation for retrieval-augmented large language models: a review,'' \emph{Mathematics}, vol. 13, no. 5, 2025.
+  \item Z. Ji et al., ``Survey of hallucination in natural language generation,'' \emph{ACM Computing Surveys}, vol. 55, no. 12, 2023.
+  \item S. M. T. I. Tonmoy et al., ``A comprehensive survey of hallucination mitigation techniques in large language models,'' arXiv, 2024.
+  \item M. Zhang and T. Zhao, ``Citation accuracy challenges posed by large language models,'' \emph{JMIR Medical Education}, vol. 11, 2025.
+  \item Y. Li et al., ``Enhancing systematic literature reviews with generative artificial intelligence: development, applications, and performance evaluation,'' \emph{Journal of the American Medical Informatics Association}, vol. 32, no. 4, 2025.
+  \item P. Lewis et al., ``Retrieval-augmented generation for knowledge-intensive NLP tasks,'' \emph{Advances in Neural Information Processing Systems 33}, 2020.
+  \item A. Asai et al., ``Self-RAG: learning to retrieve, generate, and critique through self-reflection,'' \emph{ICLR}, 2024.
+  \item J. Thorne et al., ``FEVER: a large-scale dataset for fact extraction and verification,'' \emph{NAACL-HLT}, 2018.
+  \item T. Gao et al., ``Enabling large language models to generate text with citations,'' \emph{EMNLP}, 2023.
+  \item O. Press et al., ``CiteME: can language models accurately cite scientific claims?,'' \emph{Advances in Neural Information Processing Systems 38}, 2024.
+  \item X. Liu et al., ``AgentBench: evaluating LLMs as agents,'' \emph{ICLR}, 2024.
+  \item J. H. Saltzer and M. D. Schroeder, ``The protection of information in computer systems,'' \emph{Proceedings of the IEEE}, vol. 63, no. 9, 1975.
+\end{enumerate}
+
+\end{document}
